@@ -259,6 +259,22 @@ public class Game implements Runnable {
             }
         }
 
+        for (Sprite s : renderState.sprites) {
+            // Interpolacja pozycji
+            float drawX = s.lastX + (s.x - s.lastX) * (float)alpha;
+            float drawY = s.lastY + (s.y - s.lastY) * (float)alpha;
+
+            if (s.rotation != 0) {
+                // Rotacja wymaga przesunięcia kontekstu Graphics2D
+                Graphics2D g2d = (Graphics2D) window.g.create();
+                g2d.translate(drawX + s.width / 2, drawY + s.height / 2);
+                g2d.rotate(Math.toRadians(s.rotation));
+                g2d.drawImage(s.image, -s.width / 2, -s.height / 2, s.width, s.height, null);
+                g2d.dispose();
+            } else {
+                window.g.drawImage(s.image, (int)drawX, (int)drawY, s.width, s.height, null);
+            }
+        }
         // Pozwól programiście narysować coś ekstra (np. UI)
         //renderOverlay(window.g);
 
