@@ -1,4 +1,4 @@
-package main.java.pl.sgl.engine;
+package pl.sgl.engine;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;

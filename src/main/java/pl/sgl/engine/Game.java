@@ -1,4 +1,4 @@
-package main.java.pl.sgl.engine;
+package pl.sgl.engine;
 
 import java.awt.*;
 
@@ -198,7 +198,7 @@ public class Game implements Runnable {
         if (Math.abs(diffX) > 100) {
             didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
         }
-        System.out.println("watek logiki");
+//        System.out.println("watek logiki");
 
         //currentSnapshot = new GameState(x, y, lastX, lastY, didTeleport);
 

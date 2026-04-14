@@ -1,6 +1,4 @@
-import main.java.pl.sgl.engine.Game;
-import main.java.pl.sgl.engine.GameState;
-import main.java.pl.sgl.engine.Primitive;
+package pl.sgl.engine;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ public class Main extends Game {
     }
     @Override
     protected void update() {
-        super.update();
+
         // 1. Logika poruszania
 //        for(MyPlayer p : players) {
 //            p.move();
@@ -32,7 +30,9 @@ public class Main extends Game {
 
         // 3. Przesłanie do silnika
         //this.publishState(new GameState(toRender));
-        this.currentSnapshot = new GameState(toRender);
+        this.currentSnapshot = new GameState(toRender, new ArrayList<>());
+
+        super.update();
     }
 
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package main.java.pl.sgl.engine;
+package pl.sgl.engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +18,23 @@ public class GameState {
 //        this.lastX = lastX; this.lastY = lastY;
 //        this.didTeleport = false;
 //    }
-    // Kolekcja wszystkich obiektów do narysowania w danej klatce
+//    // Kolekcja wszystkich obiektów do narysowania w danej klatce
+//    public final List<Primitive> entities;
+//
+//    public GameState(List<Primitive> entities) {
+//        // Robimy kopię listy, aby była niemutowalna
+//        this.entities = new ArrayList<>(entities);
+//    }
     public final List<Primitive> entities;
+    public final List<Sprite> sprites;
 
-    public GameState(List<Primitive> entities) {
-        // Robimy kopię listy, aby była niemutowalna
-        this.entities = new ArrayList<>(entities);
+    public GameState(List<Primitive> primitives, List<Sprite> sprites) {
+        this.entities = new ArrayList<>(primitives);
+        this.sprites = new ArrayList<>(sprites);
     }
 
     public GameState(){
         entities = new ArrayList<>();
+        sprites = new ArrayList<>();
     }
 }
