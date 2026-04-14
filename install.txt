@@ -1,0 +1,7 @@
+<dependencies>
+    <dependency>
+        <groupId>pl.twojanazwa</groupId>
+        <artifactId>moj-silnik-gier</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>

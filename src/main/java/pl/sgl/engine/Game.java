@@ -1,4 +1,4 @@
-package engine;
+package main.java.pl.sgl.engine;
 
 import java.awt.*;
 
@@ -8,7 +8,7 @@ public class Game implements Runnable {
 //    private volatile GameState buffer1 = new GameState(0, 0, 0, 0);
 //    private volatile GameState buffer2 = new GameState(0, 0, 0, 0);
 //    private volatile boolean bufferInUse = true;
-    private volatile GameState currentSnapshot = new GameState(100, 100, 100, 100, false);
+    protected volatile GameState currentSnapshot = new GameState();
 
     private GameWindow window;
     private volatile boolean running = false;
@@ -177,7 +177,7 @@ public class Game implements Runnable {
         }
     }
 
-    private void update() {
+    protected void update() {
         // Zapisujemy poprzedni stan przed aktualizacją
 
         lastTickTime = System.nanoTime();
@@ -198,8 +198,9 @@ public class Game implements Runnable {
         if (Math.abs(diffX) > 100) {
             didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
         }
+        System.out.println("watek logiki");
 
-        currentSnapshot = new GameState(x, y, lastX, lastY, didTeleport);
+        //currentSnapshot = new GameState(x, y, lastX, lastY, didTeleport);
 
         // Tutaj reszta fizyki...
 
@@ -231,21 +232,39 @@ public class Game implements Runnable {
         GameState renderState= this.currentSnapshot;
 //        GameState renderState = bufferInUse ? buffer2 : buffer1;
 //        float renderX = (float) (renderState.lastX + (renderState.x - renderState.lastX) * alpha);
-        float renderY  = (float) (renderState.lastY + (renderState.y - renderState.lastY) * alpha);
+//        float renderY  = (float) (renderState.lastY + (renderState.y - renderState.lastY) * alpha);
+//
+//        // -----!!! DODAJ ABY PRZY NAGŁEJ ZMIANIE MIEJSCA BRAC TYLKO STARĄ POZYCJE
+//        // Jeśli różnica jest większa niż np. połowa szerokości ekranu,
+//        // to znaczy, że kwadrat przeskoczył krawędź.
+//        float renderX;
+//        if (renderState.didTeleport) {
+//            renderX = (float) renderState.x; // Jeśli był teleport, nie interpoluj "drogi pomiędzy"
+//        } else {
+//            renderX = (float) (renderState.lastX + (renderState.x - renderState.lastX) * alpha);
+//        }
 
-        // -----!!! DODAJ ABY PRZY NAGŁEJ ZMIANIE MIEJSCA BRAC TYLKO STARĄ POZYCJE
-        // Jeśli różnica jest większa niż np. połowa szerokości ekranu,
-        // to znaczy, że kwadrat przeskoczył krawędź.
-        float renderX;
-        if (renderState.didTeleport) {
-            renderX = (float) renderState.x; // Jeśli był teleport, nie interpoluj "drogi pomiędzy"
-        } else {
-            renderX = (float) (renderState.lastX + (renderState.x - renderState.lastX) * alpha);
+        for (Primitive e : renderState.entities) {
+            //System.out.println(e);
+            // INTERPOLACJA dla każdego obiektu z osobna
+            float drawX = e.lastX + (e.x - e.lastX) * (float)alpha;
+            float drawY = e.lastY + (e.y - e.lastY) * (float)alpha;
+
+            window.g.setColor(e.color);
+
+            if ("RECT".equals(e.type)) {
+                window.g.fillRect((int)drawX, (int)drawY, e.width, e.height);
+            } else if ("CIRCLE".equals(e.type)) {
+                window.g.fillOval((int)drawX, (int)drawY, e.width, e.height);
+            }
         }
 
+        // Pozwól programiście narysować coś ekstra (np. UI)
+        //renderOverlay(window.g);
+
         // Rysowanie
-        window.g.setColor(Color.RED);
-        window.g.fillRect((int)renderX, (int)renderY, 50, 50);
+//        window.g.setColor(Color.RED);
+//        window.g.fillRect((int)renderX, (int)renderY, 50, 50);
 
         // --- RYSOWANIE STATYSTYK ---
         window.g.setColor(Color.WHITE);
@@ -265,7 +284,12 @@ public class Game implements Runnable {
         window.render();
     }
 
-    public static void main(String[] args) {
-        new Game().start();
-    }
+//    public static void main(String[] args) {
+//        new Game().start();
+//    }
+
+    // Lista obiektów logicznych (w świecie gry)
+//    private List<MyPlayer> players = new ArrayList<>();
+//
+
 }
