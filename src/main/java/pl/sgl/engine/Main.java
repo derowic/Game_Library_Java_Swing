@@ -10,15 +10,18 @@ public class Main extends Game {
 //    private List<MyPlayer> players = new ArrayList<>();
 //
     private BufferedImage playerShip;
-    public int x = 600;
+
+    List<Sprite> sprites = new ArrayList<>();
+
 
     public Main() {
         super();
         // Ładujemy raz przy starcie
-        playerShip = TextureLoader.load("/textures/ship.png");
+        playerShip = TextureLoader.load("/textures/ship2.png");
+        sprites.add(new Sprite(playerShip, 300, 600));
     }
     @Override
-    protected void update(double DT) {
+    protected void update() {
 
         // 1. Logika poruszania
 //        for(MyPlayer p : players) {
@@ -38,27 +41,19 @@ public class Main extends Game {
 //        //this.publishState(new GameState(toRender));
 //        this.currentSnapshot = new GameState(toRender, new ArrayList<>());
 
-        List<Sprite> sprites = new ArrayList<>();
-        double velocity = 200.0;
-        int oldX = x;
-        x -= (int) (velocity * DT);
-        if(x < -50)
+
+        if(sprites.get(0).y < -50)
         {
-            x=600;
+            sprites.get(0).y = 600;
         }
+        sprites.get(0).velocityY = -200;
         // Dodajemy sprite gracza do snapshota
-        sprites.add(new Sprite(
-                playerShip,
-                (float)375, (float)x,
-                (float)375, (float)oldX,
-                64, 64, 0
-        ));
 
-
+        //sprites.get(0).velocityY = -200;
 
         this.currentSnapshot = new GameState(sprites);
 
-        super.update(DT);
+        super.update();
     }
 
     public static void main(String[] args) {

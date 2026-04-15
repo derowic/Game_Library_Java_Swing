@@ -17,7 +17,7 @@ public class Game implements Runnable {
     private final int TICKS_PER_SECOND = 60;
     private final double SKIP_TICKS = 1_000_000_000.0 / TICKS_PER_SECOND;
     // Czas trwania jednego ticku w sekundach (dla 60 TPS to ~0.0166s)
-    protected final double DT = 1.0 / TICKS_PER_SECOND;
+    protected final double deltaTime = 1.0 / TICKS_PER_SECOND;
 
     //dane interpolacji
     private double x,y;
@@ -162,7 +162,7 @@ public class Game implements Runnable {
 
             // Warunek zatrzyma się, jeśli zrobimy więcej niż 5 update'ów na raz!
             while (accumulator >= SKIP_TICKS && updates < 5) {
-                update(DT);
+                update();
                 tickCount++;
                 accumulator -= SKIP_TICKS;
                 lastTickTime = System.nanoTime();
@@ -190,7 +190,7 @@ public class Game implements Runnable {
 
 
 
-    protected void update(double dt) {
+    protected void update() {
         // Zapisujemy poprzedni stan przed aktualizacją
 
         lastTickTime = System.nanoTime();
@@ -199,11 +199,13 @@ public class Game implements Runnable {
         // Logika ruchu (np. przesuwanie w prawo)
 
         for (Sprite s : currentSnapshot.sprites) {
-            float diffX = (s.x - s.lastX);
+            s.update(deltaTime);
+
+            double diffX = (s.x - s.lastX);
             if (Math.abs(diffX) > 100) {
                 s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
             }
-            float diffY = (s.y - s.lastY);
+            double diffY = (s.y - s.lastY);
             if (Math.abs(diffY) > 100) {
                 s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
             }
@@ -272,10 +274,13 @@ public class Game implements Runnable {
             }
         }
 
+//        System.out.println(renderState.sprites);
         // Rysowanie Sprite'ów
         for (Sprite s : renderState.sprites) {
-            float drawX;
-            float drawY;
+//            System.out.println("render:" + renderState.sprites.get(0).image);
+
+            double drawX;
+            double drawY;
             if (s.didTeleport) {
 //            renderX = (float) renderState.x;
                 // Interpolacja pozycji
@@ -294,7 +299,7 @@ public class Game implements Runnable {
                 g2d.drawImage(s.image, -s.width / 2, -s.height / 2, s.width, s.height, null);
                 g2d.dispose();
             } else {
-                window.g.drawImage(s.image, (int)drawX, (int)drawY, s.width, s.height, null);
+                window.g.drawImage(s.image, (int)s.x, (int)s.y, s.width, s.height, null);
             }
         }
 
