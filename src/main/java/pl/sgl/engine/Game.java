@@ -200,9 +200,11 @@ public class Game implements Runnable {
 
         for (Sprite s : currentSnapshot.sprites) {
             float diffX = (s.x - s.lastX);
-            // Jeśli różnica jest większa niż np. połowa szerokości ekranu,
-            // to znaczy, że kwadrat przeskoczył krawędź.
             if (Math.abs(diffX) > 100) {
+                s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
+            }
+            float diffY = (s.y - s.lastY);
+            if (Math.abs(diffY) > 100) {
                 s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
             }
         }

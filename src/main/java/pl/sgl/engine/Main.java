@@ -10,7 +10,7 @@ public class Main extends Game {
 //    private List<MyPlayer> players = new ArrayList<>();
 //
     private BufferedImage playerShip;
-    public int x = 0;
+    public int x = 600;
 
     public Main() {
         super();
@@ -39,21 +39,22 @@ public class Main extends Game {
 //        this.currentSnapshot = new GameState(toRender, new ArrayList<>());
 
         List<Sprite> sprites = new ArrayList<>();
-
+        double velocity = 200.0;
+        int oldX = x;
+        x -= (int) (velocity * DT);
+        if(x < -50)
+        {
+            x=600;
+        }
         // Dodajemy sprite gracza do snapshota
         sprites.add(new Sprite(
                 playerShip,
-                (float)x, (float)300,
-                (float)x+1, (float)300,
+                (float)375, (float)x,
+                (float)375, (float)oldX,
                 64, 64, 0
         ));
 
-        double velocity = 200.0;
-        x += (int) (velocity * DT);
-        if(x >600)
-        {
-            x=0;
-        }
+
 
         this.currentSnapshot = new GameState(sprites);
 
