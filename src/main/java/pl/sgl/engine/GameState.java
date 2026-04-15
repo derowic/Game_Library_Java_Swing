@@ -28,6 +28,8 @@ public class GameState {
     public final List<Primitive> entities;
     public final List<Sprite> sprites;
 
+
+
     public GameState(List<Primitive> primitives, List<Sprite> sprites) {
         this.entities = new ArrayList<>(primitives);
         this.sprites = new ArrayList<>(sprites);
@@ -36,5 +38,11 @@ public class GameState {
     public GameState(){
         entities = new ArrayList<>();
         sprites = new ArrayList<>();
+    }
+
+
+    public GameState(List<Sprite> sprites) {
+        this.entities = new ArrayList<>();
+        this.sprites = new ArrayList<>(sprites);
     }
 }

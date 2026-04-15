@@ -16,6 +16,8 @@ public class Game implements Runnable {
     //ustawienia czasu
     private final int TICKS_PER_SECOND = 60;
     private final double SKIP_TICKS = 1_000_000_000.0 / TICKS_PER_SECOND;
+    // Czas trwania jednego ticku w sekundach (dla 60 TPS to ~0.0166s)
+    protected final double deltaTime = 1.0 / TICKS_PER_SECOND;
 
     //dane interpolacji
     private double x,y;
@@ -146,58 +148,71 @@ public class Game implements Runnable {
     // Pętla Logiki
     @Override
     public void run() {
-        long nextTick = System.nanoTime();
+        long lastTime = System.nanoTime();
+        double accumulator = 0;
 
         while (running) {
-            while (System.nanoTime() > nextTick) {
+            long now = System.nanoTime();
+            long passedTime = now - lastTime;
+            lastTime = now;
+
+            accumulator += passedTime;
+
+            int updates = 0; // Dodatkowy licznik bezpieczeństwa
+
+            // Warunek zatrzyma się, jeśli zrobimy więcej niż 5 update'ów na raz!
+            while (accumulator >= SKIP_TICKS && updates < 5) {
                 update();
-                tickCount++; // Zwiększamy licznik aktualizacji
-                nextTick += SKIP_TICKS;
+                tickCount++;
+                accumulator -= SKIP_TICKS;
+                lastTickTime = System.nanoTime();
+
+                updates++;
             }
 
-            // LICZNIK SEKUNDOWY
-            // Sprawdzamy czy minęła 1 sekunda (1000 ms)
-            if (System.currentTimeMillis() - lastTimer >= 1000) {
-                lastTimer += 1000;
+            // Jeśli komputer jest tak tragicznie wolny, że przekroczyliśmy 5 update'ów,
+            // to "wyrzucamy" zaległy czas, aby gra się nie zawiesiła.
+            if (accumulator >= SKIP_TICKS) {
+                accumulator = 0; // "Panika" - resetujemy zegar, gra lekko przeskoczy, ale nie zgaśnie
+            }
 
-                // Przekazujemy wyniki do zmiennych wyświetlanych
+            if (System.currentTimeMillis() - lastTimer >= 1000) {
                 currentFPS = frameCount;
                 currentTPS = tickCount;
-
-                // Resetujemy liczniki robocze
                 frameCount = 0;
                 tickCount = 0;
-
-                // Opcjonalnie: pisanie w konsoli co sekundę
-                // System.out.println("FPS: " + currentFPS + " | TPS: " + currentTPS);
+                lastTimer += 1000;
             }
-            // Mały sleep, żeby nie spalać 100% procesora na pustym kręceniu się,
-            // gdy logika nadgoniła czas.
+
             try { Thread.sleep(1); } catch (InterruptedException e) {}
         }
     }
+
+
 
     protected void update() {
         // Zapisujemy poprzedni stan przed aktualizacją
 
         lastTickTime = System.nanoTime();
-        lastX = x;
-        lastY = y;
+
 
         // Logika ruchu (np. przesuwanie w prawo)
-        boolean didTeleport = false;
-        x += 2.0;
-        if (x > 800) {
-            x = 0;
 
+        for (Sprite s : currentSnapshot.sprites) {
+            s.update(deltaTime);
+
+            double diffX = (s.x - s.lastX);
+            if (Math.abs(diffX) > 100) {
+                s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
+            }
+            double diffY = (s.y - s.lastY);
+            if (Math.abs(diffY) > 100) {
+                s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
+            }
         }
 
-        float diffX = (float) (x - lastX);
-        // Jeśli różnica jest większa niż np. połowa szerokości ekranu,
-        // to znaczy, że kwadrat przeskoczył krawędź.
-        if (Math.abs(diffX) > 100) {
-            didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
-        }
+
+
 //        System.out.println("watek logiki");
 
         //currentSnapshot = new GameState(x, y, lastX, lastY, didTeleport);
@@ -259,22 +274,36 @@ public class Game implements Runnable {
             }
         }
 
+//        System.out.println(renderState.sprites);
+        // Rysowanie Sprite'ów
         for (Sprite s : renderState.sprites) {
-            // Interpolacja pozycji
-            float drawX = s.lastX + (s.x - s.lastX) * (float)alpha;
-            float drawY = s.lastY + (s.y - s.lastY) * (float)alpha;
+//            System.out.println("render:" + renderState.sprites.get(0).image);
+
+            double drawX;
+            double drawY;
+            if (s.didTeleport) {
+//            renderX = (float) renderState.x;
+                // Interpolacja pozycji
+                drawX = (float) s.x;
+                drawY = s.y;
+            } else {
+                drawX = s.lastX + (s.x - s.lastX) * (float) alpha;
+                drawY = s.lastY + (s.y - s.lastY) * (float) alpha;
+            }
 
             if (s.rotation != 0) {
                 // Rotacja wymaga przesunięcia kontekstu Graphics2D
                 Graphics2D g2d = (Graphics2D) window.g.create();
-                g2d.translate(drawX + s.width / 2, drawY + s.height / 2);
+                g2d.translate(drawX + (double) s.width / 2, drawY + (double) s.height / 2);
                 g2d.rotate(Math.toRadians(s.rotation));
                 g2d.drawImage(s.image, -s.width / 2, -s.height / 2, s.width, s.height, null);
                 g2d.dispose();
             } else {
-                window.g.drawImage(s.image, (int)drawX, (int)drawY, s.width, s.height, null);
+                window.g.drawImage(s.image, (int)s.x, (int)s.y, s.width, s.height, null);
             }
         }
+
+
         // Pozwól programiście narysować coś ekstra (np. UI)
         //renderOverlay(window.g);
 
