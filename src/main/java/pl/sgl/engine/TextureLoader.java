@@ -21,4 +21,18 @@ public class TextureLoader {
             return null;
         }
     }
+
+    public static BufferedImage[] loadSheet(String path, int width, int height) {
+        BufferedImage sheet = load(path);
+        int cols = sheet.getWidth() / width;
+        int rows = sheet.getHeight() / height;
+        BufferedImage[] frames = new BufferedImage[cols * rows];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                frames[i * cols + j] = sheet.getSubimage(j * width, i * height, width, height);
+            }
+        }
+        return frames;
+    }
 }

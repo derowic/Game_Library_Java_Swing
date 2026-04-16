@@ -26,7 +26,7 @@ public class GameState {
 //        this.entities = new ArrayList<>(entities);
 //    }
     public final List<Primitive> entities;
-    public final List<Sprite> sprites;
+    public final List<GameObject> sprites;
 
 
 
@@ -41,7 +41,7 @@ public class GameState {
     }
 
 
-    public GameState(List<Sprite> sprites) {
+    public GameState(List<GameObject> sprites) {
         this.entities = new ArrayList<>();
         this.sprites = new ArrayList<>(sprites);
     }

@@ -198,7 +198,7 @@ public class Game implements Runnable {
 
         // Logika ruchu (np. przesuwanie w prawo)
 
-        for (Sprite s : currentSnapshot.sprites) {
+        for (GameObject s : currentSnapshot.sprites) {
             s.update(deltaTime);
 
             double diffX = (s.x - s.lastX);
@@ -276,31 +276,48 @@ public class Game implements Runnable {
 
 //        System.out.println(renderState.sprites);
         // Rysowanie Sprite'ów
-        for (Sprite s : renderState.sprites) {
+        for (GameObject s : renderState.sprites) {
 //            System.out.println("render:" + renderState.sprites.get(0).image);
+            // 1. OBLICZENIE POZYCJI (Interpolacja lub Teleport)
+            Graphics2D g2d = (Graphics2D) window.g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            s.draw(g2d, alpha);
+//            double drawX;
+//            double drawY;
+//            if (s.didTeleport) {
+////            renderX = (float) renderState.x;
+//                // Interpolacja pozycji
+//                drawX = (float) s.x;
+//                drawY = s.y;
+//            } else {
+//                drawX = s.lastX + (s.x - s.lastX) * (float) alpha;
+//                drawY = s.lastY + (s.y - s.lastY) * (float) alpha;
+//            }
+//
+//            // 2. scaling
+//            int finalWidth = (int) (s.width * s.scaleX);
+//            int finalHeight = (int) (s.height * s.scaleY);
+//
+//
+//            g2d.translate(drawX, drawY);
+//            if (s.rotation !=0) {
+//                g2d.rotate(Math.toRadians(s.rotation), finalWidth /2, finalHeight /2 );
+//            }
+//            g2d.drawImage((Image) s.image, 0,0, finalWidth, finalHeight, null);
 
-            double drawX;
-            double drawY;
-            if (s.didTeleport) {
-//            renderX = (float) renderState.x;
-                // Interpolacja pozycji
-                drawX = (float) s.x;
-                drawY = s.y;
-            } else {
-                drawX = s.lastX + (s.x - s.lastX) * (float) alpha;
-                drawY = s.lastY + (s.y - s.lastY) * (float) alpha;
-            }
 
-            if (s.rotation != 0) {
-                // Rotacja wymaga przesunięcia kontekstu Graphics2D
-                Graphics2D g2d = (Graphics2D) window.g.create();
-                g2d.translate(drawX + (double) s.width / 2, drawY + (double) s.height / 2);
-                g2d.rotate(Math.toRadians(s.rotation));
-                g2d.drawImage(s.image, -s.width / 2, -s.height / 2, s.width, s.height, null);
-                g2d.dispose();
-            } else {
-                window.g.drawImage(s.image, (int)s.x, (int)s.y, s.width, s.height, null);
-            }
+
+
+//            if (s.rotation != 0) {
+//                // Rotacja wymaga przesunięcia kontekstu Graphics2D
+//                Graphics2D g2d = (Graphics2D) window.g.create();
+//                g2d.translate(drawX + (double) s.width / 2, drawY + (double) s.height / 2);
+//                g2d.rotate(Math.toRadians(s.rotation));
+//                g2d.drawImage(s.image, -s.width / 2, -s.height / 2, s.width, s.height, null);
+//                g2d.dispose();
+//            } else {
+//                window.g.drawImage(s.image, (int)s.x, (int)s.y, s.width, s.height, null);
+//            }
         }
 
 
@@ -328,7 +345,9 @@ public class Game implements Runnable {
 
         window.render();
     }
+    public void input() {
 
+    }
 //    public static void main(String[] args) {
 //        new Game().start();
 //    }

@@ -1,29 +1,26 @@
 package pl.sgl.engine;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Sprite {
-    public BufferedImage image;
-    public double x;
-    public double y;
-    public double lastX;
-    public double lastY;
+public class Sprite extends GameObject {
+
+
     public int width, height;
-    public double rotation; // Dodajmy rotację, sprite'y często jej potrzebują
-    public boolean didTeleport = false;
-    double velocityX = 0.0;
-    double velocityY = 0.0;
+
 
     public Sprite(BufferedImage image, float x, float y) {
+        super(x,y);
         this.image = image;
-        this.x = x;
-        this.y = y;
-        this.lastX = x;
-        this.lastY = y;
         this.width = image.getWidth();
         this.height = image.getHeight();
-        info();
+//        info();
+    }
 
+    public Sprite(BufferedImage image) {
+        super(0,0);
+        this.image = image;
+//        info();
     }
 
     public void info()
@@ -31,7 +28,7 @@ public class Sprite {
         System.out.println("width: " +width);
         System.out.println("height: " +height);
     }
-
+    @Override
     public void update(double deltaTime)
     {
         this.lastX = this.x;
@@ -40,5 +37,19 @@ public class Sprite {
         this.lastY = this.y;
         this.y += (velocityY * deltaTime);
 
+    }
+
+    @Override
+    public void draw(Graphics2D g2d, double alpha){
+        super.draw(g2d,alpha);
+
+        // 2. scaling
+        int finalWidth = (int) (width * scaleX);
+        int finalHeight = (int) (height * scaleY);
+
+        if (rotation !=0) {
+            g2d.rotate(Math.toRadians(rotation), finalWidth /2, finalHeight /2 );
+        }
+        g2d.drawImage((Image) image, 0,0, finalWidth, finalHeight, null);
     }
 }
