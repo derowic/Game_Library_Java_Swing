@@ -14,6 +14,8 @@ public class GameObject {
     double velocityY = 0.0;
     double scaleX = 1.0;
     double scaleY= 1.0;
+    protected int width = 0;
+    protected int height =0;
     public BufferedImage image;
 
     public GameObject(double x, double y) {
@@ -25,6 +27,7 @@ public class GameObject {
     }
 
     public void update(double deltaTime) {}
+
     public void draw(Graphics2D g2d, double alpha) {
         double drawX;
         double drawY;
@@ -38,5 +41,9 @@ public class GameObject {
             drawY = lastY + (y - lastY) * (float) alpha;
         }
         g2d.translate(drawX, drawY);
+    }
+
+    public void scale() {
+
     }
 }

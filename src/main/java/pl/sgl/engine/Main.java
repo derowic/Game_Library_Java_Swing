@@ -1,6 +1,6 @@
 package pl.sgl.engine;
 
-import pl.sgl.engine.TextureLoader;
+import pl.sgl.engine.Animation.AnimatedSprite;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -54,6 +54,10 @@ public class Main extends Game {
             sprites.get(0).y = 600;
         }
         sprites.get(0).velocityY = -200;
+
+        if(Colision.colisionWithListOfSprites(sprites.get(1), sprites)) {
+            System.out.println("Colision");
+        }
         // Dodajemy sprite gracza do snapshota
 
         //sprites.get(0).velocityY = -200;

@@ -20,10 +20,6 @@ public class Game implements Runnable {
     protected final double deltaTime = 1.0 / TICKS_PER_SECOND;
 
     //dane interpolacji
-    private double x,y;
-    private double lastX, lastY;
-    private double interpolation;
-    private Thread gameThread;
     private volatile long lastTickTime;
 
     // Wartości do wyświetlenia (volatile, bo czytane/pisane przez różne wątki)
@@ -101,49 +97,6 @@ public class Game implements Runnable {
 
         renderThread.start();
     }
-
-//    @Override
-//    public void run() {
-//        final double TARGET_FPS   = 60.0;
-//        final double NS_PER_FRAME = 1_000_000_000.0 / TARGET_FPS;
-//
-//        long lastTime = System.nanoTime();
-//        double delta  = 0;
-//
-//        while (running) {
-//            long now = System.nanoTime();
-//            delta += (now - lastTime) / NS_PER_FRAME;
-//            lastTime = now;
-//
-//            // update tyle razy ile minęło klatek
-//            while (delta >= 1) {
-//                update();
-//                delta--;
-//            }
-//            window.prepareToRender();
-//
-//            // prostokąt
-//            window.g.setColor(Color.RED);
-//            window.g.fillRect(100, 100, 50, 50);       // wypełniony
-//            window.g.drawRect(200, 100, 50, 50);       // tylko obramowanie
-//
-//            // koło (tak naprawdę elipsa)
-//            window.g.setColor(Color.BLUE);
-//            window.g.fillOval(300, 100, 60, 60);       // wypełnione
-//            window.g.drawOval(400, 100, 60, 60);       // tylko obramowanie
-//
-//            // linia
-//            window.g.setColor(Color.GREEN);
-//            window.g.drawLine(0, 300, 800, 300);       // od (0,300) do (800,300)
-//
-//            // tekst
-//            window.g.setColor(Color.WHITE);
-//            window.g.setFont(new Font("Arial", Font.PLAIN, 24));
-//            window.g.drawString("Witaj w grze!", 100, 400);
-//
-//            render();
-//        }
-//    }
 
     // Pętla Logiki
     @Override
@@ -237,27 +190,7 @@ public class Game implements Runnable {
         frameCount++; // Zwiększamy licznik przy każdym wywołaniu renderu
         window.prepareToRender();
 
-        // OBLICZANIE INTERPOLOWANEJ POZYCJI
-        // Dzięki temu przy 144Hz monitorze ruch będzie idealnie płynny,
-        // mimo że logika działa tylko w 60Hz.
-//        float renderX = (float) (lastX + (x - lastX) * alpha);
-//        float renderY = (float) (lastY + (y - lastY) * alpha);
-
-
         GameState renderState= this.currentSnapshot;
-//        GameState renderState = bufferInUse ? buffer2 : buffer1;
-//        float renderX = (float) (renderState.lastX + (renderState.x - renderState.lastX) * alpha);
-//        float renderY  = (float) (renderState.lastY + (renderState.y - renderState.lastY) * alpha);
-//
-//        // -----!!! DODAJ ABY PRZY NAGŁEJ ZMIANIE MIEJSCA BRAC TYLKO STARĄ POZYCJE
-//        // Jeśli różnica jest większa niż np. połowa szerokości ekranu,
-//        // to znaczy, że kwadrat przeskoczył krawędź.
-//        float renderX;
-//        if (renderState.didTeleport) {
-//            renderX = (float) renderState.x; // Jeśli był teleport, nie interpoluj "drogi pomiędzy"
-//        } else {
-//            renderX = (float) (renderState.lastX + (renderState.x - renderState.lastX) * alpha);
-//        }
 
         for (Primitive e : renderState.entities) {
             //System.out.println(e);
@@ -274,56 +207,13 @@ public class Game implements Runnable {
             }
         }
 
-//        System.out.println(renderState.sprites);
         // Rysowanie Sprite'ów
         for (GameObject s : renderState.sprites) {
-//            System.out.println("render:" + renderState.sprites.get(0).image);
             // 1. OBLICZENIE POZYCJI (Interpolacja lub Teleport)
             Graphics2D g2d = (Graphics2D) window.g.create();
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             s.draw(g2d, alpha);
-//            double drawX;
-//            double drawY;
-//            if (s.didTeleport) {
-////            renderX = (float) renderState.x;
-//                // Interpolacja pozycji
-//                drawX = (float) s.x;
-//                drawY = s.y;
-//            } else {
-//                drawX = s.lastX + (s.x - s.lastX) * (float) alpha;
-//                drawY = s.lastY + (s.y - s.lastY) * (float) alpha;
-//            }
-//
-//            // 2. scaling
-//            int finalWidth = (int) (s.width * s.scaleX);
-//            int finalHeight = (int) (s.height * s.scaleY);
-//
-//
-//            g2d.translate(drawX, drawY);
-//            if (s.rotation !=0) {
-//                g2d.rotate(Math.toRadians(s.rotation), finalWidth /2, finalHeight /2 );
-//            }
-//            g2d.drawImage((Image) s.image, 0,0, finalWidth, finalHeight, null);
-
-
-
-
-//            if (s.rotation != 0) {
-//                // Rotacja wymaga przesunięcia kontekstu Graphics2D
-//                Graphics2D g2d = (Graphics2D) window.g.create();
-//                g2d.translate(drawX + (double) s.width / 2, drawY + (double) s.height / 2);
-//                g2d.rotate(Math.toRadians(s.rotation));
-//                g2d.drawImage(s.image, -s.width / 2, -s.height / 2, s.width, s.height, null);
-//                g2d.dispose();
-//            } else {
-//                window.g.drawImage(s.image, (int)s.x, (int)s.y, s.width, s.height, null);
-//            }
         }
-
-
-        // Pozwól programiście narysować coś ekstra (np. UI)
-        //renderOverlay(window.g);
-
         // Rysowanie
 //        window.g.setColor(Color.RED);
 //        window.g.fillRect((int)renderX, (int)renderY, 50, 50);
@@ -346,6 +236,11 @@ public class Game implements Runnable {
         window.render();
     }
     public void input() {
+
+    }
+
+    public void setFullScreen()
+    {
 
     }
 //    public static void main(String[] args) {

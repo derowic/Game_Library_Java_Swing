@@ -5,10 +5,6 @@ import java.awt.image.BufferedImage;
 
 public class Sprite extends GameObject {
 
-
-    public int width, height;
-
-
     public Sprite(BufferedImage image, float x, float y) {
         super(x,y);
         this.image = image;
