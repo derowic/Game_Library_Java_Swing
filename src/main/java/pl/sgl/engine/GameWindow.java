@@ -25,7 +25,7 @@ public class GameWindow {
         // 3. JFrame – tylko kontener na Canvas
         frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setIgnoreRepaint(true);   // też wyłączamy na oknie
         frame.add(canvas);
         frame.pack();                   // dopasuj rozmiar okna do Canvas

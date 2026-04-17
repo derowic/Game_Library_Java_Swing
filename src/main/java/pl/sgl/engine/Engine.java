@@ -2,12 +2,8 @@ package pl.sgl.engine;
 
 import java.awt.*;
 
-public class Game implements Runnable {
-
-    // To jest nasz JEDEN bezpieczny punkt styku między wątkami
-//    private volatile GameState buffer1 = new GameState(0, 0, 0, 0);
-//    private volatile GameState buffer2 = new GameState(0, 0, 0, 0);
-//    private volatile boolean bufferInUse = true;
+public class Engine implements Runnable {
+    //buffor to send data to rendering function
     protected volatile GameState currentSnapshot = new GameState();
 
     private GameWindow window;
@@ -33,7 +29,7 @@ public class Game implements Runnable {
     // Czas ostatniego pomiaru
     private long lastTimer = System.currentTimeMillis();
 
-    public Game() {
+    public Engine() {
         window = new GameWindow("Moja Gra", 800, 600);
         window.show();
     }
@@ -145,11 +141,7 @@ public class Game implements Runnable {
 
     protected void update() {
         // Zapisujemy poprzedni stan przed aktualizacją
-
         lastTickTime = System.nanoTime();
-
-
-        // Logika ruchu (np. przesuwanie w prawo)
 
         for (GameObject s : currentSnapshot.sprites) {
             s.update(deltaTime);
@@ -163,27 +155,6 @@ public class Game implements Runnable {
                 s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
             }
         }
-
-
-
-//        System.out.println("watek logiki");
-
-        //currentSnapshot = new GameState(x, y, lastX, lastY, didTeleport);
-
-        // Tutaj reszta fizyki...
-
-//        if(bufferInUse) {
-//            buffer1 = new GameState(x, y, lastX, lastY);
-//        }
-//        else {
-//            buffer2 = new GameState(x, y, lastX, lastY);
-//        }
-//        bufferInUse = !bufferInUse;
-
-        //----!!! WAŻŃE !!!----
-        //Wątek renderujący, który już zaczął rysować przy użyciu starej referencji, spokojnie kończy pracę na starym obiekcie,
-        // a nowa klatka renderu pobierze już nowy obiekt.
-//        currentSnapshot = new GameState(x, y, lastX, lastY);
     }
 
     private void render(double alpha) {
@@ -213,7 +184,35 @@ public class Game implements Runnable {
             Graphics2D g2d = (Graphics2D) window.g.create();
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             s.draw(g2d, alpha);
+
+            if (s.showHitBox) {
+//                Rectangle rec = s.getCalculatedAutoHitBoxes();
+//
+//                // 3. Rysuj obramowanie
+//                window.g.setColor(Color.RED);
+//
+//                // Hitbox jest relatywny do pozycji Sprite'a, więc dodajemy rec.x i rec.y
+//                window.g.drawRect(
+//                        (int)(s.x + rec.x),
+//                        (int)(s.y + rec.y),
+//                        rec.width,
+//                        rec.height
+//                );
+                Shape rotatedHitbox = s.getRotatedShape();
+
+                // C. Rysujemy obramowanie kształtu
+                window.g.setColor(Color.RED);
+                window.g.setStroke(new BasicStroke(2.0f)); // Opcjonalnie: grubsza linia, by była widoczna
+                window.g.draw(rotatedHitbox); // To narysuje obrócony prostokąt!
+
+                // D. Opcjonalnie: Wypełnienie (półprzezroczyste)
+                window.g.setColor(new Color(255, 0, 0, 50));
+                window.g.fill(rotatedHitbox);
+            }
         }
+
+
+
         // Rysowanie
 //        window.g.setColor(Color.RED);
 //        window.g.fillRect((int)renderX, (int)renderY, 50, 50);

@@ -1,13 +1,15 @@
 package pl.sgl.engine;
 
 import pl.sgl.engine.Animation.AnimatedSprite;
+import pl.sgl.engine.Animation.Animation;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Main extends Game {
+public class Main extends Engine {
     // Lista obiektów logicznych (w świecie gry)
 //    private List<MyPlayer> players = new ArrayList<>();
 //
@@ -20,61 +22,39 @@ public class Main extends Game {
     public Main() {
         super();
         // Ładujemy raz przy starcie
-        playerShip = TextureLoader.load("/textures/ship2.png");
-        sprites.add(new Sprite(playerShip, 300, 600));
-        sprites.get(0).scaleX = 0.25;
-        sprites.get(0).rotation = 45;
+//        playerShip = TextureLoader.load();
+        Sprite s2 = new Sprite("/textures/ship2.png", 400, 600);
+//        s2.rotate(45);
+        s2.rotation = 45;
+        sprites.add(s2);
+//        sprites.get(0).scaleX = 0.25;
+
+        sprites.get(0).velocityY = -200;
+        sprites.get(0).showHitBox = true;
 
         stressTest();
+
+        for (GameObject s : sprites) {
+            Rectangle rec = s.getCalculatedAutoHitBoxes();
+//
+            System.out.println((int) s.x);
+            System.out.println((int) s.y);
+            System.out.println((int) (s.x + rec.width));
+            System.out.println((int) (s.y + rec.width));
+
+        }
     }
     @Override
     protected void update() {
-
-        // 1. Logika poruszania
-//        for(MyPlayer p : players) {
-//            p.move();
-//        }
-
-//        // 2. Przygotowanie danych do Snapshota
-//        List<Primitive> toRender = new ArrayList<>();
-//        //for(MyPlayer p : players) {
-//            toRender.add(new Primitive(
-//                    0,0,50,0,
-//                    50, 50, Color.RED, "RECT"
-//            ));
-//        //}
-//
-//        // 3. Przesłanie do silnika
-//        //this.publishState(new GameState(toRender));
-//        this.currentSnapshot = new GameState(toRender, new ArrayList<>());
-
-
         if(sprites.get(0).y < -50)
         {
             sprites.get(0).y = 600;
         }
-        sprites.get(0).velocityY = -200;
 
         if(Colision.colisionWithListOfSprites(sprites.get(1), sprites)) {
             System.out.println("Colision");
         }
-        // Dodajemy sprite gracza do snapshota
 
-        //sprites.get(0).velocityY = -200;
-
-//        // 1. Aktualizujemy czas animacji
-//        playerWalk.update(deltaTime);
-//
-//        // 2. Pobieramy aktualną grafikę
-//        BufferedImage currentImg = playerWalk.getCurrentFrame();
-//
-//        // 3. Dodajemy do Snapshota
-//        List<Sprite> sprites = new ArrayList<>();
-//        sprites.add(this.sprites.get(0));
-//        sprites.add(new Sprite(
-//                currentImg,
-//                (float)200, (float)200
-//        ));
 
         this.currentSnapshot = new GameState(sprites);
 
@@ -85,19 +65,16 @@ public class Main extends Game {
         new Main().start();
     }
 
-//    @Override
-//    protected void renderOverlay(Graphics2D g) {
-//        g.setColor(Color.WHITE);
-//        g.drawString("Punkty: 100", 10, 20);
-//    }
     public void stressTest()
     {
         Random rand = new Random();
+        Animation an = new Animation("/textures/mario-walk.png",0,0, 100, 100, 3);
+//        BufferedImage[] frames = TextureLoader.loadSheet();
+        for(int i =0; i<1; i++) {
 
-
-        for(int i =0; i<100; i++) {
-            BufferedImage[] frames = TextureLoader.loadSheet("/textures/mario-walk.png", 100, 100);
-            playerWalk = new AnimatedSprite(frames, 0.1, rand.nextInt(0,50), rand.nextInt(0,50)); // zmiana klatki co 0.1 sekundy
+            playerWalk = new AnimatedSprite(0.1, 400, 50); // zmiana klatki co 0.1 sekundy
+            playerWalk.addAnimation("walk", an);
+            playerWalk.showHitBox = true;
             sprites.add(playerWalk);
         }
     }

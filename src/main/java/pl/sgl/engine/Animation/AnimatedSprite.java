@@ -1,25 +1,38 @@
 package pl.sgl.engine.Animation;
 
+import Texture.TextureLoader;
 import pl.sgl.engine.GameObject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 public class AnimatedSprite extends GameObject {
-    private BufferedImage[] frames;
+//    private BufferedImage[] frames;
+    protected HashMap<String, Animation> animations = new HashMap<>();
+    private String currentPlayedAnimation = "";
     private int currentFrame = 0;
     private double frameTimer = 0;
     private double frameDuration = 0.1;
     private boolean loop = true;
     private boolean play = false;
+    private Rectangle globalHitbox;
 
-    public AnimatedSprite(BufferedImage[] frames, double speed, double x, double y) {
+    public AnimatedSprite(double speed, double x, double y) {
         super(x,y);
-        this.frames = frames;
         this.frameDuration = speed;
-        this.width = frames[0].getWidth();
-        this.height = frames[0].getHeight();
+
         playAnimation();
+    }
+
+    public void addAnimation(String animationName, Animation anim) {
+        animations.put(animationName, anim);
+        if (currentPlayedAnimation.equals("")) {
+            currentPlayedAnimation = animationName;
+            this.width = animations.get(animationName).frames[0].getWidth();
+            this.height = animations.get(animationName).frames[0].getHeight();
+            globalHitbox = TextureLoader.getTightHitbox(animations.get(animationName).frames[0]);
+        }
     }
 
     public void update(double deltaTime) {
@@ -35,7 +48,7 @@ public class AnimatedSprite extends GameObject {
     }
 
     public BufferedImage getCurrentFrame() {
-        return frames[currentFrame];
+        return animations.get(currentPlayedAnimation).frames[currentFrame];
     }
 
     @Override
@@ -49,22 +62,20 @@ public class AnimatedSprite extends GameObject {
         if (rotation !=0) {
             g2d.rotate(Math.toRadians(rotation), finalWidth /2, finalHeight /2 );
         }
-        g2d.drawImage((Image) getCurrentFrame(), (int) this.x, (int) this.y, finalWidth, finalHeight, null);
+        g2d.drawImage((Image) getCurrentFrame(), 0, 0, finalWidth, finalHeight, null);
     }
 
-
-    private void animation(double deltaTime)
-    {
+    private void animation(double deltaTime) {
         if (play) {
             frameTimer += deltaTime;
             if (frameTimer >= frameDuration) {
                 frameTimer = 0;
                 currentFrame++;
-                if (currentFrame >= frames.length) {
+                if (currentFrame >= animations.get(currentPlayedAnimation).frames.length) {
                     if (loop) {
                         currentFrame = 0;
                     } else {
-                        currentFrame = frames.length - 1;
+                        currentFrame = animations.get(currentPlayedAnimation).frames.length - 1;
                     }
                 }
             }
@@ -82,5 +93,10 @@ public class AnimatedSprite extends GameObject {
     public void resetAnimation() {
         currentFrame = 0;
         frameTimer = 0;
+    }
+
+    @Override
+    public Rectangle getCalculatedAutoHitBoxes() {
+        return globalHitbox;
     }
 }

@@ -1,21 +1,18 @@
 package pl.sgl.engine;
 
+import Texture.Texture;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class Sprite extends GameObject {
 
-    public Sprite(BufferedImage image, float x, float y) {
+    public Texture texture;
+    public Sprite(String pathToTexture, float x, float y) {
         super(x,y);
-        this.image = image;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-//        info();
-    }
-
-    public Sprite(BufferedImage image) {
-        super(0,0);
-        this.image = image;
+        texture = new Texture(pathToTexture);
+        width = texture.image.getWidth();
+        height = texture.image.getHeight();
+        getCalculatedAutoHitBoxes();
 //        info();
     }
 
@@ -24,6 +21,7 @@ public class Sprite extends GameObject {
         System.out.println("width: " +width);
         System.out.println("height: " +height);
     }
+
     @Override
     public void update(double deltaTime)
     {
@@ -46,6 +44,20 @@ public class Sprite extends GameObject {
         if (rotation !=0) {
             g2d.rotate(Math.toRadians(rotation), finalWidth /2, finalHeight /2 );
         }
-        g2d.drawImage((Image) image, 0,0, finalWidth, finalHeight, null);
+        g2d.drawImage((Image) texture.image, 0,0, finalWidth, finalHeight, null);
+    }
+
+    @Override
+    public Rectangle getCalculatedAutoHitBoxes() {
+        return texture.getHitBox();
+    }
+
+    public boolean intersects(Sprite s) {
+        return this.texture.rectangle.intersects(s.texture.rectangle);
+    }
+
+    public void rotate(double angle) {
+        rotation = angle;
+        texture.rectangle = getRotatedBounds();
     }
 }
