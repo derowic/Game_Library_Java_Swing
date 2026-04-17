@@ -5,7 +5,8 @@ import pl.sgl.engine.TextureLoader;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-    
+import java.util.Random;
+
 public class Main extends Game {
     // Lista obiektów logicznych (w świecie gry)
 //    private List<MyPlayer> players = new ArrayList<>();
@@ -24,9 +25,7 @@ public class Main extends Game {
         sprites.get(0).scaleX = 0.25;
         sprites.get(0).rotation = 45;
 
-        BufferedImage[] frames = TextureLoader.loadSheet("/textures/mario-walk.png", 100,100);
-        playerWalk = new AnimatedSprite(frames, 0.1, 200,200); // zmiana klatki co 0.1 sekundy
-        sprites.add(playerWalk);
+        stressTest();
     }
     @Override
     protected void update() {
@@ -87,4 +86,15 @@ public class Main extends Game {
 //        g.setColor(Color.WHITE);
 //        g.drawString("Punkty: 100", 10, 20);
 //    }
+    public void stressTest()
+    {
+        Random rand = new Random();
+
+
+        for(int i =0; i<100; i++) {
+            BufferedImage[] frames = TextureLoader.loadSheet("/textures/mario-walk.png", 100, 100);
+            playerWalk = new AnimatedSprite(frames, 0.1, rand.nextInt(0,50), rand.nextInt(0,50)); // zmiana klatki co 0.1 sekundy
+            sprites.add(playerWalk);
+        }
+    }
 }
