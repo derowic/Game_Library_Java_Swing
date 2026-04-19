@@ -29,8 +29,11 @@ public class Engine implements Runnable {
     // Czas ostatniego pomiaru
     private long lastTimer = System.currentTimeMillis();
 
+    protected InputHandler input = new InputHandler();
+
     public Engine() {
         window = new GameWindow("Moja Gra", 800, 600);
+        window.initInput(input); // Podpinamy obsługę klawiatury
         window.show();
     }
 
@@ -155,6 +158,8 @@ public class Engine implements Runnable {
                 s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
             }
         }
+
+        input.update();
     }
 
     private void render(double alpha) {

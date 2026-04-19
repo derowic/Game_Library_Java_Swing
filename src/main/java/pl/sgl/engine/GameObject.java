@@ -91,9 +91,9 @@ public abstract class GameObject {
         return at.createTransformedShape(baseRect);
     }
 
-    public boolean checkCollision(Shape shape1, Shape shape2) {
-        Area area1 = new Area(shape1);
-        Area area2 = new Area(shape2);
+    public boolean checkCollision(Sprite s) {
+        Area area1 = new Area(getRotatedShape());
+        Area area2 = new Area(s.getRotatedShape());
 
         // Oblicz część wspólną obu kształtów
         area1.intersect(area2);

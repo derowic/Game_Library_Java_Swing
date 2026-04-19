@@ -59,4 +59,9 @@ public class GameWindow {
         g.dispose(); // zawsze zwalniaj Graphics
         bs.show();   // zamień bufory – tylny staje się widocznym
     }
+
+    public void initInput(InputHandler input) {
+        canvas.addKeyListener(input);
+        canvas.requestFocus(); // Ważne: Canvas musi mieć focus, żeby czytać klawisze
+    }
 }
