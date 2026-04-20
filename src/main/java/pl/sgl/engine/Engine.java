@@ -1,12 +1,14 @@
 package pl.sgl.engine;
 
+import pl.sgl.engine.audio.AudioManager;
+
 import java.awt.*;
 
 public class Engine implements Runnable {
     //buffor to send data to rendering function
     protected volatile GameState currentSnapshot = new GameState();
 
-    private GameWindow window;
+    private Window window;
     private volatile boolean running = false;
 
     //ustawienia czasu
@@ -29,11 +31,15 @@ public class Engine implements Runnable {
     // Czas ostatniego pomiaru
     private long lastTimer = System.currentTimeMillis();
 
-    protected InputHandler input = new InputHandler();
+    protected AudioManager audio = new AudioManager();
 
-    public Engine() {
-        window = new GameWindow("Moja Gra", 800, 600);
-        window.initInput(input); // Podpinamy obsługę klawiatury
+    protected InputHandler input = new InputHandler();
+    protected MouseHandler mouse = new MouseHandler();
+
+    public Engine(String title, int width, int height) {
+        window = new Window(title, width, height);
+        window.initInput(input);  // Klawiatura
+        window.initMouse(mouse);  // Myszka
         window.show();
     }
 

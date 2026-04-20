@@ -1,6 +1,6 @@
 package pl.sgl.engine;
 
-import Texture.Texture;
+import pl.sgl.engine.texture.Texture;
 
 import java.awt.*;
 

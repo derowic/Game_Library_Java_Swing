@@ -1,7 +1,7 @@
 package pl.sgl.engine;
 
-import pl.sgl.engine.Animation.AnimatedSprite;
-import pl.sgl.engine.Animation.Animation;
+import pl.sgl.engine.animation.AnimatedSprite;
+import pl.sgl.engine.animation.Animation;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -21,7 +21,7 @@ public class Main extends Engine {
 
 
     public Main() {
-        super();
+        super("Test", 1280, 720);
         // Ładujemy raz przy starcie
 //        playerShip = TextureLoader.load();
         Sprite s2 = new Sprite("/textures/ship2.png", 470, 100);
@@ -42,8 +42,14 @@ public class Main extends Engine {
             System.out.println((int) s.y);
             System.out.println((int) (s.x + rec.width));
             System.out.println((int) (s.y + rec.width));
-
         }
+
+        audio.load("bg_music", "/audio/alex-productions-racing-sport-gaming-racing(chosic.com).wav");
+        audio.load("shoot", "/audio/zap-hiphop-a.wav");
+
+        audio.loop("bg_music"); // Start muzyki w tle
+
+
     }
     @Override
     protected void update() {
@@ -53,7 +59,7 @@ public class Main extends Engine {
 //        }
 
         if(sprites.get(1).checkCollision((Sprite) sprites.get(0))) {
-            System.out.println("Colision");
+//            System.out.println("Colision");
         }
 
         if (input.isKeyDown(KeyEvent.VK_W))  sprites.get(0).velocityY = -100;;
@@ -66,6 +72,30 @@ public class Main extends Engine {
 
         if (input.isKeyDown(KeyEvent.VK_SPACE)) {
             // Strzał, skok itp.
+        }
+
+        // Sprawdzenie pozycji
+        int mx = mouse.getX();
+        int my = mouse.getY();
+
+        // Reakcja na lewy przycisk myszy (MouseEvent.BUTTON1)
+        if (mouse.isButtonDown(java.awt.event.MouseEvent.BUTTON1)) {
+            // Przykładowo: postać teleportuje się tam, gdzie klikniemy
+            this.sprites.get(0).x = mx;
+            this.sprites.get(0).y = my;
+        }
+
+        Rectangle enemyHitbox = new Rectangle((int)this.sprites.get(1).x, (int)this.sprites.get(1).y, 50, 50);
+
+        // Sprawdź czy kursor jest wewnątrz hitboxa I czy kliknięto przycisk
+        if (enemyHitbox.contains(mouse.getX(), mouse.getY())) {
+            if (mouse.isButtonDown(1)) {
+                System.out.println("Trafiłeś przeciwnika!");
+            }
+        }
+
+        if (input.isKeyPressed(KeyEvent.VK_SPACE)) {
+            audio.play("shoot"); // Dźwięk strzału przy spacji
         }
 
 
