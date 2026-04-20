@@ -4,6 +4,7 @@ import pl.sgl.engine.Animation.AnimatedSprite;
 import pl.sgl.engine.Animation.Animation;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +24,13 @@ public class Main extends Engine {
         super();
         // Ładujemy raz przy starcie
 //        playerShip = TextureLoader.load();
-        Sprite s2 = new Sprite("/textures/ship2.png", 400, 600);
+        Sprite s2 = new Sprite("/textures/ship2.png", 470, 100);
 //        s2.rotate(45);
         s2.rotation = 45;
         sprites.add(s2);
 //        sprites.get(0).scaleX = 0.25;
 
-        sprites.get(0).velocityY = -200;
+//        sprites.get(0).velocityY = -200;
         sprites.get(0).showHitBox = true;
 
         stressTest();
@@ -46,13 +47,25 @@ public class Main extends Engine {
     }
     @Override
     protected void update() {
-        if(sprites.get(0).y < -50)
-        {
-            sprites.get(0).y = 600;
+//        if(sprites.get(0).y < -50)
+//        {
+////            sprites.get(0).y = 600;
+//        }
+
+        if(sprites.get(1).checkCollision((Sprite) sprites.get(0))) {
+            System.out.println("Colision");
         }
 
-        if(Colision.colisionWithListOfSprites(sprites.get(1), sprites)) {
-            System.out.println("Colision");
+        if (input.isKeyDown(KeyEvent.VK_W))  sprites.get(0).velocityY = -100;;
+        if (input.isKeyDown(KeyEvent.VK_S))  sprites.get(0).velocityY = 100;;
+        if (input.isKeyDown(KeyEvent.VK_A)) sprites.get(0).velocityX = -100;;
+        if (input.isKeyDown(KeyEvent.VK_D)) sprites.get(0).velocityX = 100;;
+
+        if (!input.isKeyDown(KeyEvent.VK_W) && !input.isKeyDown(KeyEvent.VK_S))  sprites.get(0).velocityY = 0;;
+        if (!input.isKeyDown(KeyEvent.VK_D) && !input.isKeyDown(KeyEvent.VK_A)) sprites.get(0).velocityX = 0;;
+
+        if (input.isKeyDown(KeyEvent.VK_SPACE)) {
+            // Strzał, skok itp.
         }
 
 
