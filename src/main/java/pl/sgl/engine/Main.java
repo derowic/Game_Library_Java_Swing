@@ -46,10 +46,14 @@ public class Main extends Engine {
             System.out.println((int) (s.y + rec.width));
         }
 
-        audio.load("bg_music", "/audio/alex-productions-racing-sport-gaming-racing(chosic.com).wav");
-        audio.load("shoot", "/audio/zap-hiphop-a.wav");
+        if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
+            System.exit(0);
+        }
 
-        audio.loop("bg_music"); // Start muzyki w tle
+//        audio.load("bg_music", "/audio/alex-productions-racing-sport-gaming-racing(chosic.com).wav");
+//        audio.load("shoot", "/audio/zap-hiphop-a.wav");
+//
+//        audio.loop("bg_music"); // Start muzyki w tle
 
 
     }
@@ -63,6 +67,8 @@ public class Main extends Engine {
         if(sprites.get(1).checkCollision((Sprite) sprites.get(0))) {
 //            System.out.println("Colision");
         }
+
+        if (input.isKeyDown(KeyEvent.VK_ESCAPE)) this.stopRunning();;
 
         if (input.isKeyDown(KeyEvent.VK_W))  sprites.get(0).velocityY = -100;;
         if (input.isKeyDown(KeyEvent.VK_S))  sprites.get(0).velocityY = 100;;

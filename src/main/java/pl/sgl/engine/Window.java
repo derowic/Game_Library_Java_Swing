@@ -32,6 +32,8 @@ public class Window {
         frame.add(canvas);
         frame.pack();                   // dopasuj rozmiar okna do Canvas
         frame.setLocationRelativeTo(null); // wyśrodkuj na ekranie
+
+
         setFullScreen();
     }
 

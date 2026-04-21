@@ -172,6 +172,34 @@ public class Engine implements Runnable {
         frameCount++; // Zwiększamy licznik przy każdym wywołaniu renderu
         window.prepareToRender();
 
+        Graphics2D g = (Graphics2D) window.g;
+
+        // Rozmiar wirtualny (Twojej gry)
+        int virtualW = 800;
+        int virtualH = 600;
+
+        // Rozmiar rzeczywisty (Okna/Fullscreena)
+        int screenW = window.getCanvas().getWidth();
+        int screenH = window.getCanvas().getHeight();
+
+        // Obliczamy skalę (wybieramy mniejszą, żeby obraz zmieścił się w całości)
+        double scale = Math.min((double)screenW / virtualW, (double)screenH / virtualH);
+
+        // Obliczamy przesunięcie, żeby wyśrodkować obraz (centrowanie)
+        int offsetX = (int)(screenW - (virtualW * scale)) / 2;
+        int offsetY = (int)(screenH - (virtualH * scale)) / 2;
+
+        // 3. AKTUALIZUJEMY MYSZKĘ (Wysyłamy dane o skali do handlera)
+        mouse.setTransformation(scale, offsetX, offsetY);
+
+        // 1. Czyścimy tło pod czarne pasy
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, screenW, screenH);
+
+        // 2. Transformacja: Najpierw przesuń do środka, potem skaluj
+        g.translate(offsetX, offsetY);
+        g.scale(scale, scale);
+
         GameState renderState= this.currentSnapshot;
 
         for (Primitive e : renderState.entities) {

@@ -1,0 +1,9 @@
+[] camera, camera move rotate and scale (zoom)
+[] multiplayer and minimap
+[] scaling for fullscreen
+[] add ui elements:
+    [] buttons
+    [] inputs
+    [] sliders
+    [] styling ui
+    []

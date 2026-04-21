@@ -9,6 +9,18 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     private int mouseX, mouseY;
     private final boolean[] buttons = new boolean[10];
 
+    // Dane o transformacji
+    private double scale = 1.0;
+    private int offsetX = 0;
+    private int offsetY = 0;
+
+    // Metoda, którą wywoła silnik po obliczeniu skali w renderze
+    public void setTransformation(double scale, int offsetX, int offsetY) {
+        this.scale = scale;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+    }
+
     public int getX() { return mouseX; }
     public int getY() { return mouseY; }
 
