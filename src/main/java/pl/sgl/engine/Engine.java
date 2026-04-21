@@ -189,38 +189,79 @@ public class Engine implements Runnable {
             }
         }
 
-        // Rysowanie Sprite'ów
-        for (GameObject s : renderState.sprites) {
-            // 1. OBLICZENIE POZYCJI (Interpolacja lub Teleport)
-            Graphics2D g2d = (Graphics2D) window.g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            s.draw(g2d, alpha);
+        renderWorld(alpha);
 
-            if (s.showHitBox) {
-//                Rectangle rec = s.getCalculatedAutoHitBoxes();
+//        // Rysowanie Sprite'ów
+//        for (GameObject s : renderState.sprites) {
+//            // 1. OBLICZENIE POZYCJI (Interpolacja lub Teleport)
+//            Graphics2D g2d = (Graphics2D) window.g.create();
+//            g2d.translate(0,0);
+//            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//            s.draw(g2d, alpha);
+//            g2d.dispose();
 //
-//                // 3. Rysuj obramowanie
-//                window.g.setColor(Color.RED);
+//            if (s.showHitBox) {
+//                g2d = (Graphics2D) window.g.create();
+//                g2d.translate(0,0);
+//                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+////                Rectangle rec = s.getCalculatedAutoHitBoxes();
+////
+////                // 3. Rysuj obramowanie
+////                window.g.setColor(Color.RED);
+////
+////                // Hitbox jest relatywny do pozycji Sprite'a, więc dodajemy rec.x i rec.y
+////                window.g.drawRect(
+////                        (int)(s.x + rec.x),
+////                        (int)(s.y + rec.y),
+////                        rec.width,
+////                        rec.height
+////                );
+//                Shape rotatedHitbox = s.getRotatedShape();
 //
-//                // Hitbox jest relatywny do pozycji Sprite'a, więc dodajemy rec.x i rec.y
-//                window.g.drawRect(
-//                        (int)(s.x + rec.x),
-//                        (int)(s.y + rec.y),
-//                        rec.width,
-//                        rec.height
-//                );
-                Shape rotatedHitbox = s.getRotatedShape();
+//                // C. Rysujemy obramowanie kształtu
+//                g2d.setColor(Color.RED);
+//                g2d.setStroke(new BasicStroke(2.0f)); // Opcjonalnie: grubsza linia, by była widoczna
+//                g2d.draw(rotatedHitbox); // To narysuje obrócony prostokąt!
+//
+//                // D. Opcjonalnie: Wypełnienie (półprzezroczyste)
+//                g2d.setColor(new Color(255, 0, 0, 50));
+//                g2d.fill(rotatedHitbox);
+//                g2d.dispose();
+//            }
+//
+//        for (GameObject s : renderState.sprites) {
+//            // TWORZYMY RAZ dla całego obiektu
+//            Graphics2D g2d = (Graphics2D) window.g.create();
+//
+//            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//            g2d.translate(200,0);
+//            // 1. Rysujemy sprite'a
+//            s.draw(g2d, alpha);
+//
+//            // 2. Rysujemy hitbox na TYM SAMYM g2d (on już ma te same transformacje!)
+//            if (s.showHitBox) {
+//                // Obliczamy pozycję do rysowania (interpolacja)
+//                float drawX = (float) (s.lastX + (s.x - s.lastX) * (float)alpha);
+//                float drawY = (float) (s.lastY + (s.y - s.lastY) * (float)alpha);
+//
+//                // Ważne: s.getRotatedShape() musi być spójne z g2d
+//                Shape rotatedHitbox = s.getRotatedShape(drawX, drawY);
+//
+//                g2d.setColor(Color.RED);
+//                g2d.setStroke(new BasicStroke(2.0f));
+//                g2d.draw(rotatedHitbox);
+//
+//                g2d.setColor(new Color(255, 0, 0, 50));
+//                g2d.fill(rotatedHitbox);
+//            }
+//
+//            // ZWALNIAMY RAZ
+//            g2d.dispose();
+//        }
 
-                // C. Rysujemy obramowanie kształtu
-                window.g.setColor(Color.RED);
-                window.g.setStroke(new BasicStroke(2.0f)); // Opcjonalnie: grubsza linia, by była widoczna
-                window.g.draw(rotatedHitbox); // To narysuje obrócony prostokąt!
 
-                // D. Opcjonalnie: Wypełnienie (półprzezroczyste)
-                window.g.setColor(new Color(255, 0, 0, 50));
-                window.g.fill(rotatedHitbox);
-            }
-        }
+
 
 
 
@@ -244,6 +285,28 @@ public class Engine implements Runnable {
         window.g.drawString("Alpha: " + String.format("%.2f", alpha), 10, 60);
 
         window.render();
+    }
+
+    private void renderWorld(double alpha) {
+        GameState renderState = this.currentSnapshot;
+
+        // TWORZYMY JEDNĄ KOPIĘ DLA CAŁEGO ŚWIATA (Kamera / Globalne przesunięcie)
+        Graphics2D worldG = (Graphics2D) window.g.create();
+
+        // Ustawiamy hinty raz dla całego świata (to przyspiesza!)
+        worldG.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        worldG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Globalne przesunięcie (Kamera + Twoje testowe 200px)
+        worldG.translate(0 - renderState.camX, 0 - renderState.camY);
+
+        for (GameObject s : renderState.sprites) {
+            // Wywołujemy draw, przekazując mu worldG.
+            // Metoda s.draw() sama zajmie się stworzeniem swojej izolowanej kopii.
+            s.draw(worldG, alpha);
+        }
+
+        worldG.dispose(); // Zwalniamy świat
     }
     public void input() {
 

@@ -18,6 +18,8 @@ public class Main extends Engine {
     private AnimatedSprite playerWalk;
 
     List<GameObject> sprites = new ArrayList<>();
+    double x = 0;
+    double y=0;
 
 
     public Main() {
@@ -67,6 +69,16 @@ public class Main extends Engine {
         if (input.isKeyDown(KeyEvent.VK_A)) sprites.get(0).velocityX = -100;;
         if (input.isKeyDown(KeyEvent.VK_D)) sprites.get(0).velocityX = 100;;
 
+        if (input.isKeyDown(KeyEvent.VK_LEFT))  {
+
+            System.out.println("left");
+            System.out.println(this.currentSnapshot.camX);
+            this.x -=1;
+        };
+        if (input.isKeyDown(KeyEvent.VK_RIGHT))  this.x+=1;;;
+        if (input.isKeyDown(KeyEvent.VK_UP)) this.y -=1;
+        if (input.isKeyDown(KeyEvent.VK_DOWN)) this.y +=1;;
+
         if (!input.isKeyDown(KeyEvent.VK_W) && !input.isKeyDown(KeyEvent.VK_S))  sprites.get(0).velocityY = 0;;
         if (!input.isKeyDown(KeyEvent.VK_D) && !input.isKeyDown(KeyEvent.VK_A)) sprites.get(0).velocityX = 0;;
 
@@ -98,8 +110,10 @@ public class Main extends Engine {
             audio.play("shoot"); // Dźwięk strzału przy spacji
         }
 
-
-        this.currentSnapshot = new GameState(sprites);
+        GameState g = new GameState(sprites);
+        g.camX = x;
+        g.camY = y;
+        this.currentSnapshot = g;
 
         super.update();
     }

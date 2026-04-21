@@ -28,6 +28,9 @@ public class GameState {
     public final List<Primitive> entities;
     public final List<GameObject> sprites;
 
+    public double camX=-500;
+    public double camY=0;
+
 
 
     public GameState(List<Primitive> primitives, List<Sprite> sprites) {

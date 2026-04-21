@@ -3,6 +3,7 @@ package pl.sgl.engine;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 
 public abstract class GameObject {
     public double x = 0;
@@ -18,6 +19,8 @@ public abstract class GameObject {
     protected int width = 0;
     protected int height =0;
     public boolean showHitBox = false;
+    protected double drawX;
+    protected double drawY;
 
     public GameObject(double x, double y) {
         this.x = x;
@@ -30,8 +33,7 @@ public abstract class GameObject {
     public void update(double deltaTime) {}
 
     public void draw(Graphics2D g2d, double alpha) {
-        double drawX;
-        double drawY;
+
         if (didTeleport) {
 //            renderX = (float) renderState.x;
             // Interpolacja pozycji
@@ -102,5 +104,27 @@ public abstract class GameObject {
         return !area1.isEmpty();
     }
 
+    public Shape getRotatedShape(float drawX, float drawY) {
+        // 1. Pobieramy Tight Hitbox (współrzędne lokalne względem obrazka)
+        Rectangle rec = getCalculatedAutoHitBoxes();
+
+        // 2. Tworzymy transformację
+        AffineTransform at = new AffineTransform();
+
+        // 3. Przesuwamy do zinterpolowanej pozycji na ekranie
+        at.translate(drawX, drawY);
+
+        // 4. Obracamy wokół ŚRODKA OBRAZKA (nie środka hitboxa!)
+        // Bardzo ważne: Punkt obrotu musi być IDENTYCZNY jak w metodzie draw()
+        // Zazwyczaj jest to środek całej grafiki (width/2, height/2)
+        at.rotate(Math.toRadians(rotation), this.width / 2.0, this.height / 2.0);
+
+        // 5. Tworzymy bazowy prostokąt hitboxa w jego lokalnych współrzędnych
+        // Używamy rec.x i rec.y, bo tight hitbox może być przesunięty względem (0,0)
+        Rectangle2D baseHitbox = new Rectangle2D.Double(rec.x, rec.y, rec.width, rec.height);
+
+        // 6. Zwracamy przetransformowany kształt
+        return at.createTransformedShape(baseHitbox);
+    }
 //    public abstract void getCalculateAutoHitBoxes();
 }
