@@ -64,7 +64,10 @@ public class Main extends Engine {
 //            System.out.println("Colision");
         }
 
-        if (input.isKeyDown(KeyEvent.VK_ESCAPE)) this.stopRunning();;
+        if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
+            //this.stopRunning();
+            this.setWindow();
+        };
 
         if (input.isKeyDown(KeyEvent.VK_W))  currentGame.sprites.get(0).velocityY = -100;;
         if (input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 100;;

@@ -27,14 +27,14 @@ public class Window {
         // 3. JFrame – tylko kontener na Canvas
         frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(true);
+        frame.setResizable(false);
         frame.setIgnoreRepaint(true);   // też wyłączamy na oknie
         frame.add(canvas);
         frame.pack();                   // dopasuj rozmiar okna do Canvas
         frame.setLocationRelativeTo(null); // wyśrodkuj na ekranie
 
 
-//        setFullScreen();
+
     }
 
     // TA METODA WŁĄCZA FULLSCREEN

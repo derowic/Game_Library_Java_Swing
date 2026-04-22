@@ -47,6 +47,7 @@ public class Engine implements Runnable {
         window.initInput(input);  // Klawiatura
         window.initMouse(mouse);  // Myszka
         window.show();
+        window.setFullScreen();
     }
 
     public synchronized void stopRunning() {
@@ -357,7 +358,11 @@ public class Engine implements Runnable {
 
     public void setFullScreen()
     {
+        window.setFullScreen();
+    }
 
+    public void setWindow() {
+        window.setWindowedMode(1280, 720);
     }
 
     public void addGameObject(GameObject g) {
