@@ -3,10 +3,14 @@ package pl.sgl.engine;
 import pl.sgl.engine.audio.AudioManager;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Engine implements Runnable {
     //buffor to send data to rendering function
-    protected volatile GameState currentSnapshot = new GameState();
+    protected GameState currentSnapshot = new GameState();
+    // W klasie Engine
+    protected GameState currentGame = new GameState();
 
     private Window window;
     private volatile boolean running = false;
@@ -35,6 +39,8 @@ public class Engine implements Runnable {
 
     protected InputHandler input = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
+
+//    public List<GameObject> sprites = new ArrayList<>();
 
     public Engine(String title, int width, int height) {
         window = new Window(title, width, height);
@@ -152,7 +158,7 @@ public class Engine implements Runnable {
         // Zapisujemy poprzedni stan przed aktualizacją
         lastTickTime = System.nanoTime();
 
-        for (GameObject s : currentSnapshot.sprites) {
+        for (GameObject s : currentGame.sprites) {
             s.update(deltaTime);
 
             double diffX = (s.x - s.lastX);
@@ -164,6 +170,15 @@ public class Engine implements Runnable {
                 s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
             }
         }
+        // 2. STWÓRZ SNAPSHOT (Zdjęcie)
+        // Tworzymy nową listę, która zawiera KOPIE stanów obiektów
+        // (W uproszczeniu: kopiujemy referencje do nowej listy,
+        // ale profesjonalnie kopiuje się wartości x, y do nowych obiektów-struktur)
+        List<GameObject> snapshotSprites = new ArrayList<>(currentGame.sprites);
+//        List<Primitive> snapshotEntities = new ArrayList<>(entities); // Twoja lista prymitywów
+
+        // 3. PUBLIKUJEMY - Podmieniamy całe pudełko (to jest bezpieczne dzięki volatile)
+        this.currentSnapshot = new GameState(snapshotSprites, currentGame.camX, currentGame.camY);
 
         input.update();
     }
@@ -175,8 +190,8 @@ public class Engine implements Runnable {
         Graphics2D g = (Graphics2D) window.g;
 
         // Rozmiar wirtualny (Twojej gry)
-        int virtualW = 800;
-        int virtualH = 600;
+        int virtualW = window.getCanvas().getWidth();
+        int virtualH = window.getCanvas().getHeight();
 
         // Rozmiar rzeczywisty (Okna/Fullscreena)
         int screenW = window.getCanvas().getWidth();
@@ -343,6 +358,10 @@ public class Engine implements Runnable {
     public void setFullScreen()
     {
 
+    }
+
+    public void addGameObject(GameObject g) {
+        currentGame.sprites.add(g);
     }
 //    public static void main(String[] args) {
 //        new Game().start();

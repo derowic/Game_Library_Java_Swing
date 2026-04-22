@@ -34,7 +34,7 @@ public class Window {
         frame.setLocationRelativeTo(null); // wyśrodkuj na ekranie
 
 
-        setFullScreen();
+//        setFullScreen();
     }
 
     // TA METODA WŁĄCZA FULLSCREEN
@@ -57,6 +57,31 @@ public class Window {
         } else {
             System.err.println("Fullscreen nie jest wspierany na tym sprzęcie.");
         }
+    }
+
+    public void setWindowedMode(int width, int height) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+
+        // 1. Wyłączamy tryb Fullscreen w systemie
+        gd.setFullScreenWindow(null);
+
+        // 2. Musimy "zniszczyć" okno (tylko zasoby), aby zmienić jego styl
+        frame.dispose();
+
+        // 3. Przywracamy ramki okna
+        frame.setUndecorated(false);
+
+        // 4. Przywracamy rozmiar Canvasu
+        canvas.setPreferredSize(new Dimension(width, height));
+
+        // 5. Dopasowujemy ramkę do Canvasu i środkujemy
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+
+        // 6. Pokazujemy okno i odświeżamy BufferStrategy
+        frame.setVisible(true);
+        canvas.createBufferStrategy(2);
     }
 
     public void show() {

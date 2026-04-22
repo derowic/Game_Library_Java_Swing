@@ -17,7 +17,7 @@ public class Main extends Engine {
     private BufferedImage playerShip;
     private AnimatedSprite playerWalk;
 
-    List<GameObject> sprites = new ArrayList<>();
+
     double x = 0;
     double y=0;
 
@@ -29,22 +29,18 @@ public class Main extends Engine {
         Sprite s2 = new Sprite("/textures/ship2.png", 470, 100);
 //        s2.rotate(45);
         s2.rotation = 45;
-        sprites.add(s2);
-//        sprites.get(0).scaleX = 0.25;
-
-//        sprites.get(0).velocityY = -200;
-        sprites.get(0).showHitBox = true;
-
+        s2.showHitBox = true;
+        addGameObject(s2);
         stressTest();
 
-        for (GameObject s : sprites) {
-            Rectangle rec = s.getCalculatedAutoHitBoxes();
-//
-            System.out.println((int) s.x);
-            System.out.println((int) s.y);
-            System.out.println((int) (s.x + rec.width));
-            System.out.println((int) (s.y + rec.width));
-        }
+//        for (GameObject s : gameObjects) {
+//            Rectangle rec = s.getCalculatedAutoHitBoxes();
+////
+//            System.out.println((int) s.x);
+//            System.out.println((int) s.y);
+//            System.out.println((int) (s.x + rec.width));
+//            System.out.println((int) (s.y + rec.width));
+//        }
 
         if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
             System.exit(0);
@@ -64,16 +60,16 @@ public class Main extends Engine {
 ////            sprites.get(0).y = 600;
 //        }
 
-        if(sprites.get(1).checkCollision((Sprite) sprites.get(0))) {
+        if(currentGame.sprites.get(1).checkCollision((Sprite) currentGame.sprites.get(0))) {
 //            System.out.println("Colision");
         }
 
         if (input.isKeyDown(KeyEvent.VK_ESCAPE)) this.stopRunning();;
 
-        if (input.isKeyDown(KeyEvent.VK_W))  sprites.get(0).velocityY = -100;;
-        if (input.isKeyDown(KeyEvent.VK_S))  sprites.get(0).velocityY = 100;;
-        if (input.isKeyDown(KeyEvent.VK_A)) sprites.get(0).velocityX = -100;;
-        if (input.isKeyDown(KeyEvent.VK_D)) sprites.get(0).velocityX = 100;;
+        if (input.isKeyDown(KeyEvent.VK_W))  currentGame.sprites.get(0).velocityY = -100;;
+        if (input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 100;;
+        if (input.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = -100;;
+        if (input.isKeyDown(KeyEvent.VK_D)) currentGame.sprites.get(0).velocityX = 100;;
 
         if (input.isKeyDown(KeyEvent.VK_LEFT))  {
 
@@ -85,8 +81,11 @@ public class Main extends Engine {
         if (input.isKeyDown(KeyEvent.VK_UP)) this.y -=1;
         if (input.isKeyDown(KeyEvent.VK_DOWN)) this.y +=1;;
 
-        if (!input.isKeyDown(KeyEvent.VK_W) && !input.isKeyDown(KeyEvent.VK_S))  sprites.get(0).velocityY = 0;;
-        if (!input.isKeyDown(KeyEvent.VK_D) && !input.isKeyDown(KeyEvent.VK_A)) sprites.get(0).velocityX = 0;;
+        currentGame.camX = x;
+        currentGame.camY = y;
+
+        if (!input.isKeyDown(KeyEvent.VK_W) && !input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 0;;
+        if (!input.isKeyDown(KeyEvent.VK_D) && !input.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = 0;;
 
         if (input.isKeyDown(KeyEvent.VK_SPACE)) {
             // Strzał, skok itp.
@@ -99,11 +98,11 @@ public class Main extends Engine {
         // Reakcja na lewy przycisk myszy (MouseEvent.BUTTON1)
         if (mouse.isButtonDown(java.awt.event.MouseEvent.BUTTON1)) {
             // Przykładowo: postać teleportuje się tam, gdzie klikniemy
-            this.sprites.get(0).x = mx;
-            this.sprites.get(0).y = my;
+           currentGame.sprites.get(0).x = mx;
+           currentGame.sprites.get(0).y = my;
         }
 
-        Rectangle enemyHitbox = new Rectangle((int)this.sprites.get(1).x, (int)this.sprites.get(1).y, 50, 50);
+        Rectangle enemyHitbox = new Rectangle((int)currentGame.sprites.get(1).x, (int)currentGame.sprites.get(1).y, 50, 50);
 
         // Sprawdź czy kursor jest wewnątrz hitboxa I czy kliknięto przycisk
         if (enemyHitbox.contains(mouse.getX(), mouse.getY())) {
@@ -116,10 +115,6 @@ public class Main extends Engine {
             audio.play("shoot"); // Dźwięk strzału przy spacji
         }
 
-        GameState g = new GameState(sprites);
-        g.camX = x;
-        g.camY = y;
-        this.currentSnapshot = g;
 
         super.update();
     }
@@ -138,7 +133,7 @@ public class Main extends Engine {
             playerWalk = new AnimatedSprite(0.1, 400, 50); // zmiana klatki co 0.1 sekundy
             playerWalk.addAnimation("walk", an);
             playerWalk.showHitBox = true;
-            sprites.add(playerWalk);
+            addGameObject(playerWalk);
         }
     }
 }

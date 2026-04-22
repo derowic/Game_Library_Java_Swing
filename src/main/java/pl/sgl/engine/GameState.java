@@ -28,10 +28,8 @@ public class GameState {
     public final List<Primitive> entities;
     public final List<GameObject> sprites;
 
-    public double camX=-500;
+    public double camX=0;
     public double camY=0;
-
-
 
     public GameState(List<Primitive> primitives, List<Sprite> sprites) {
         this.entities = new ArrayList<>(primitives);
@@ -44,8 +42,10 @@ public class GameState {
     }
 
 
-    public GameState(List<GameObject> sprites) {
+    public GameState(List<GameObject> sprites, double camX, double camY) {
         this.entities = new ArrayList<>();
         this.sprites = new ArrayList<>(sprites);
+        this.camX = camX;
+        this.camY = camY;
     }
 }
