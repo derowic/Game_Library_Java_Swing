@@ -43,6 +43,10 @@ public class InputHandler implements KeyListener {
 
     // Sprawdza, czy klawisz został WŁAŚNIE wciśnięty (klatka temu nie był)
     public boolean isKeyPressed(int keyCode) {
+//        System.out.println("");
+//        System.out.println(keyCode);
+//        System.out.println(isKeyDown(keyCode));
+//        System.out.println(!keysLast[keyCode]);
         return isKeyDown(keyCode) && !keysLast[keyCode];
     }
 }

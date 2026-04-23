@@ -12,7 +12,7 @@ public class Engine implements Runnable {
     // W klasie Engine
     protected GameState currentGame = new GameState();
 
-    private Window window;
+    public Window window;
     private volatile boolean running = false;
 
     //ustawienia czasu
@@ -37,11 +37,11 @@ public class Engine implements Runnable {
 
     protected AudioManager audio = new AudioManager();
 
-    protected InputHandler input = new InputHandler();
+    public InputHandler input = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
     private final Object renderLock = new Object();
     private boolean isSwitching = false;
-    private String windowMode = "window";
+    public String windowMode = "window";
 
     private long lastToggleTime = 0;
     private static final long COOLDOWN_MS = 500; // pół sekundy przerwy między zmianami
@@ -55,16 +55,16 @@ public class Engine implements Runnable {
     }
 
     public void toggleFullScreen(String mode) {
-
+        System.out.println(mode);
         if (isSwitching) return; // Blokada, jeśli proces trwa
 
         if(mode.equals(windowMode)) return;
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastToggleTime < COOLDOWN_MS) {
-            return; // Ignoruj wywołanie, jeśli nastąpiło zbyt szybko
-        }
-        lastToggleTime = currentTime;
+//
+//        long currentTime = System.currentTimeMillis();
+//        if (currentTime - lastToggleTime < COOLDOWN_MS) {
+//            return; // Ignoruj wywołanie, jeśli nastąpiło zbyt szybko
+//        }
+//        lastToggleTime = currentTime;
 
         isSwitching = true;
 
@@ -80,6 +80,7 @@ public class Engine implements Runnable {
         }
         System.out.println(window.getCanvas().getWidth());
         isSwitching = false;
+        windowMode = mode;
     }
 
     public synchronized void stopRunning() {
@@ -399,8 +400,8 @@ public class Engine implements Runnable {
 
         worldG.dispose(); // Zwalniamy świat
     }
-    public void input() {
-
+    public boolean isKeyPressed(int keyCode) {
+        return input.isKeyPressed(keyCode);
     }
 
 
