@@ -20,6 +20,7 @@ public class Main extends Engine {
 
     double x = 0;
     double y=0;
+    private boolean fullscreenKeyPressed = false;
 
 
     public Main() {
@@ -62,12 +63,24 @@ public class Main extends Engine {
 //            System.out.println("Colision");
         }
 
-        if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
-            //this.stopRunning();
-            this.setWindow();
-//            System.exit(0);
-        };
 
+
+        // W pętli update
+        if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
+//            if (!fullscreenKeyPressed) { // Sprawdzamy, czy to pierwsze wykrycie wciśnięcia
+                this.setWindow();
+//                fullscreenKeyPressed = true;
+//            }
+        }
+
+//        if (input.isKeyDown(KeyEvent.VK_F)) {
+//            if (!fullscreenKeyPressed) { // Sprawdzamy, czy to pierwsze wykrycie wciśnięcia
+//                this.setFullScreen();
+//                fullscreenKeyPressed = true;
+//            }
+//        } else {
+//            fullscreenKeyPressed = false; // Resetujemy flagę, gdy puścisz klawisz
+//        }
 
         if (input.isKeyDown(KeyEvent.VK_W))  currentGame.sprites.get(0).velocityY = -100;;
         if (input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 100;;

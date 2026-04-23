@@ -40,7 +40,9 @@ public class Engine implements Runnable {
     protected InputHandler input = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
     volatile boolean renderingPaused = false;
-
+    private final Object renderLock = new Object();
+    private boolean isSwitching = false;
+    private String windowMode = "window";
 //    public List<GameObject> sprites = new ArrayList<>();
 
     public Engine(String title, int width, int height) {
@@ -48,16 +50,44 @@ public class Engine implements Runnable {
         window.initInput(input);  // Klawiatura
         window.initMouse(mouse);  // Myszka
         window.show();
-        window.setFullScreen();
+        this.setFullScreen();
     }
 
     public void setFullScreen()
     {
-        window.setFullScreen();
+        if (windowMode.equals("window")) { // Sprawdzamy, czy to pierwsze wykrycie wciśnięcia
+            windowMode = "fullscreen";
+            if (isSwitching) return; // Jeśli już trwa zmiana, nie rób nic
+            isSwitching = true;
+            renderingPaused = true;
+
+            synchronized (renderLock) { // Czekamy aż render() się zakończy
+                renderingPaused = true;
+                window.setFullScreen();
+                renderingPaused = false;
+
+                isSwitching = false;
+            }
+
+
+        }
     }
 
     public void setWindow() {
-        window.setWindowedMode(1280, 720);
+        if (windowMode.equals("fullscreen")) { //
+            windowMode = "window";
+            if (isSwitching) return; // Jeśli już trwa zmiana, nie rób nic
+            isSwitching = true;
+            renderingPaused = true;
+
+            synchronized (renderLock) { // Czekamy aż render() się zakończy
+                renderingPaused = true;
+                window.setWindowedMode(1280, 720);
+                renderingPaused = false;
+                isSwitching = false;
+            }
+
+        }
     }
 
     public synchronized void stopRunning() {
@@ -123,49 +153,56 @@ public class Engine implements Runnable {
     // Pętla Logiki
     @Override
     public void run() {
-        long lastTime = System.nanoTime();
-        double accumulator = 0;
+        synchronized (renderLock) {
+            if (!renderingPaused) {
+                long lastTime = System.nanoTime();
+                double accumulator = 0;
 
-        while (running) {
-            long now = System.nanoTime();
-            long passedTime = now - lastTime;
-            lastTime = now;
+                while (running) {
+                    long now = System.nanoTime();
+                    long passedTime = now - lastTime;
+                    lastTime = now;
 
-            accumulator += passedTime;
+                    accumulator += passedTime;
 
-            int updates = 0; // Dodatkowy licznik bezpieczeństwa
+                    int updates = 0; // Dodatkowy licznik bezpieczeństwa
 
-            // Warunek zatrzyma się, jeśli zrobimy więcej niż 5 update'ów na raz!
-            while (accumulator >= SKIP_TICKS && updates < 5) {
-                update();
-                tickCount++;
-                accumulator -= SKIP_TICKS;
-                lastTickTime = System.nanoTime();
+                    // Warunek zatrzyma się, jeśli zrobimy więcej niż 5 update'ów na raz!
+                    while (accumulator >= SKIP_TICKS && updates < 5) {
+                        update();
+                        tickCount++;
+                        accumulator -= SKIP_TICKS;
+                        lastTickTime = System.nanoTime();
 
-                updates++;
+                        updates++;
+                    }
+
+                    // Jeśli komputer jest tak tragicznie wolny, że przekroczyliśmy 5 update'ów,
+                    // to "wyrzucamy" zaległy czas, aby gra się nie zawiesiła.
+                    if (accumulator >= SKIP_TICKS) {
+                        accumulator = 0; // "Panika" - resetujemy zegar, gra lekko przeskoczy, ale nie zgaśnie
+                    }
+
+                    if (System.currentTimeMillis() - lastTimer >= 1000) {
+                        currentFPS = frameCount;
+                        currentTPS = tickCount;
+                        frameCount = 0;
+                        tickCount = 0;
+                        lastTimer += 1000;
+                    }
+
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                    }
+                }
             }
-
-            // Jeśli komputer jest tak tragicznie wolny, że przekroczyliśmy 5 update'ów,
-            // to "wyrzucamy" zaległy czas, aby gra się nie zawiesiła.
-            if (accumulator >= SKIP_TICKS) {
-                accumulator = 0; // "Panika" - resetujemy zegar, gra lekko przeskoczy, ale nie zgaśnie
-            }
-
-            if (System.currentTimeMillis() - lastTimer >= 1000) {
-                currentFPS = frameCount;
-                currentTPS = tickCount;
-                frameCount = 0;
-                tickCount = 0;
-                lastTimer += 1000;
-            }
-
-            try { Thread.sleep(1); } catch (InterruptedException e) {}
         }
     }
 
 
-
     protected void update() {
+        if (renderingPaused) return;
         // Zapisujemy poprzedni stan przed aktualizacją
         lastTickTime = System.nanoTime();
 
@@ -196,150 +233,161 @@ public class Engine implements Runnable {
 
     private void render(double alpha) {
         if (renderingPaused) return;
+
         frameCount++; // Zwiększamy licznik przy każdym wywołaniu renderu
         window.prepareToRender();
 
         Graphics2D g = (Graphics2D) window.g;
 
-        // Rozmiar wirtualny (Twojej gry)
-        int virtualW = window.getCanvas().getWidth();
-        int virtualH = window.getCanvas().getHeight();
+        try {
+            // Rozmiar wirtualny (Twojej gry)
+            int virtualW = window.getCanvas().getWidth();
+            int virtualH = window.getCanvas().getHeight();
 
-        // Rozmiar rzeczywisty (Okna/Fullscreena)
-        int screenW = window.getCanvas().getWidth();
-        int screenH = window.getCanvas().getHeight();
+            // Rozmiar rzeczywisty (Okna/Fullscreena)
+            int screenW = window.getCanvas().getWidth();
+            int screenH = window.getCanvas().getHeight();
 
-        // Obliczamy skalę (wybieramy mniejszą, żeby obraz zmieścił się w całości)
-        double scale = Math.min((double)screenW / virtualW, (double)screenH / virtualH);
+            // Obliczamy skalę (wybieramy mniejszą, żeby obraz zmieścił się w całości)
+            double scale = Math.min((double)screenW / virtualW, (double)screenH / virtualH);
 
-        // Obliczamy przesunięcie, żeby wyśrodkować obraz (centrowanie)
-        int offsetX = (int)(screenW - (virtualW * scale)) / 2;
-        int offsetY = (int)(screenH - (virtualH * scale)) / 2;
+            // Obliczamy przesunięcie, żeby wyśrodkować obraz (centrowanie)
+            int offsetX = (int)(screenW - (virtualW * scale)) / 2;
+            int offsetY = (int)(screenH - (virtualH * scale)) / 2;
 
-        // 3. AKTUALIZUJEMY MYSZKĘ (Wysyłamy dane o skali do handlera)
-        mouse.setTransformation(scale, offsetX, offsetY);
+            // 3. AKTUALIZUJEMY MYSZKĘ (Wysyłamy dane o skali do handlera)
+            mouse.setTransformation(scale, offsetX, offsetY);
 
-        // 1. Czyścimy tło pod czarne pasy
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, screenW, screenH);
+            // 1. Czyścimy tło pod czarne pasy
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, screenW, screenH);
 
-        // 2. Transformacja: Najpierw przesuń do środka, potem skaluj
-        g.translate(offsetX, offsetY);
-        g.scale(scale, scale);
+            // 2. Transformacja: Najpierw przesuń do środka, potem skaluj
+            g.translate(offsetX, offsetY);
+            g.scale(scale, scale);
 
-        GameState renderState= this.currentSnapshot;
+            GameState renderState= this.currentSnapshot;
 
-        for (Primitive e : renderState.entities) {
-            //System.out.println(e);
-            // INTERPOLACJA dla każdego obiektu z osobna
-            float drawX = e.lastX + (e.x - e.lastX) * (float)alpha;
-            float drawY = e.lastY + (e.y - e.lastY) * (float)alpha;
+            for (Primitive e : renderState.entities) {
+                //System.out.println(e);
+                // INTERPOLACJA dla każdego obiektu z osobna
+                float drawX = e.lastX + (e.x - e.lastX) * (float)alpha;
+                float drawY = e.lastY + (e.y - e.lastY) * (float)alpha;
 
-            window.g.setColor(e.color);
+                window.g.setColor(e.color);
 
-            if ("RECT".equals(e.type)) {
-                window.g.fillRect((int)drawX, (int)drawY, e.width, e.height);
-            } else if ("CIRCLE".equals(e.type)) {
-                window.g.fillOval((int)drawX, (int)drawY, e.width, e.height);
+                if ("RECT".equals(e.type)) {
+                    window.g.fillRect((int)drawX, (int)drawY, e.width, e.height);
+                } else if ("CIRCLE".equals(e.type)) {
+                    window.g.fillOval((int)drawX, (int)drawY, e.width, e.height);
+                }
+            }
+
+            renderWorld(alpha);
+
+    //        // Rysowanie Sprite'ów
+    //        for (GameObject s : renderState.sprites) {
+    //            // 1. OBLICZENIE POZYCJI (Interpolacja lub Teleport)
+    //            Graphics2D g2d = (Graphics2D) window.g.create();
+    //            g2d.translate(0,0);
+    //            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    //            s.draw(g2d, alpha);
+    //            g2d.dispose();
+    //
+    //            if (s.showHitBox) {
+    //                g2d = (Graphics2D) window.g.create();
+    //                g2d.translate(0,0);
+    //                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    ////                Rectangle rec = s.getCalculatedAutoHitBoxes();
+    ////
+    ////                // 3. Rysuj obramowanie
+    ////                window.g.setColor(Color.RED);
+    ////
+    ////                // Hitbox jest relatywny do pozycji Sprite'a, więc dodajemy rec.x i rec.y
+    ////                window.g.drawRect(
+    ////                        (int)(s.x + rec.x),
+    ////                        (int)(s.y + rec.y),
+    ////                        rec.width,
+    ////                        rec.height
+    ////                );
+    //                Shape rotatedHitbox = s.getRotatedShape();
+    //
+    //                // C. Rysujemy obramowanie kształtu
+    //                g2d.setColor(Color.RED);
+    //                g2d.setStroke(new BasicStroke(2.0f)); // Opcjonalnie: grubsza linia, by była widoczna
+    //                g2d.draw(rotatedHitbox); // To narysuje obrócony prostokąt!
+    //
+    //                // D. Opcjonalnie: Wypełnienie (półprzezroczyste)
+    //                g2d.setColor(new Color(255, 0, 0, 50));
+    //                g2d.fill(rotatedHitbox);
+    //                g2d.dispose();
+    //            }
+    //
+    //        for (GameObject s : renderState.sprites) {
+    //            // TWORZYMY RAZ dla całego obiektu
+    //            Graphics2D g2d = (Graphics2D) window.g.create();
+    //
+    //            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    //            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    //            g2d.translate(200,0);
+    //            // 1. Rysujemy sprite'a
+    //            s.draw(g2d, alpha);
+    //
+    //            // 2. Rysujemy hitbox na TYM SAMYM g2d (on już ma te same transformacje!)
+    //            if (s.showHitBox) {
+    //                // Obliczamy pozycję do rysowania (interpolacja)
+    //                float drawX = (float) (s.lastX + (s.x - s.lastX) * (float)alpha);
+    //                float drawY = (float) (s.lastY + (s.y - s.lastY) * (float)alpha);
+    //
+    //                // Ważne: s.getRotatedShape() musi być spójne z g2d
+    //                Shape rotatedHitbox = s.getRotatedShape(drawX, drawY);
+    //
+    //                g2d.setColor(Color.RED);
+    //                g2d.setStroke(new BasicStroke(2.0f));
+    //                g2d.draw(rotatedHitbox);
+    //
+    //                g2d.setColor(new Color(255, 0, 0, 50));
+    //                g2d.fill(rotatedHitbox);
+    //            }
+    //
+    //            // ZWALNIAMY RAZ
+    //            g2d.dispose();
+    //        }
+
+
+
+
+
+
+            // Rysowanie
+    //        window.g.setColor(Color.RED);
+    //        window.g.fillRect((int)renderX, (int)renderY, 50, 50);
+
+            // --- RYSOWANIE STATYSTYK ---
+            window.g.setColor(Color.WHITE);
+            // Ustawiamy tło pod tekst, żeby był czytelny
+            window.g.setColor(new Color(0, 0, 0, 150)); // Półprzezroczysty czarny
+            window.g.fillRect(5, 5, 100, 45);
+
+            window.g.setColor(Color.GREEN);
+            window.g.setFont(new Font("Monospaced", Font.BOLD, 14));
+            window.g.drawString("FPS: " + currentFPS, 10, 20);
+            window.g.drawString("TPS: " + currentTPS, 10, 40);
+
+            // Wyświetlanie Alpha (opcjonalnie do debugowania płynności)
+            window.g.setColor(Color.YELLOW);
+            window.g.drawString("Alpha: " + String.format("%.2f", alpha), 10, 60);
+
+            window.render();
+
+        } catch (Exception e) {
+            // Ignoruj błędy podczas przełączania trybów graficznych
+            e.printStackTrace();
+        } finally {
+            if (g != null) {
+                g.dispose();
             }
         }
-
-        renderWorld(alpha);
-
-//        // Rysowanie Sprite'ów
-//        for (GameObject s : renderState.sprites) {
-//            // 1. OBLICZENIE POZYCJI (Interpolacja lub Teleport)
-//            Graphics2D g2d = (Graphics2D) window.g.create();
-//            g2d.translate(0,0);
-//            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//            s.draw(g2d, alpha);
-//            g2d.dispose();
-//
-//            if (s.showHitBox) {
-//                g2d = (Graphics2D) window.g.create();
-//                g2d.translate(0,0);
-//                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-////                Rectangle rec = s.getCalculatedAutoHitBoxes();
-////
-////                // 3. Rysuj obramowanie
-////                window.g.setColor(Color.RED);
-////
-////                // Hitbox jest relatywny do pozycji Sprite'a, więc dodajemy rec.x i rec.y
-////                window.g.drawRect(
-////                        (int)(s.x + rec.x),
-////                        (int)(s.y + rec.y),
-////                        rec.width,
-////                        rec.height
-////                );
-//                Shape rotatedHitbox = s.getRotatedShape();
-//
-//                // C. Rysujemy obramowanie kształtu
-//                g2d.setColor(Color.RED);
-//                g2d.setStroke(new BasicStroke(2.0f)); // Opcjonalnie: grubsza linia, by była widoczna
-//                g2d.draw(rotatedHitbox); // To narysuje obrócony prostokąt!
-//
-//                // D. Opcjonalnie: Wypełnienie (półprzezroczyste)
-//                g2d.setColor(new Color(255, 0, 0, 50));
-//                g2d.fill(rotatedHitbox);
-//                g2d.dispose();
-//            }
-//
-//        for (GameObject s : renderState.sprites) {
-//            // TWORZYMY RAZ dla całego obiektu
-//            Graphics2D g2d = (Graphics2D) window.g.create();
-//
-//            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//            g2d.translate(200,0);
-//            // 1. Rysujemy sprite'a
-//            s.draw(g2d, alpha);
-//
-//            // 2. Rysujemy hitbox na TYM SAMYM g2d (on już ma te same transformacje!)
-//            if (s.showHitBox) {
-//                // Obliczamy pozycję do rysowania (interpolacja)
-//                float drawX = (float) (s.lastX + (s.x - s.lastX) * (float)alpha);
-//                float drawY = (float) (s.lastY + (s.y - s.lastY) * (float)alpha);
-//
-//                // Ważne: s.getRotatedShape() musi być spójne z g2d
-//                Shape rotatedHitbox = s.getRotatedShape(drawX, drawY);
-//
-//                g2d.setColor(Color.RED);
-//                g2d.setStroke(new BasicStroke(2.0f));
-//                g2d.draw(rotatedHitbox);
-//
-//                g2d.setColor(new Color(255, 0, 0, 50));
-//                g2d.fill(rotatedHitbox);
-//            }
-//
-//            // ZWALNIAMY RAZ
-//            g2d.dispose();
-//        }
-
-
-
-
-
-
-        // Rysowanie
-//        window.g.setColor(Color.RED);
-//        window.g.fillRect((int)renderX, (int)renderY, 50, 50);
-
-        // --- RYSOWANIE STATYSTYK ---
-        window.g.setColor(Color.WHITE);
-        // Ustawiamy tło pod tekst, żeby był czytelny
-        window.g.setColor(new Color(0, 0, 0, 150)); // Półprzezroczysty czarny
-        window.g.fillRect(5, 5, 100, 45);
-
-        window.g.setColor(Color.GREEN);
-        window.g.setFont(new Font("Monospaced", Font.BOLD, 14));
-        window.g.drawString("FPS: " + currentFPS, 10, 20);
-        window.g.drawString("TPS: " + currentTPS, 10, 40);
-
-        // Wyświetlanie Alpha (opcjonalnie do debugowania płynności)
-        window.g.setColor(Color.YELLOW);
-        window.g.drawString("Alpha: " + String.format("%.2f", alpha), 10, 60);
-
-        window.render();
     }
 
     private void renderWorld(double alpha) {

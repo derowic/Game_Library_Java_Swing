@@ -14,6 +14,7 @@ public class Window {
     public boolean showMouse = true;
 
 
+
     public Window(String title, int width, int height) {
 
         // 1. Włącz akcelerację sprzętową PRZED utworzeniem okna
@@ -33,13 +34,11 @@ public class Window {
         frame.add(canvas);
         frame.pack();                   // dopasuj rozmiar okna do Canvas
         frame.setLocationRelativeTo(null); // wyśrodkuj na ekranie
-
-
-
     }
 
     // TA METODA WŁĄCZA FULLSCREEN
     public void setFullScreen() {
+
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
 
@@ -96,6 +95,11 @@ public class Window {
 
     public void prepareToRender(){
         bs = canvas.getBufferStrategy();
+        if (bs == null) {
+            // Jeśli jeszcze nie ma strategii, spróbuj ją stworzyć raz
+            canvas.createBufferStrategy(2);
+            return;
+        }
 
         // pobierz Graphics z bufora tylnego (niewidocznego)
         g = (Graphics2D) bs.getDrawGraphics();
