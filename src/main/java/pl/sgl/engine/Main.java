@@ -68,17 +68,23 @@ public class Main extends Engine {
         // W pętli update
         if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
 //            if (!fullscreenKeyPressed) { // Sprawdzamy, czy to pierwsze wykrycie wciśnięcia
-                this.setWindow();
-//                fullscreenKeyPressed = true;
+                this.toggleFullScreen("window");
+//              fullscreenKeyPressed = true;
+            System.out.println("switch");
 //            }
         }
+//        else{
+//            fullscreenKeyPressed = false;
+//        }
 
-//        if (input.isKeyDown(KeyEvent.VK_F)) {
-//            if (!fullscreenKeyPressed) { // Sprawdzamy, czy to pierwsze wykrycie wciśnięcia
-//                this.setFullScreen();
-//                fullscreenKeyPressed = true;
-//            }
-//        } else {
+
+        if (input.isKeyDown(KeyEvent.VK_F)) {
+
+                this.toggleFullScreen("fullscreen");
+
+
+        }
+//        else {
 //            fullscreenKeyPressed = false; // Resetujemy flagę, gdy puścisz klawisz
 //        }
 

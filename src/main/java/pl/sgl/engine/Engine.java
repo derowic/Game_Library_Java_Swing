@@ -39,55 +39,47 @@ public class Engine implements Runnable {
 
     protected InputHandler input = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
-    volatile boolean renderingPaused = false;
     private final Object renderLock = new Object();
     private boolean isSwitching = false;
     private String windowMode = "window";
-//    public List<GameObject> sprites = new ArrayList<>();
+
+    private long lastToggleTime = 0;
+    private static final long COOLDOWN_MS = 500; // pół sekundy przerwy między zmianami
+
 
     public Engine(String title, int width, int height) {
         window = new Window(title, width, height);
         window.initInput(input);  // Klawiatura
         window.initMouse(mouse);  // Myszka
         window.show();
-        this.setFullScreen();
     }
 
-    public void setFullScreen()
-    {
-        if (windowMode.equals("window")) { // Sprawdzamy, czy to pierwsze wykrycie wciśnięcia
-            windowMode = "fullscreen";
-            if (isSwitching) return; // Jeśli już trwa zmiana, nie rób nic
-            isSwitching = true;
-            renderingPaused = true;
+    public void toggleFullScreen(String mode) {
 
-            synchronized (renderLock) { // Czekamy aż render() się zakończy
-                renderingPaused = true;
+        if (isSwitching) return; // Blokada, jeśli proces trwa
+
+        if(mode.equals(windowMode)) return;
+
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastToggleTime < COOLDOWN_MS) {
+            return; // Ignoruj wywołanie, jeśli nastąpiło zbyt szybko
+        }
+        lastToggleTime = currentTime;
+
+        isSwitching = true;
+
+
+        synchronized (renderLock) {
+            if (windowMode.equals("window")) {
                 window.setFullScreen();
-                renderingPaused = false;
-
-                isSwitching = false;
-            }
-
-
-        }
-    }
-
-    public void setWindow() {
-        if (windowMode.equals("fullscreen")) { //
-            windowMode = "window";
-            if (isSwitching) return; // Jeśli już trwa zmiana, nie rób nic
-            isSwitching = true;
-            renderingPaused = true;
-
-            synchronized (renderLock) { // Czekamy aż render() się zakończy
-                renderingPaused = true;
+                windowMode = "fullscreen";
+            } else {
                 window.setWindowedMode(1280, 720);
-                renderingPaused = false;
-                isSwitching = false;
+                windowMode = "window";
             }
-
         }
+        System.out.println(window.getCanvas().getWidth());
+        isSwitching = false;
     }
 
     public synchronized void stopRunning() {
@@ -153,56 +145,52 @@ public class Engine implements Runnable {
     // Pętla Logiki
     @Override
     public void run() {
-        synchronized (renderLock) {
-            if (!renderingPaused) {
-                long lastTime = System.nanoTime();
-                double accumulator = 0;
+        var lastTime = System.nanoTime();
+        double accumulator = 0;
 
-                while (running) {
-                    long now = System.nanoTime();
-                    long passedTime = now - lastTime;
-                    lastTime = now;
+        while (running) {
+            long now = System.nanoTime();
+            long passedTime = now - lastTime;
+            lastTime = now;
 
-                    accumulator += passedTime;
+            accumulator += passedTime;
 
-                    int updates = 0; // Dodatkowy licznik bezpieczeństwa
+            int updates = 0; // Dodatkowy licznik bezpieczeństwa
 
-                    // Warunek zatrzyma się, jeśli zrobimy więcej niż 5 update'ów na raz!
-                    while (accumulator >= SKIP_TICKS && updates < 5) {
-                        update();
-                        tickCount++;
-                        accumulator -= SKIP_TICKS;
-                        lastTickTime = System.nanoTime();
+            // Warunek zatrzyma się, jeśli zrobimy więcej niż 5 update'ów na raz!
+            while (accumulator >= SKIP_TICKS && updates < 5) {
+                update();
+                tickCount++;
+                accumulator -= SKIP_TICKS;
+                lastTickTime = System.nanoTime();
 
-                        updates++;
-                    }
+                updates++;
+            }
 
-                    // Jeśli komputer jest tak tragicznie wolny, że przekroczyliśmy 5 update'ów,
-                    // to "wyrzucamy" zaległy czas, aby gra się nie zawiesiła.
-                    if (accumulator >= SKIP_TICKS) {
-                        accumulator = 0; // "Panika" - resetujemy zegar, gra lekko przeskoczy, ale nie zgaśnie
-                    }
+            // Jeśli komputer jest tak tragicznie wolny, że przekroczyliśmy 5 update'ów,
+            // to "wyrzucamy" zaległy czas, aby gra się nie zawiesiła.
+            if (accumulator >= SKIP_TICKS) {
+                accumulator = 0; // "Panika" - resetujemy zegar, gra lekko przeskoczy, ale nie zgaśnie
+            }
 
-                    if (System.currentTimeMillis() - lastTimer >= 1000) {
-                        currentFPS = frameCount;
-                        currentTPS = tickCount;
-                        frameCount = 0;
-                        tickCount = 0;
-                        lastTimer += 1000;
-                    }
+            if (System.currentTimeMillis() - lastTimer >= 1000) {
+                currentFPS = frameCount;
+                currentTPS = tickCount;
+                frameCount = 0;
+                tickCount = 0;
+                lastTimer += 1000;
+            }
 
-                    try {
-                        Thread.sleep(1);
-                    } catch (InterruptedException e) {
-                    }
-                }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
             }
         }
+
     }
 
 
     protected void update() {
-        if (renderingPaused) return;
         // Zapisujemy poprzedni stan przed aktualizacją
         lastTickTime = System.nanoTime();
 
@@ -232,7 +220,7 @@ public class Engine implements Runnable {
     }
 
     private void render(double alpha) {
-        if (renderingPaused) return;
+        if (isSwitching) return;
 
         frameCount++; // Zwiększamy licznik przy każdym wywołaniu renderu
         window.prepareToRender();
