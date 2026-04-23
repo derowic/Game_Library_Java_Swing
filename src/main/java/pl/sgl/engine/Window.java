@@ -13,6 +13,7 @@ public class Window {
     public Graphics2D g;
     public boolean showMouse = true;
 
+
     public Window(String title, int width, int height) {
 
         // 1. Włącz akcelerację sprzętową PRZED utworzeniem okna
@@ -105,6 +106,7 @@ public class Window {
     }
 
     public void render() {
+
         // rysuj obiekty gry...
         // ───────────────────────────────────────
         if(!showMouse) {

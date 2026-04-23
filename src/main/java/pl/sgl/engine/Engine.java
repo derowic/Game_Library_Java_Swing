@@ -39,6 +39,7 @@ public class Engine implements Runnable {
 
     protected InputHandler input = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
+    volatile boolean renderingPaused = false;
 
 //    public List<GameObject> sprites = new ArrayList<>();
 
@@ -48,6 +49,15 @@ public class Engine implements Runnable {
         window.initMouse(mouse);  // Myszka
         window.show();
         window.setFullScreen();
+    }
+
+    public void setFullScreen()
+    {
+        window.setFullScreen();
+    }
+
+    public void setWindow() {
+        window.setWindowedMode(1280, 720);
     }
 
     public synchronized void stopRunning() {
@@ -185,6 +195,7 @@ public class Engine implements Runnable {
     }
 
     private void render(double alpha) {
+        if (renderingPaused) return;
         frameCount++; // Zwiększamy licznik przy każdym wywołaniu renderu
         window.prepareToRender();
 
@@ -356,14 +367,7 @@ public class Engine implements Runnable {
 
     }
 
-    public void setFullScreen()
-    {
-        window.setFullScreen();
-    }
 
-    public void setWindow() {
-        window.setWindowedMode(1280, 720);
-    }
 
     public void addGameObject(GameObject g) {
         currentGame.sprites.add(g);

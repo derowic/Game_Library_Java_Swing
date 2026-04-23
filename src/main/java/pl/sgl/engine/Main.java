@@ -42,9 +42,7 @@ public class Main extends Engine {
 //            System.out.println((int) (s.y + rec.width));
 //        }
 
-        if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
-            System.exit(0);
-        }
+
 
 //        audio.load("bg_music", "/audio/alex-productions-racing-sport-gaming-racing(chosic.com).wav");
 //        audio.load("shoot", "/audio/zap-hiphop-a.wav");
@@ -67,7 +65,9 @@ public class Main extends Engine {
         if (input.isKeyDown(KeyEvent.VK_ESCAPE)) {
             //this.stopRunning();
             this.setWindow();
+//            System.exit(0);
         };
+
 
         if (input.isKeyDown(KeyEvent.VK_W))  currentGame.sprites.get(0).velocityY = -100;;
         if (input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 100;;
