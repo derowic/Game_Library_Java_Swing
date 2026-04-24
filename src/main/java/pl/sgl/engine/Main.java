@@ -27,7 +27,7 @@ public class Main extends Engine {
         super("Test", 1280, 720);
         // Ładujemy raz przy starcie
 //        playerShip = TextureLoader.load();
-        Sprite s2 = new Sprite("/textures/ship2.png", 470, 100);
+        Sprite s2 = new Sprite("/textures/ship2.png", 670, 100);
 //        s2.rotate(45);
         s2.rotation = 45;
         s2.showHitBox = true;
@@ -93,29 +93,29 @@ public class Main extends Engine {
 //            fullscreenKeyPressed = false; // Resetujemy flagę, gdy puścisz klawisz
 //        }
 
-        if (isKeyPressed(KeyEvent.VK_W))  currentGame.sprites.get(0).velocityY = -100;;
-        if (isKeyPressed(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 100;;
-        if (isKeyPressed(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = -100;;
-        if (isKeyPressed(KeyEvent.VK_D)) {
+        if (input.isKeyDown(KeyEvent.VK_W))  currentGame.sprites.get(0).velocityY = -100;;
+        if (input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 100;;
+        if (input.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = -100;;
+        if (input.isKeyDown(KeyEvent.VK_D)) {
             currentGame.sprites.get(0).velocityX = 100;
-            System.out.println("D");
+//            System.out.println("D");
         };
 
-        if (isKeyPressed(KeyEvent.VK_LEFT))  {
+        if (input.isKeyDown(KeyEvent.VK_LEFT))  {
 
             System.out.println("left");
             System.out.println(this.currentSnapshot.camX);
             this.x -=1;
         };
-        if (isKeyPressed(KeyEvent.VK_RIGHT))  this.x+=1;;;
-        if (isKeyPressed(KeyEvent.VK_UP)) this.y -=1;
-        if (isKeyPressed(KeyEvent.VK_DOWN)) this.y +=1;;
+        if (input.isKeyDown(KeyEvent.VK_RIGHT))  this.x+=1;;;
+        if (input.isKeyDown(KeyEvent.VK_UP)) this.y -=1;
+        if (input.isKeyDown(KeyEvent.VK_DOWN)) this.y +=1;;
 
         currentGame.camX = x;
         currentGame.camY = y;
 
-        if (!isKeyPressed(KeyEvent.VK_W) && !isKeyPressed(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 0;;
-        if (!isKeyPressed(KeyEvent.VK_D) && !isKeyPressed(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = 0;;
+        if (!input.isKeyDown(KeyEvent.VK_W) && !input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 0;;
+        if (!input.isKeyDown(KeyEvent.VK_D) && !input.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = 0;;
 
         if (isKeyPressed(KeyEvent.VK_SPACE)) {
             // Strzał, skok itp.
@@ -145,6 +145,9 @@ public class Main extends Engine {
             audio.play("shoot"); // Dźwięk strzału przy spacji
         }
 
+        if(Colision.colisionWithListOfSprites(currentGame.sprites.get(1), currentGame.sprites)) {
+            System.out.println("Colision");
+        }
 
         super.update();
     }

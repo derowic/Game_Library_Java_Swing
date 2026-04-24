@@ -230,8 +230,8 @@ public class Engine implements Runnable {
 
         try {
             // Rozmiar wirtualny (Twojej gry)
-            int virtualW = window.getCanvas().getWidth();
-            int virtualH = window.getCanvas().getHeight();
+            int virtualW = window.oldWidth;
+            int virtualH = window.oldHeight;
 
             // Rozmiar rzeczywisty (Okna/Fullscreena)
             int screenW = window.getCanvas().getWidth();
@@ -273,85 +273,6 @@ public class Engine implements Runnable {
             }
 
             renderWorld(alpha);
-
-    //        // Rysowanie Sprite'ów
-    //        for (GameObject s : renderState.sprites) {
-    //            // 1. OBLICZENIE POZYCJI (Interpolacja lub Teleport)
-    //            Graphics2D g2d = (Graphics2D) window.g.create();
-    //            g2d.translate(0,0);
-    //            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    //            s.draw(g2d, alpha);
-    //            g2d.dispose();
-    //
-    //            if (s.showHitBox) {
-    //                g2d = (Graphics2D) window.g.create();
-    //                g2d.translate(0,0);
-    //                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    ////                Rectangle rec = s.getCalculatedAutoHitBoxes();
-    ////
-    ////                // 3. Rysuj obramowanie
-    ////                window.g.setColor(Color.RED);
-    ////
-    ////                // Hitbox jest relatywny do pozycji Sprite'a, więc dodajemy rec.x i rec.y
-    ////                window.g.drawRect(
-    ////                        (int)(s.x + rec.x),
-    ////                        (int)(s.y + rec.y),
-    ////                        rec.width,
-    ////                        rec.height
-    ////                );
-    //                Shape rotatedHitbox = s.getRotatedShape();
-    //
-    //                // C. Rysujemy obramowanie kształtu
-    //                g2d.setColor(Color.RED);
-    //                g2d.setStroke(new BasicStroke(2.0f)); // Opcjonalnie: grubsza linia, by była widoczna
-    //                g2d.draw(rotatedHitbox); // To narysuje obrócony prostokąt!
-    //
-    //                // D. Opcjonalnie: Wypełnienie (półprzezroczyste)
-    //                g2d.setColor(new Color(255, 0, 0, 50));
-    //                g2d.fill(rotatedHitbox);
-    //                g2d.dispose();
-    //            }
-    //
-    //        for (GameObject s : renderState.sprites) {
-    //            // TWORZYMY RAZ dla całego obiektu
-    //            Graphics2D g2d = (Graphics2D) window.g.create();
-    //
-    //            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    //            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    //            g2d.translate(200,0);
-    //            // 1. Rysujemy sprite'a
-    //            s.draw(g2d, alpha);
-    //
-    //            // 2. Rysujemy hitbox na TYM SAMYM g2d (on już ma te same transformacje!)
-    //            if (s.showHitBox) {
-    //                // Obliczamy pozycję do rysowania (interpolacja)
-    //                float drawX = (float) (s.lastX + (s.x - s.lastX) * (float)alpha);
-    //                float drawY = (float) (s.lastY + (s.y - s.lastY) * (float)alpha);
-    //
-    //                // Ważne: s.getRotatedShape() musi być spójne z g2d
-    //                Shape rotatedHitbox = s.getRotatedShape(drawX, drawY);
-    //
-    //                g2d.setColor(Color.RED);
-    //                g2d.setStroke(new BasicStroke(2.0f));
-    //                g2d.draw(rotatedHitbox);
-    //
-    //                g2d.setColor(new Color(255, 0, 0, 50));
-    //                g2d.fill(rotatedHitbox);
-    //            }
-    //
-    //            // ZWALNIAMY RAZ
-    //            g2d.dispose();
-    //        }
-
-
-
-
-
-
-            // Rysowanie
-    //        window.g.setColor(Color.RED);
-    //        window.g.fillRect((int)renderX, (int)renderY, 50, 50);
-
             // --- RYSOWANIE STATYSTYK ---
             window.g.setColor(Color.WHITE);
             // Ustawiamy tło pod tekst, żeby był czytelny
