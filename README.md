@@ -2,7 +2,7 @@ JAK ZAINSTALOWAĆ (za pomocą Mavena)
 
 1. Utwórz projekt za pomocą Mavena
 2. Dodaj zależności w pliku pom.xml
-<repositories>
+```<repositories>
 		<repository>
 		    <id>jitpack.io</id>
 		    <url>https://jitpack.io</url>
@@ -15,4 +15,5 @@ JAK ZAINSTALOWAĆ (za pomocą Mavena)
 	    <version>Tag</version>
 	</dependency>
 </dependencies>
+```
 3. Odśwież Mavena, aby zainstalować (lub kliknij „Instaluj”) 
