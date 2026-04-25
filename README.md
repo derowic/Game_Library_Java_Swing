@@ -1,38 +1,17 @@
-HOW INSTALL (using maven)
+JAK ZAINSTALOWAĆ (za pomocą Mavena)
 
-1. Create project with maven
-2. Add dependencies in pom.xml file
+1. Utwórz projekt za pomocą Mavena
+2. Dodaj zależności w pliku pom.xml
 
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-<modelVersion>4.0.0</modelVersion>
+3. Odśwież Mavena, aby zainstalować (lub kliknij „Instaluj”) <repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
-    <groupId>org.example</groupId>
-    <artifactId>testMyLibrary</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
-
-    <properties>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.github.derowic</groupId>
-            <artifactId>Game_Library_Java_Swing</artifactId>
-            <version>Java</version>
-        </dependency>
-    </dependencies>
-</project>
-
-3. Refresh maven to install (or click install)
+<dependency>
+	    <groupId>com.github.derowic</groupId>
+	    <artifactId>Game_Library_Java_Swing</artifactId>
+	    <version>Tag</version>
+	</dependency>
