@@ -5,7 +5,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 
-public class Window {
+class Window {
 
     private JFrame frame;
     private Canvas canvas;
@@ -38,27 +38,47 @@ public class Window {
         frame.setLocationRelativeTo(null); // wyśrodkuj na ekranie
     }
 
-    // TA METODA WŁĄCZA FULLSCREEN
     public void setFullScreen() {
+            bs = null; // Zatrzymujemy renderowanie na starym buforze
 
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice gd = ge.getDefaultScreenDevice();
 
-        if (gd.isFullScreenSupported()) {
-            // 1. Ukrywamy okno, żeby zmienić jego styl
-            frame.dispose();
-            // 2. Usuwamy ramki (tytuł, przyciski zamknij/minimalizuj)
-            frame.setUndecorated(true);
-            // 3. Włączamy tryb pełnoekranowy
-            gd.setFullScreenWindow(frame);
-            // 4. Pokazujemy okno ponownie
-            frame.setVisible(true);
+            if (gd.isFullScreenSupported()) {
+                // 1. Zamknij zasoby okna, aby zmienić jego styl
+                frame.dispose();
 
-            // WAŻNE: Po zmianie na Fullscreen Canvas musi odświeżyć BufferStrategy
-            canvas.createBufferStrategy(2);
-        } else {
-            System.err.println("Fullscreen nie jest wspierany na tym sprzęcie.");
-        }
+                // 2. Konfiguracja pod Fullscreen i Linuxa
+                frame.setUndecorated(true);
+                frame.setAlwaysOnTop(true);
+                frame.setResizable(false); // Kluczowe dla menedżerów okien na Linuxie
+
+                // Ustawienie typu okna na POPUP (to naprawia problem z panelem na Mint/Ubuntu)
+                // Musi być java.awt.Window.Type.POPUP
+                frame.setType(java.awt.Window.Type.POPUP);
+
+                // 3. Włączamy tryb pełnoekranowy
+                gd.setFullScreenWindow(frame);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setVisible(true);
+
+                // 4. Czekamy, aż Canvas zostanie podpięty do nowego okna
+                while (!canvas.isDisplayable()) {
+                    Thread.yield();
+                }
+
+                // 5. Tworzymy nowe BufferStrategy
+                canvas.createBufferStrategy(2);
+                this.bs = canvas.getBufferStrategy();
+
+                // Przywracamy skupienie klawiatury
+                canvas.requestFocus();
+
+                System.out.println("Fullscreen aktywowany pomyślnie.");
+            } else {
+                System.err.println("Fullscreen nie jest wspierany na tym sprzęcie.");
+            }
+
     }
 
     public void setWindowedMode(int width, int height) {
@@ -73,6 +93,14 @@ public class Window {
 
         // 3. Przywracamy ramki okna
         frame.setUndecorated(false);
+        frame.setAlwaysOnTop(false);     // Wyłącz tryb "zawsze na wierzchu"
+        frame.setResizable(false);        // Zazwyczaj w grach okno ma stały rozmiar
+
+        // Przywrócenie typu okna na NORMALNY (kluczowe na Linuxie)
+        frame.setType(java.awt.Window.Type.NORMAL);
+
+        // Resetowanie stanu maksymalizacji
+        frame.setExtendedState(JFrame.NORMAL);
 
         // 4. Przywracamy rozmiar Canvasu
         canvas.setPreferredSize(new Dimension(width, height));

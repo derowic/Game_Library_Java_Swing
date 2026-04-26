@@ -1,21 +1,31 @@
 package pl.sgl.engine;
 
+import pl.sgl.engine.TileMaps.TileMap;
+import pl.sgl.engine.TileMaps.TileMapLoader;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
+import pl.sgl.engine.ui.*;
+import pl.sgl.engine.ui.Button;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
-public class Main extends Engine {
+public class Main extends Game {
     // Lista obiektów logicznych (w świecie gry)
 //    private List<MyPlayer> players = new ArrayList<>();
 //
     private BufferedImage playerShip;
     private AnimatedSprite playerWalk;
+    private UIElement startButton;
+    private UIElement scoreLabel;
+    private UIElement inputField;
+    private UIElement slider;
+    private volatile int score = 0;
+    private TileMap tileMap;
+
+    private TileMap level1;
 
 
     double x = 0;
@@ -26,87 +36,72 @@ public class Main extends Engine {
     public Main() {
         super("Test", 1280, 720);
         // Ładujemy raz przy starcie
-//        playerShip = TextureLoader.load();
         Sprite s2 = new Sprite("/textures/ship2.png", 670, 100);
-//        s2.rotate(45);
         s2.rotation = 45;
         s2.showHitBox = true;
         addGameObject(s2);
-        stressTest();
 
-//        for (GameObject s : gameObjects) {
-//            Rectangle rec = s.getCalculatedAutoHitBoxes();
-////
-//            System.out.println((int) s.x);
-//            System.out.println((int) s.y);
-//            System.out.println((int) (s.x + rec.width));
-//            System.out.println((int) (s.y + rec.width));
-//        }
+        Animation an = new Animation("/textures/mario-walk.png",0,0, 100, 100, 3);
+        playerWalk = new AnimatedSprite(0.1, 400, 50); // zmiana klatki co 0.1 sekundy
+        playerWalk.addAnimation("walk", an);
+        playerWalk.showHitBox = true;
+        playerWalk.rotation = 45;
+        addGameObject(playerWalk);
+
+        startButton = new Button("ZAGRAJ", 300, 250, 200, 50);
+        scoreLabel = new Text("PUNKTY: 0", 20, 40, 24);
+        inputField = new InputField(600, 450, 200, 25, 12);
+        slider = new Slider(600, 550, 200, 50);
+
+        currentGame.UIElements.add(startButton);
+        currentGame.UIElements.add(scoreLabel);
+        currentGame.UIElements.add(inputField);
+        currentGame.UIElements.add(slider);
+
+//        currentGame.tileMap = new TileMap("", 64);
 
 
-
+        // 1. Wczytujemy dane kafelków z JSON
+        int[][] data = TileMapLoader.loadMap("/tileMaps/dungeon3.json");
+        // 2. Tworzymy obiekt TileMap (używając Twojej klasy, którą pisaliśmy wcześniej)
+        // Zakładamy, że konstruktor przyjmuje tablicę int[][], ścieżkę do obrazka i rozmiar kafelka
+        level1 = new TileMap(data, "/tileMaps/dungeon_tile.png", 16);
+        level1.collidableTiles = TileMapLoader.loadCollisionsFromTileset("/tileMaps/dungeon3.json");
+        System.out.println(level1.collidableTiles);
+        currentGame.tileMap = level1;
 //        audio.load("bg_music", "/audio/alex-productions-racing-sport-gaming-racing(chosic.com).wav");
 //        audio.load("shoot", "/audio/zap-hiphop-a.wav");
 //
 //        audio.loop("bg_music"); // Start muzyki w tle
 
-
+//        tileMap = new TileMap();
+//        tileMap.dr
     }
     @Override
     protected void update() {
-//        if(sprites.get(0).y < -50)
-//        {
-////            sprites.get(0).y = 600;
-//        }
-
-        if(currentGame.sprites.get(1).checkCollision((Sprite) currentGame.sprites.get(0))) {
-//            System.out.println("Colision");
-        }
-
-//        this.toggleFullScreen("fullscreen");
 
         // W pętli update
         if (isKeyPressed(KeyEvent.VK_ESCAPE)) {
             System.out.println("switch");
-//            if (!fullscreenKeyPressed) { // Sprawdzamy, czy to pierwsze wykrycie wciśnięcia
-                this.toggleFullScreen("window");
-//              fullscreenKeyPressed = true;
-
-//            }
+            this.toggleFullScreen("window");
         }
-//        else{
-//            System.out.println("nie klika");
-//        }
-
 
         if (isKeyPressed(KeyEvent.VK_F)) {
             System.out.println("switch2");
             this.toggleFullScreen("fullscreen");
-
         }
-//        else{
-//            System.out.println("nie klika");
-//        }
-
-//        System.out.println(windowMode);
-//        else {
-//            fullscreenKeyPressed = false; // Resetujemy flagę, gdy puścisz klawisz
-//        }
 
         if (input.isKeyDown(KeyEvent.VK_W))  currentGame.sprites.get(0).velocityY = -100;;
         if (input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 100;;
         if (input.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = -100;;
         if (input.isKeyDown(KeyEvent.VK_D)) {
             currentGame.sprites.get(0).velocityX = 100;
-//            System.out.println("D");
         };
 
         if (input.isKeyDown(KeyEvent.VK_LEFT))  {
-
-            System.out.println("left");
-            System.out.println(this.currentSnapshot.camX);
             this.x -=1;
         };
+
         if (input.isKeyDown(KeyEvent.VK_RIGHT))  this.x+=1;;;
         if (input.isKeyDown(KeyEvent.VK_UP)) this.y -=1;
         if (input.isKeyDown(KeyEvent.VK_DOWN)) this.y +=1;;
@@ -145,28 +140,39 @@ public class Main extends Engine {
             audio.play("shoot"); // Dźwięk strzału przy spacji
         }
 
+        if (isKeyPressed(KeyEvent.VK_H)) {
+//            audio.play("shoot"); // Dźwięk strzału przy spacji
+            currentGame.sprites.get(1).visible = !currentGame.sprites.get(1).visible;
+        }
+
         if(Colision.colisionWithListOfSprites(currentGame.sprites.get(1), currentGame.sprites)) {
             System.out.println("Colision");
         }
+
+        // Aktualizacja UI
+
+        if (mouse.isButtonPressed(MouseEvent.BUTTON1) && startButton.isClicked(mouse)) {
+//            System.out.println("Startujemy!");
+            score++;
+            scoreLabel.text = "PUNKTY: " + score;
+        }
+
+        boolean tmp =false;
+        tmp = currentGame.tileMap.isCollidingWithWall(
+                currentGame.sprites.get(0).x,
+                currentGame.sprites.get(0).y,
+                currentGame.sprites.get(0).width,
+                currentGame.sprites.get(0).height
+        );
+
+//        System.out.println(currentGame.sprites.get(0).x);
+
+//        System.out.println(tmp);
 
         super.update();
     }
 
     public static void main(String[] args) {
         new Main().start();
-    }
-
-    public void stressTest()
-    {
-        Random rand = new Random();
-        Animation an = new Animation("/textures/mario-walk.png",0,0, 100, 100, 3);
-//        BufferedImage[] frames = TextureLoader.loadSheet();
-        for(int i =0; i<1; i++) {
-
-            playerWalk = new AnimatedSprite(0.1, 400, 50); // zmiana klatki co 0.1 sekundy
-            playerWalk.addAnimation("walk", an);
-            playerWalk.showHitBox = true;
-            addGameObject(playerWalk);
-        }
     }
 }

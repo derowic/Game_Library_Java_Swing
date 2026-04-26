@@ -7,3 +7,19 @@
     [] sliders
     [] styling ui
     []
+
+[] obsługa obrotu wokół gracza, taki kontroller jak w unity
+[] porzadne ui
+[] fizyka
+[] tailemaps system
+[] system scen
+[] system cząsteczek
+[] system efektów specjalnych
+[] ukrywanie obiektów
+[] object pooling
+[] zaawanswoana camera
+    [] shake
+    [] płynne podążanie za graczem
+[] zarzadzanie zasobami
+[] prefaby np. przeciwnik - łucznika zamiast wpisywania ich statystyk w kodzie Javy.
+[] export do exe

@@ -2,12 +2,16 @@ package pl.sgl.engine;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class InputHandler implements KeyListener {
     // Tablica wszystkich możliwych klawiszy (standardowo 256 lub 65536 dla Unicode)
     private final boolean[] keys = new boolean[65536];
     private final boolean[] keysLast = new boolean[65536];
 
+    // --- DODATEK: Kolejka na wpisane litery ---
+    private final Queue<Character> charBuffer = new LinkedList<>();
 
     // Sprawdza, czy klawisz jest aktualnie trzymany
     public boolean isKeyDown(int keyCode) {
@@ -33,7 +37,14 @@ public class InputHandler implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Zazwyczaj nieużywane w grach, keyPressed jest lepsze
+        // --- DODATEK: Przechwytywanie liter ---
+        char c = e.getKeyChar();
+        // Ignorujemy znaki specjalne, które obsłużymy przez isKeyPressed
+        if (c != KeyEvent.CHAR_UNDEFINED && c != '\b' && c != '\n') {
+            synchronized (charBuffer) {
+                charBuffer.add(c);
+            }
+        }
     }
 
     // Metoda wywoływana raz na końcu każdego update'u w Game.java
@@ -48,5 +59,17 @@ public class InputHandler implements KeyListener {
 //        System.out.println(isKeyDown(keyCode));
 //        System.out.println(!keysLast[keyCode]);
         return isKeyDown(keyCode) && !keysLast[keyCode];
+    }
+
+    // --- DODATEK: Metoda do pobierania liter ---
+    public char getNextChar() {
+        synchronized (charBuffer) {
+            if (charBuffer.isEmpty()) return '\0';
+            return charBuffer.poll();
+        }
+    }
+
+    public void resetCharBuffer() {
+        charBuffer.clear();
     }
 }

@@ -8,6 +8,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 
     private int mouseX, mouseY;
     private final boolean[] buttons = new boolean[10];
+    private final boolean[] buttonsLast = new boolean[10];
 
     // Dane o transformacji
     private double scale = 1.0;
@@ -21,12 +22,24 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         this.offsetY = offsetY;
     }
 
-    public int getX() { return mouseX; }
-    public int getY() { return mouseY; }
+    ///gettery, aby uwzględniały skalowanie (o którym pisaliśmy wcześniej)
+    public int getX() { return (int) ((mouseX - offsetX) / scale); }
+    public int getY() { return (int) ((mouseY - offsetY) / scale); }
+
 
     public boolean isButtonDown(int button) {
         if (button < 0 || button >= buttons.length) return false;
         return buttons[button];
+    }
+
+    public boolean isButtonPressed(int button) {
+        if (button < 0 || button >= buttons.length) return false;
+        return buttons[button] && !buttonsLast[button];
+    }
+
+    // Metoda wywoływana przez silnik na końcu każdego update'u
+    public void update() {
+        System.arraycopy(buttons, 0, buttonsLast, 0, buttons.length);
     }
 
     // MouseMotionListener - śledzenie ruchu

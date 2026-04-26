@@ -21,6 +21,7 @@ public abstract class GameObject {
     public boolean showHitBox = false;
     protected double drawX;
     protected double drawY;
+    protected boolean visible = true;
 
     public GameObject(double x, double y) {
         this.x = x;
@@ -33,7 +34,6 @@ public abstract class GameObject {
     public void update(double deltaTime) {}
 
     public void draw(Graphics2D g2d, double alpha) {
-
         if (didTeleport) {
 //            renderX = (float) renderState.x;
             // Interpolacja pozycji
@@ -125,6 +125,14 @@ public abstract class GameObject {
 
         // 6. Zwracamy przetransformowany kształt
         return at.createTransformedShape(baseHitbox);
+    }
+
+    public void hide () {
+        visible = false;
+    }
+
+    public void show () {
+        visible = true;
     }
 //    public abstract void getCalculateAutoHitBoxes();
 }
