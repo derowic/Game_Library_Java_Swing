@@ -34,9 +34,13 @@ public class Colision {
     }
 
     public static boolean colisionWithListOfSprites(GameObject a, List<GameObject> sprites) {
+        Shape shapeA = a.getRotatedShape();
+
         for(GameObject g : sprites) {
             if(a != g) {
-                if (checkCollision(a.getRotatedShape(),g.getRotatedShape())) return true;
+                // Generujemy kształt obiektu G
+                Shape shapeG = g.getRotatedShape();
+                if (checkCollision(shapeA, shapeG)) return true;
             }
         }
         return false;

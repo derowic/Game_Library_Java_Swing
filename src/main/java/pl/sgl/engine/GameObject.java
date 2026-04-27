@@ -72,27 +72,47 @@ public abstract class GameObject {
         return new Rectangle(newX, newY, newW, newH);
     }
 
+    // WERSJA DLA LOGIKI (używa surowych x, y)
     public Shape getRotatedShape() {
-        Rectangle rec = getCalculatedAutoHitBoxes();
-        // 1. Tworzymy transformację
+        return getRotatedShape((float)this.x, (float)this.y);
+    }
+
+    // WERSJA UNIWERSALNA
+    public Shape getRotatedShape(float drawX, float drawY) {
         AffineTransform at = new AffineTransform();
 
-        // 2. Przesuwamy do środka obiektu (żeby obracać wokół centrum)
-        double centerX = x + rec.x + rec.width / 2.0;
-        double centerY = y + rec.y + rec.height / 2.0;
-        at.translate(centerX, centerY);
+        // 1. Przesunięcie do świata
+        at.translate(drawX, drawY);
 
-        // 3. Obracamy o zadany kąt
-        at.rotate(Math.toRadians(rotation));
+        // 2. Skalowanie wymiarów do obliczenia pivotu
+        double fW = width * scaleX;
+        double fH = height * scaleY;
 
-        // 4. Przesuwamy z powrotem, aby (0,0) było w rogu prostokąta
-        at.translate(-rec.width / 2.0, -rec.height / 2.0);
+        // 3. Obliczenie Pivotu (identycznie jak w draw)
+        double pX, pY;
+        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
+            pX = fW / 2.0;
+            pY = fH / 2.0;
+        } else {
+            pX = pivotX * scaleX;
+            pY = pivotY * scaleY;
+        }
 
-        // 5. Tworzymy bazowy prostokąt (bez rotacji)
-        Rectangle baseRect = new Rectangle(0, 0, rec.width, rec.height);
+        // 4. Obrót
+        if (rotation != 0) {
+            at.rotate(Math.toRadians(rotation), pX, pY);
+        }
 
-        // 6. Zwracamy OBRÓCONY kształt (jako Path2D)
-        return at.createTransformedShape(baseRect);
+        // 5. Tworzymy lokalny przeskalowany prostokąt
+        Rectangle rec = getCalculatedAutoHitBoxes();
+        Rectangle2D.Double scaledLocalRect = new Rectangle2D.Double(
+                rec.x * scaleX,
+                rec.y * scaleY,
+                rec.width * scaleX,
+                rec.height * scaleY
+        );
+
+        return at.createTransformedShape(scaledLocalRect);
     }
 
     public boolean checkCollision(Sprite s) {
@@ -106,28 +126,28 @@ public abstract class GameObject {
         return !area1.isEmpty();
     }
 
-    public Shape getRotatedShape(float drawX, float drawY) {
-        // 1. Pobieramy Tight Hitbox (współrzędne lokalne względem obrazka)
-        Rectangle rec = getCalculatedAutoHitBoxes();
-
-        // 2. Tworzymy transformację
-        AffineTransform at = new AffineTransform();
-
-        // 3. Przesuwamy do zinterpolowanej pozycji na ekranie
-        at.translate(drawX, drawY);
-
-        // 4. Obracamy wokół ŚRODKA OBRAZKA (nie środka hitboxa!)
-        // Bardzo ważne: Punkt obrotu musi być IDENTYCZNY jak w metodzie draw()
-        // Zazwyczaj jest to środek całej grafiki (width/2, height/2)
-        at.rotate(Math.toRadians(rotation), this.width / 2.0, this.height / 2.0);
-
-        // 5. Tworzymy bazowy prostokąt hitboxa w jego lokalnych współrzędnych
-        // Używamy rec.x i rec.y, bo tight hitbox może być przesunięty względem (0,0)
-        Rectangle2D baseHitbox = new Rectangle2D.Double(rec.x, rec.y, rec.width, rec.height);
-
-        // 6. Zwracamy przetransformowany kształt
-        return at.createTransformedShape(baseHitbox);
-    }
+//    public Shape getRotatedShape(float drawX, float drawY) {
+//        // 1. Pobieramy Tight Hitbox (współrzędne lokalne względem obrazka)
+//        Rectangle rec = getCalculatedAutoHitBoxes();
+//
+//        // 2. Tworzymy transformację
+//        AffineTransform at = new AffineTransform();
+//
+//        // 3. Przesuwamy do zinterpolowanej pozycji na ekranie
+//        at.translate(drawX, drawY);
+//
+//        // 4. Obracamy wokół ŚRODKA OBRAZKA (nie środka hitboxa!)
+//        // Bardzo ważne: Punkt obrotu musi być IDENTYCZNY jak w metodzie draw()
+//        // Zazwyczaj jest to środek całej grafiki (width/2, height/2)
+//        at.rotate(Math.toRadians(rotation), this.width / 2.0, this.height / 2.0);
+//
+//        // 5. Tworzymy bazowy prostokąt hitboxa w jego lokalnych współrzędnych
+//        // Używamy rec.x i rec.y, bo tight hitbox może być przesunięty względem (0,0)
+//        Rectangle2D baseHitbox = new Rectangle2D.Double(rec.x, rec.y, rec.width, rec.height);
+//
+//        // 6. Zwracamy przetransformowany kształt
+//        return at.createTransformedShape(baseHitbox);
+//    }
 
     public void hide () {
         visible = false;

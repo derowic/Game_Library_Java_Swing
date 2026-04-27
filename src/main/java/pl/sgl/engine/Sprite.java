@@ -35,60 +35,55 @@ public class Sprite extends GameObject {
 
     @Override
     public void draw(Graphics2D g, double alpha) {
-        // 1. Obliczamy interpolację RAZ
+        // 1. Obliczamy interpolację
         float dX = (float) (lastX + (x - lastX) * alpha);
         float dY = (float) (lastY + (y - lastY) * alpha);
 
-        // 2. TWORZYMY KOPIĘ DLA TEGO OBIEKTU
+        // 2. Tworzymy izolowaną kopię Graphics2D
         Graphics2D g2d = (Graphics2D) g.create();
 
-        // 3. TRANSFORMACJE
-//        g2d.translate(dX, dY);
+        // 3. Obliczamy wymiary po skalowaniu
         int fW = (int)(width * scaleX);
         int fH = (int)(height * scaleY);
 
-//        if (rotation != 0) {
-//            g2d.rotate(Math.toRadians(rotation), fW / 2.0, fH / 2.0);
-//        }
-
-        // 2. Wyznaczamy punkt obrotu (Pivot)
+        // 4. Wyznaczamy punkt obrotu (Pivot) - identycznie jak w getRotatedShape
         double pX, pY;
         if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
-            // DOMYŚLNIE: Centrum
             pX = fW / 2.0;
             pY = fH / 2.0;
         } else {
-            // UŻYTKOWNIKA: Skalujemy punkt podany przez użytkownika
             pX = pivotX * scaleX;
             pY = pivotY * scaleY;
         }
 
-        // 3. Transformacje
+        // 5. TRANSFORMACJE (Kolejność: Translate -> Rotate)
         g2d.translate(dX, dY);
         if (rotation != 0) {
-            // Obrót wokół wyznaczonego punktu pX, pY
             g2d.rotate(Math.toRadians(rotation), pX, pY);
         }
 
-        // 4. RYSOWANIE OBRAZKA
+        // 6. RYSOWANIE OBRAZKA (od 0,0 bo g2d jest już przesunięte)
         g2d.drawImage(texture.image, 0, 0, fW, fH, null);
 
-        // 5. RYSOWANIE HITBOXA (Używamy tego samego g2d!)
+        // 7. RYSOWANIE HITBOXA (Lokalnie!)
         if (showHitBox) {
-            // Ponieważ g2d jest już przesunięte (translate) i obrócone (rotate),
-            // rysujemy hitbox od punktu 0,0 względem obiektu!
-            Rectangle rec = getCalculatedAutoHitBoxes();
+            Rectangle rec = getCalculatedAutoHitBoxes(); // Pobiera bazowy rect (np. 0,0,16,16)
+
+            // Rysujemy na tym samym g2d, więc NIE dodajemy dX, dY.
+            // Musimy tylko przeskalować rozmiar samego prostokąta.
+            int rx = (int)(rec.x * scaleX);
+            int ry = (int)(rec.y * scaleY);
+            int rw = (int)(rec.width * scaleX);
+            int rh = (int)(rec.height * scaleY);
 
             g2d.setColor(Color.RED);
             g2d.setStroke(new BasicStroke(2.0f));
-            // Rysujemy prostokąt hitboxa (uwzględniając jego przesunięcie wewnątrz grafiki)
-            g2d.drawRect(rec.x, rec.y, rec.width, rec.height);
+            g2d.drawRect(rx, ry, rw, rh);
 
             g2d.setColor(new Color(255, 0, 0, 50));
-            g2d.fillRect(rec.x, rec.y, rec.width, rec.height);
+            g2d.fillRect(rx, ry, rw, rh);
         }
 
-        // 6. ZWALNIAMY KOPIĘ
         g2d.dispose();
     }
 //    public void draw(Graphics2D g2d, double alpha){
@@ -118,13 +113,13 @@ public class Sprite extends GameObject {
     @Override
     public void setScaleY(double scaleY) {
         this.scaleY = scaleY;
-        texture.rectangle.height *= (int) scaleY;
+        // USUNIĘTO: texture.rectangle.height *= scaleY; // NIGDY TEGO NIE RÓB
     }
 
     @Override
     public void setScaleX(double scaleX) {
         this.scaleX = scaleX;
-        texture.rectangle.width *= (int) scaleX;
+        // USUNIĘTO: texture.rectangle.width *= scaleX; // NIGDY TEGO NIE RÓB
     }
 
     public boolean intersects(Sprite s) {
