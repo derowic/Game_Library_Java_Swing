@@ -19,6 +19,8 @@ class Window {
     public Window(String title, int width, int height) {
         this.oldWidth = width;
         this.oldHeight = height;
+        ConfigureData.oldHeight = height;
+        ConfigureData.oldWidth = width;
         // 1. Włącz akcelerację sprzętową PRZED utworzeniem okna
         System.setProperty("sun.java2d.opengl", "true");
 

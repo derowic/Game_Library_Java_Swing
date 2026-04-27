@@ -1,7 +1,10 @@
+[x] scale hitbox with the sprite
+[] scaling UI for fullscreen
+[] scaling and rotating at setted point
+
 [] camera, camera move rotate and scale (zoom)
 [] multiplayer and minimap
-[] scaling for fullscreen
-[] add ui elements:
+[X] add ui elements:
     [] buttons
     [] inputs
     [] sliders
@@ -23,3 +26,4 @@
 [] zarzadzanie zasobami
 [] prefaby np. przeciwnik - łucznika zamiast wpisywania ich statystyk w kodzie Javy.
 [] export do exe
+

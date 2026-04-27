@@ -48,6 +48,9 @@ public class Game implements Runnable {
     private long lastToggleTime = 0;
     private static final long COOLDOWN_MS = 500; // pół sekundy przerwy między zmianami
 
+    protected double zoom = 1.0; // 1.0 = 100%, 2.0 = 200% przybliżenia
+    protected double lastZoom = 1.0;
+
 
     public Game(String title, int width, int height) {
         window = new Window(title, width, height);
@@ -196,6 +199,7 @@ public class Game implements Runnable {
     protected void update() {
         // Zapisujemy poprzedni stan przed aktualizacją
         lastTickTime = System.nanoTime();
+//        lastZoom = zoom;
 
         for (GameObject s : currentGame.sprites) {
             s.update(deltaTime);
@@ -225,8 +229,11 @@ public class Game implements Runnable {
         List<GameObject> snapshotSprites = new ArrayList<>(currentGame.sprites);
         List<UIElement> snapshotUIElements = new ArrayList<>(currentGame.UIElements);
 
+        ConfigureData.zoom = currentGame.zoom;
+        ConfigureData.camX = currentGame.camX;
+        ConfigureData.camY = currentGame.camY;
         // 3. PUBLIKUJEMY - Podmieniamy całe pudełko (to jest bezpieczne dzięki volatile)
-        this.currentSnapshot = new GameState(snapshotSprites, snapshotUIElements, currentGame.tileMap, currentGame.camX, currentGame.camY);
+        this.currentSnapshot = new GameState(snapshotSprites, snapshotUIElements, currentGame.tileMap, currentGame.camX, currentGame.camY, currentGame.zoom, currentGame.lastZoom);
 
         input.update();
         mouse.update();
@@ -316,12 +323,29 @@ public class Game implements Runnable {
     private void renderWorld(double alpha) {
         GameState renderState = this.currentSnapshot;
 
+        // 1. Obliczamy zinterpolowany zoom
+//        float drawZoom = (float) (renderState.zoom+ (renderState.zoom) * alpha);
+        float drawZoom = (float) renderState.zoom;
+
         // TWORZYMY JEDNĄ KOPIĘ DLA CAŁEGO ŚWIATA (Kamera / Globalne przesunięcie)
         Graphics2D worldG = (Graphics2D) window.g.create();
 
         // Ustawiamy hinty raz dla całego świata (to przyspiesza!)
         worldG.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         worldG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // --- MAGIA ZOOMU (Wyśrodkowanego) ---
+        // Pobieramy rozmiar wirtualny (np. 1280x720)
+        int vW = window.oldWidth;
+        int vH = window.oldHeight;
+
+        // A. Przesuwamy punkt (0,0) na środek ekranu wirtualnego
+        worldG.translate(vW / 2.0, vH / 2.0);
+        // B. Skalujemy świat (Zoom)
+        worldG.scale(drawZoom, drawZoom);
+        // C. Cofamy przesunięcie (teraz środek świata jest na środku ekranu)
+        worldG.translate(-vW / 2.0, -vH / 2.0);
+
 
         // Globalne przesunięcie (Kamera + Twoje testowe 200px)
         worldG.translate(0 - renderState.camX, 0 - renderState.camY);
@@ -344,21 +368,21 @@ public class Game implements Runnable {
     private void renderUI(Graphics2D g) {
         GameState renderState = this.currentSnapshot;
         // TWORZYMY JEDNĄ KOPIĘ DLA CAŁEGO ŚWIATA (Kamera / Globalne przesunięcie)
-        Graphics2D worldG = (Graphics2D) window.g.create();
+//        Graphics2D worldG = (Graphics2D) window.g.create();
 
         // Ustawiamy hinty raz dla całego świata (to przyspiesza!)
-        worldG.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        worldG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//        worldG.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//        worldG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Globalne przesunięcie (Kamera + Twoje testowe 200px)
-        worldG.translate(0 - renderState.camX, 0 - renderState.camY);
+//        worldG.translate(0 + renderState.camX, 0 + renderState.camY);
         for (UIElement e : renderState.UIElements) {
             if (e.isHovered) {
                 window.getCanvas().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             } else {
                 window.getCanvas().setCursor(Cursor.getDefaultCursor());
             }
-            e.draw(worldG);
+            e.draw(g);
 
         }
     }

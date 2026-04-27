@@ -92,7 +92,20 @@ public class Sprite extends GameObject {
 
     @Override
     public Rectangle getCalculatedAutoHitBoxes() {
+
         return texture.getHitBox();
+    }
+
+    @Override
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
+        texture.rectangle.height *= scaleY;
+    }
+
+    @Override
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
+        texture.rectangle.width *= scaleX;
     }
 
     public boolean intersects(Sprite s) {

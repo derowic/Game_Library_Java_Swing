@@ -37,15 +37,19 @@ public class Main extends Game {
         super("Test", 1280, 720);
         // Ładujemy raz przy starcie
         Sprite s2 = new Sprite("/textures/ship2.png", 670, 100);
-        s2.rotation = 45;
+        s2.rotation = 20;
         s2.showHitBox = true;
+//        s2.scaleX =2 ;
+        s2.setScaleX(2);
         addGameObject(s2);
 
-        Animation an = new Animation("/textures/mario-walk.png",0,0, 100, 100, 3);
+        Animation an = new Animation("/textures/mario-walk.png",0,0,61,64,3);
         playerWalk = new AnimatedSprite(0.1, 400, 50); // zmiana klatki co 0.1 sekundy
         playerWalk.addAnimation("walk", an);
         playerWalk.showHitBox = true;
         playerWalk.rotation = 45;
+//        playerWalk.scaleX = 2;
+        playerWalk.setScaleX(2);
         addGameObject(playerWalk);
 
         startButton = new Button("ZAGRAJ", 300, 250, 200, 50);
@@ -117,8 +121,8 @@ public class Main extends Game {
         }
 
         // Sprawdzenie pozycji
-        int mx = mouse.getX();
-        int my = mouse.getY();
+        int mx = mouse.getWorldX();
+        int my = mouse.getWorldY();
 
         // Reakcja na lewy przycisk myszy (MouseEvent.BUTTON1)
         if (mouse.isButtonDown(java.awt.event.MouseEvent.BUTTON1)) {
@@ -168,12 +172,15 @@ public class Main extends Game {
                 currentGame.sprites.get(0).width,
                 currentGame.sprites.get(0).height
         );
-        if(tmp) {
+        if(tmp == true) {
             System.out.println("kolizja z tilemapa");
         }
 //        System.out.println(currentGame.sprites.get(0).x);
 
 //        System.out.println(tmp);
+
+        if (input.isKeyDown(KeyEvent.VK_Q)) currentGame.zoom += 0.1;
+        if (input.isKeyDown(KeyEvent.VK_E)) currentGame.zoom -= 0.1;
 
         super.update();
     }

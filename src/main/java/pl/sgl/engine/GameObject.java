@@ -14,8 +14,8 @@ public abstract class GameObject {
     public boolean didTeleport = false;
     public double velocityX = 0.0;
     public double velocityY = 0.0;
-    public double scaleX = 1.0;
-    public double scaleY= 1.0;
+    protected double scaleX = 1.0;
+    protected double scaleY= 1.0;
     protected int width = 0;
     protected int height =0;
     public boolean showHitBox = false;
@@ -134,5 +134,15 @@ public abstract class GameObject {
     public void show () {
         visible = true;
     }
+
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
+    }
+
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
+    }
+
+
 //    public abstract void getCalculateAutoHitBoxes();
 }

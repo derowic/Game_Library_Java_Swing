@@ -35,6 +35,9 @@ public class GameState {
 
     public double camX=0;
     public double camY=0;
+    public double zoom = 1.0;
+    public double lastZoom = 1.0;
+// Zaktualizuj konstruktor GameState, aby przyjmował te wartości.
 
     public GameState(List<Primitive> primitives, List<Sprite> sprites) {
         this.entities = new ArrayList<>(primitives);
@@ -47,12 +50,14 @@ public class GameState {
     }
 
 
-    public GameState(List<GameObject> sprites, List<UIElement> UIElements, TileMap tileMap, double camX, double camY) {
+    public GameState(List<GameObject> sprites, List<UIElement> UIElements, TileMap tileMap, double camX, double camY, double zoom, double lastZoom) {
         this.entities = new ArrayList<>();
         this.sprites = new ArrayList<>(sprites);
         this.UIElements = new ArrayList<>(UIElements);
         this.camX = camX;
         this.camY = camY;
         this.tileMap = tileMap;
+        this.zoom = zoom;
+        this.lastZoom = lastZoom;
     }
 }

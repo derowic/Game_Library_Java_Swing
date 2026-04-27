@@ -26,6 +26,20 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     public int getX() { return (int) ((mouseX - offsetX) / scale); }
     public int getY() { return (int) ((mouseY - offsetY) / scale); }
 
+    public int getWorldX() {
+        double logicX = (mouseX - offsetX) / scale;
+        // 1. Odwracamy zoom (środkujemy względem środka ekranu)
+        double zoomedX = (logicX - ConfigureData.oldWidth/2.0) / ConfigureData.zoom + ConfigureData.oldWidth/2.0;
+        // 2. Dodajemy pozycję kamery
+        return (int) (zoomedX + ConfigureData.camX);
+    }
+
+    public int getWorldY() {
+        double logicY = (mouseY - offsetY) / scale;
+        double zoomedY = (logicY - ConfigureData.oldHeight/2.0) / ConfigureData.zoom + ConfigureData.oldHeight /2.0;
+        return (int) (zoomedY + ConfigureData.camY);
+    }
+
 
     public boolean isButtonDown(int button) {
         if (button < 0 || button >= buttons.length) return false;

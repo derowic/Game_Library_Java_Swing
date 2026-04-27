@@ -142,4 +142,18 @@ public class AnimatedSprite extends GameObject {
     public Rectangle getCalculatedAutoHitBoxes() {
         return globalHitbox;
     }
+
+    @Override
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
+        globalHitbox.height *= scaleY;
+    }
+
+    @Override
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
+        globalHitbox.width *= scaleX;
+    }
+
+
 }
