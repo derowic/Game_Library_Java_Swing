@@ -107,12 +107,14 @@ public class TileMap {
         if (left < 0 || right >= data[0].length || top < 0 || bottom >= data.length) return true;
 
         // Jeśli którykolwiek narożnik dotyka kafelka o ID 1 (np. ściana) -> kolizja
-        return (
+        boolean tmp = (
                 isColision(data[top][left]) ||
                         isColision(data[top][right]) ||
                 isColision(data[bottom][left]) ||
                         isColision(data[bottom][right])
         );
+
+        return tmp;
     }
 
     public boolean isColision(int tileId) {

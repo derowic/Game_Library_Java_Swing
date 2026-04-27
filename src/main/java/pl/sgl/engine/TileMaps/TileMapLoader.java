@@ -52,7 +52,20 @@ public class TileMapLoader {
 
             // 3. Parsuj plik
             JsonObject json = JsonParser.parseReader(jsonReader).getAsJsonObject();
-            JsonArray tiles = json.getAsJsonArray("tiles");
+
+            JsonArray tiles = json.getAsJsonArray("tilesets");
+            // 2. Pobieramy PIERWSZY element z tej tablicy (indeks 0) jako obiekt
+            JsonObject firstTileset = tiles.get(0).getAsJsonObject();
+
+// 3. Z tego obiektu wyciągamy tablicę "tiles"
+            if (firstTileset.has("tiles")) {
+                tiles = firstTileset.getAsJsonArray("tiles");
+
+                System.out.println("Znaleziono definicję dla kafelków");
+
+            } else {
+                System.out.println("Ten tileset nie ma zdefiniowanych właściwości kafelków (brak tablicy 'tiles')");
+            }
 
             if (tiles != null) {
                 for (JsonElement tileElement : tiles) {

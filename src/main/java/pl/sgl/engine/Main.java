@@ -159,12 +159,18 @@ public class Main extends Game {
 
         boolean tmp =false;
         tmp = currentGame.tileMap.isCollidingWithWall(
+//               mx,
+//                my,
+//                20,
+//               20
                 currentGame.sprites.get(0).x,
                 currentGame.sprites.get(0).y,
                 currentGame.sprites.get(0).width,
                 currentGame.sprites.get(0).height
         );
-
+        if(tmp) {
+            System.out.println("kolizja z tilemapa");
+        }
 //        System.out.println(currentGame.sprites.get(0).x);
 
 //        System.out.println(tmp);
