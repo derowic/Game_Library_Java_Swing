@@ -37,10 +37,11 @@ public class Main extends Game {
         super("Test", 1280, 720);
         // Ładujemy raz przy starcie
         Sprite s2 = new Sprite("/textures/ship2.png", 670, 100);
-        s2.rotation = 20;
+        s2.rotation = 90;
         s2.showHitBox = true;
 //        s2.scaleX =2 ;
         s2.setScaleX(2);
+        s2.setPivot(50,20);
         addGameObject(s2);
 
         Animation an = new Animation("/textures/mario-walk.png",0,0,61,64,3);

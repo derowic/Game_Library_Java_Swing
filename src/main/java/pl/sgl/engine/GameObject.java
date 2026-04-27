@@ -22,6 +22,8 @@ public abstract class GameObject {
     protected double drawX;
     protected double drawY;
     protected boolean visible = true;
+    protected double pivotX = Double.NaN;
+    protected double pivotY = Double.NaN;
 
     public GameObject(double x, double y) {
         this.x = x;
@@ -141,6 +143,16 @@ public abstract class GameObject {
 
     public void setScaleX(double scaleX) {
         this.scaleX = scaleX;
+    }
+
+    public void setPivot(double x, double y) {
+        this.pivotX = x;
+        this.pivotY = y;
+    }
+
+    public void resetPivotToCenter() {
+        this.pivotX = Double.NaN;
+        this.pivotY = Double.NaN;
     }
 
 

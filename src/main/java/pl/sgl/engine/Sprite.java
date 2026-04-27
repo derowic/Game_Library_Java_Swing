@@ -43,12 +43,31 @@ public class Sprite extends GameObject {
         Graphics2D g2d = (Graphics2D) g.create();
 
         // 3. TRANSFORMACJE
-        g2d.translate(dX, dY);
+//        g2d.translate(dX, dY);
         int fW = (int)(width * scaleX);
         int fH = (int)(height * scaleY);
 
+//        if (rotation != 0) {
+//            g2d.rotate(Math.toRadians(rotation), fW / 2.0, fH / 2.0);
+//        }
+
+        // 2. Wyznaczamy punkt obrotu (Pivot)
+        double pX, pY;
+        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
+            // DOMYŚLNIE: Centrum
+            pX = fW / 2.0;
+            pY = fH / 2.0;
+        } else {
+            // UŻYTKOWNIKA: Skalujemy punkt podany przez użytkownika
+            pX = pivotX * scaleX;
+            pY = pivotY * scaleY;
+        }
+
+        // 3. Transformacje
+        g2d.translate(dX, dY);
         if (rotation != 0) {
-            g2d.rotate(Math.toRadians(rotation), fW / 2.0, fH / 2.0);
+            // Obrót wokół wyznaczonego punktu pX, pY
+            g2d.rotate(Math.toRadians(rotation), pX, pY);
         }
 
         // 4. RYSOWANIE OBRAZKA
@@ -99,13 +118,13 @@ public class Sprite extends GameObject {
     @Override
     public void setScaleY(double scaleY) {
         this.scaleY = scaleY;
-        texture.rectangle.height *= scaleY;
+        texture.rectangle.height *= (int) scaleY;
     }
 
     @Override
     public void setScaleX(double scaleX) {
         this.scaleX = scaleX;
-        texture.rectangle.width *= scaleX;
+        texture.rectangle.width *= (int) scaleX;
     }
 
     public boolean intersects(Sprite s) {
