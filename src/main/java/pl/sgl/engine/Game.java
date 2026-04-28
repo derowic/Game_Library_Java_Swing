@@ -45,13 +45,6 @@ public class Game implements Runnable {
     private boolean isSwitching = false;
     public String windowMode = "window";
 
-    private long lastToggleTime = 0;
-    private static final long COOLDOWN_MS = 500; // pół sekundy przerwy między zmianami
-
-    protected double zoom = 1.0; // 1.0 = 100%, 2.0 = 200% przybliżenia
-    protected double lastZoom = 1.0;
-
-
     public Game(String title, int width, int height) {
         window = new Window(title, width, height);
         window.initInput(input);  // Klawiatura
@@ -191,6 +184,7 @@ public class Game implements Runnable {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
@@ -246,7 +240,7 @@ public class Game implements Runnable {
         frameCount++; // Zwiększamy licznik przy każdym wywołaniu renderu
         window.prepareToRender();
 
-        Graphics2D g = (Graphics2D) window.g;
+        Graphics2D g = window.g;
 
 
 

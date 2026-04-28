@@ -12,8 +12,8 @@ class Window {
     public BufferStrategy bs;
     public Graphics2D g;
     public boolean showMouse = true;
-    protected int oldWidth = 0;
-    protected int oldHeight = 0;
+    protected int oldWidth;
+    protected int oldHeight;
     public String typeOfRenderingSprites = "normal";
 
 
