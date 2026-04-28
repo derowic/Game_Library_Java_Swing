@@ -193,9 +193,22 @@ public class Game implements Runnable {
 
     protected void update() {
         // Zapisujemy poprzedni stan przed aktualizacją
+        input.update();
+        mouse.update();
         lastTickTime = System.nanoTime();
-//        lastZoom = zoom;
 
+        //sprawdz czy coś klikniete, jeśli tak to sprawdz co i wyczysc kliniecie aby logika spritów nie wiedziała ze kliniete
+
+        W profesjonalnych silnikach gier ten mechanizm nazywa się Input Consumption (pochłanianie wejścia) lub Event Bubbling.
+                Polega on na tym, że zdarzenia wejściowe (kliknięcia, klawisze) przechodzą przez warstwy gry od najwyższej (UI)
+    do najniższej (Świat gry). Jeśli wyższa warstwa "skonsumuje" kliknięcie, niższa o nim nie wie.
+        for (UIElement e : currentGame.UIElements) {
+            if(e.getClass() == InputField.class) {
+                e.update(input,mouse);
+            } else {
+                e.update(mouse);
+            }
+        }
         for (GameObject s : currentGame.sprites) {
             s.update(deltaTime);
 
@@ -210,13 +223,7 @@ public class Game implements Runnable {
         }
 
 
-        for (UIElement e : currentGame.UIElements) {
-            if(e.getClass() == InputField.class) {
-                e.update(input,mouse);
-            } else {
-                e.update(mouse);
-            }
-        }
+
         // 2. STWÓRZ SNAPSHOT (Zdjęcie)
         // Tworzymy nową listę, która zawiera KOPIE stanów obiektów
         // (W uproszczeniu: kopiujemy referencje do nowej listy,
@@ -230,8 +237,7 @@ public class Game implements Runnable {
         // 3. PUBLIKUJEMY - Podmieniamy całe pudełko (to jest bezpieczne dzięki volatile)
         this.currentSnapshot = new GameState(snapshotSprites, snapshotUIElements, currentGame.tileMap, currentGame.camX, currentGame.camY, currentGame.zoom, currentGame.lastZoom);
 
-        input.update();
-        mouse.update();
+
     }
 
     private void render(double alpha) {

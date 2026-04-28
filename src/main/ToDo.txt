@@ -14,7 +14,7 @@
 [] obsługa obrotu wokół gracza, taki kontroller jak w unity
 [] fizyka
 [x] tailemaps system
-[] system scen
+[] system scen, scena menu, scena game over
 [] system cząsteczek
 [] system efektów specjalnych
 [] ukrywanie obiektów
@@ -22,7 +22,8 @@
 [] zaawanswoana camera
     [] shake
     [] płynne podążanie za graczem
-[] zarzadzanie zasobami
+[] zarzadzanie zasobami (texture loading, aniamtion loading, music itp.)
 [] prefaby np. przeciwnik - łucznika zamiast wpisywania ich statystyk w kodzie Javy.
 [] export do exe
+[] okno do układania tilemap z oznaczeniami (taki podprogram)
 
