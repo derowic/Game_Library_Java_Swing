@@ -14,7 +14,7 @@ class Window {
     public boolean showMouse = true;
     protected int oldWidth = 0;
     protected int oldHeight = 0;
-    protected String typeOfRenderingSprites = "normal";
+    public String typeOfRenderingSprites = "normal";
 
 
     public Window(String title, int width, int height) {
@@ -141,8 +141,21 @@ class Window {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());  // czyść ekran
 
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
+        typeOfRenderedPipeLine(g);
+    }
+
+    public void typeOfRenderedPipeLine (Graphics2D g) {
+        switch (typeOfRenderingSprites) {
+            case "pixelart":
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                break;
+            case "normal":
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                break;
+
+        }
     }
 
     public void render() {

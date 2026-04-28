@@ -1,21 +1,19 @@
 [x] scale hitbox with the sprite
 [x] scaling UI for fullscreen
 [x] scaling and rotating at setted point
-[] tilemap scalling
-
+[x] tilemap scalling -> solve: scaling => zooming, zooming don't interrupt graphic sclae, colision and speed on screen
 [] camera, camera move rotate and scale (zoom)
 [] multiplayer and minimap
 [X] add ui elements:
-    [] buttons
-    [] inputs
-    [] sliders
+    [x] buttons
+    [x] inputs
+    [x] sliders
     [] styling ui
-    []
+    [] checkbox
 
 [] obsługa obrotu wokół gracza, taki kontroller jak w unity
-[] porzadne ui
 [] fizyka
-[] tailemaps system
+[x] tailemaps system
 [] system scen
 [] system cząsteczek
 [] system efektów specjalnych

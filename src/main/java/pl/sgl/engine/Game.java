@@ -57,6 +57,7 @@ public class Game implements Runnable {
         window.initInput(input);  // Klawiatura
         window.initMouse(mouse);  // Myszka
         window.show();
+        window.typeOfRenderingSprites = "pixelart";
     }
 
     public void toggleFullScreen(String mode) {
@@ -250,8 +251,7 @@ public class Game implements Runnable {
 
 
 //        // Ustawiamy hinty raz dla całego świata (to przyspiesza!)
-//        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
 
         try {
             // Rozmiar wirtualny (Twojej gry)
@@ -271,8 +271,6 @@ public class Game implements Runnable {
 
             // 3. AKTUALIZUJEMY MYSZKĘ (Wysyłamy dane o skali do handlera)
             mouse.setTransformation(scale, offsetX, offsetY);
-
-
 
             // 2. Transformacja: Najpierw przesuń do środka, potem skaluj
             g.translate(offsetX, offsetY);
