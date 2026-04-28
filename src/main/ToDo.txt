@@ -1,6 +1,7 @@
 [x] scale hitbox with the sprite
-[] scaling UI for fullscreen
-[] scaling and rotating at setted point
+[x] scaling UI for fullscreen
+[x] scaling and rotating at setted point
+[] tilemap scalling
 
 [] camera, camera move rotate and scale (zoom)
 [] multiplayer and minimap

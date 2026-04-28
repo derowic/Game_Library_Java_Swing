@@ -100,7 +100,7 @@ public class Game implements Runnable {
         // Wątek LOGIKI (Update)
         Thread logicThread = new Thread(this, "LogicThread");
         logicThread.start();
-                                // poprzez this przekazujesz cały obiekt Game z oknem do wątku
+        // poprzez this przekazujesz cały obiekt Game z oknem do wątku
         startRenderLoop();
     }
 
@@ -247,6 +247,12 @@ public class Game implements Runnable {
 
         Graphics2D g = (Graphics2D) window.g;
 
+
+
+//        // Ustawiamy hinty raz dla całego świata (to przyspiesza!)
+//        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         try {
             // Rozmiar wirtualny (Twojej gry)
             int virtualW = window.oldWidth;
@@ -330,9 +336,7 @@ public class Game implements Runnable {
         // TWORZYMY JEDNĄ KOPIĘ DLA CAŁEGO ŚWIATA (Kamera / Globalne przesunięcie)
         Graphics2D worldG = (Graphics2D) window.g.create();
 
-        // Ustawiamy hinty raz dla całego świata (to przyspiesza!)
-        worldG.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        worldG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
 
         // --- MAGIA ZOOMU (Wyśrodkowanego) ---
         // Pobieramy rozmiar wirtualny (np. 1280x720)

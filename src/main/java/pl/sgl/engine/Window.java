@@ -14,6 +14,7 @@ class Window {
     public boolean showMouse = true;
     protected int oldWidth = 0;
     protected int oldHeight = 0;
+    protected String typeOfRenderingSprites = "normal";
 
 
     public Window(String title, int width, int height) {
@@ -52,12 +53,12 @@ class Window {
 
                 // 2. Konfiguracja pod Fullscreen i Linuxa
                 frame.setUndecorated(true);
-                frame.setAlwaysOnTop(true);
+//                frame.setAlwaysOnTop(true);
                 frame.setResizable(false); // Kluczowe dla menedżerów okien na Linuxie
 
                 // Ustawienie typu okna na POPUP (to naprawia problem z panelem na Mint/Ubuntu)
                 // Musi być java.awt.Window.Type.POPUP
-                frame.setType(java.awt.Window.Type.POPUP);
+                frame.setType(java.awt.Window.Type.NORMAL);
 
                 // 3. Włączamy tryb pełnoekranowy
                 gd.setFullScreenWindow(frame);
@@ -139,6 +140,9 @@ class Window {
         // ── tutaj rysujesz ──────────────────────
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());  // czyść ekran
+
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+
     }
 
     public void render() {

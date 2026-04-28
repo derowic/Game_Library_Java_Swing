@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameState {
-//    public final double x, y, lastX, lastY;
+    //    public final double x, y, lastX, lastY;
 //    public final boolean didTeleport;
 //
 //    public GameState(double x, double y, double lastX, double lastY, boolean didTeleport) {

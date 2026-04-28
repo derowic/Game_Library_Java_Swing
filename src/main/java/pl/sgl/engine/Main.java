@@ -84,6 +84,8 @@ public class Main extends Game {
 
 //        tileMap = new TileMap();
 //        tileMap.dr
+
+
     }
     @Override
     protected void update() {
@@ -92,6 +94,7 @@ public class Main extends Game {
         if (isKeyPressed(KeyEvent.VK_ESCAPE)) {
             System.out.println("switch");
             this.toggleFullScreen("window");
+//            System.exit(0);
         }
 
         if (isKeyPressed(KeyEvent.VK_F)) {
@@ -131,8 +134,8 @@ public class Main extends Game {
         // Reakcja na lewy przycisk myszy (MouseEvent.BUTTON1)
         if (mouse.isButtonDown(java.awt.event.MouseEvent.BUTTON1)) {
             // Przykładowo: postać teleportuje się tam, gdzie klikniemy
-           currentGame.sprites.get(0).x = mx;
-           currentGame.sprites.get(0).y = my;
+            currentGame.sprites.get(0).x = mx;
+            currentGame.sprites.get(0).y = my;
         }
 
         Rectangle enemyHitbox = new Rectangle((int)currentGame.sprites.get(1).x, (int)currentGame.sprites.get(1).y, 50, 50);
@@ -160,22 +163,23 @@ public class Main extends Game {
         // Aktualizacja UI
 
         if (mouse.isButtonPressed(MouseEvent.BUTTON1) && startButton.isClicked(mouse)) {
-//            System.out.println("Startujemy!");
+//   wadsss         System.out.println("Startujemy!");
             score++;
             scoreLabel.text = "PUNKTY: " + score;
         }
 
         boolean tmp =false;
         tmp = currentGame.tileMap.isCollidingWithWall(
-//               mx,
-//                my,
-//                20,
-//               20
-                currentGame.sprites.get(0).x,
-                currentGame.sprites.get(0).y,
-                currentGame.sprites.get(0).width,
-                currentGame.sprites.get(0).height
+               mx,
+                my,
+                20,
+               20
+//                currentGame.sprites.get(0).x,
+//                currentGame.sprites.get(0).y,
+//                currentGame.sprites.get(0).width,
+//                currentGame.sprites.get(0).height
         );
+
         if(tmp == true) {
             System.out.println("kolizja z tilemapa");
         }
