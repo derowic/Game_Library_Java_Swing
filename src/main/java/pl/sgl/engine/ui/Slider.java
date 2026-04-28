@@ -14,14 +14,14 @@ public class Slider extends UIElement {
 
     @Override
     public void update(MouseHandler mouse) {
-        if (mouse.isButtonDown(1) && bounds.contains(mouse.getX(), mouse.getY())) {
+        if (mouse.isButtonDown(1) && bounds.contains(mouse.getUIX(), mouse.getUIY())) {
             dragging = true;
         }
         if (!mouse.isButtonDown(1)) dragging = false;
 
         if (dragging) {
             // Obliczamy wartość na podstawie pozycji myszy względem paska
-            float mouseRelX = mouse.getX() - bounds.x;
+            float mouseRelX = mouse.getUIX() - bounds.x;
             value = mouseRelX / (float)bounds.width;
 
             // Ograniczenie 0-1

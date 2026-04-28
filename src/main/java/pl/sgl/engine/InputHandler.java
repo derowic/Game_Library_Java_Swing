@@ -7,8 +7,8 @@ import java.util.Queue;
 
 public class InputHandler implements KeyListener {
     // Tablica wszystkich możliwych klawiszy (standardowo 256 lub 65536 dla Unicode)
-    private final boolean[] keys = new boolean[65536];
-    private final boolean[] keysLast = new boolean[65536];
+    private boolean[] keys = new boolean[65536];
+    private boolean[] keysLast = new boolean[65536];
 
     // --- DODATEK: Kolejka na wpisane litery ---
     private final Queue<Character> charBuffer = new LinkedList<>();
@@ -71,5 +71,18 @@ public class InputHandler implements KeyListener {
 
     public void resetCharBuffer() {
         charBuffer.clear();
+    }
+
+    // W InputHandler.java
+    public void consumeKey(int keyCode) {
+        if (keyCode >= 0 && keyCode < keys.length) {
+            keys[keyCode] = false;
+            keysLast[keyCode] = true; // Ustawiamy true, żeby isKeyPressed również zwróciło false
+        }
+    }
+
+    public void reset() {
+        boolean[] keys = new boolean[65536];
+        boolean[] keysLast = new boolean[65536];
     }
 }

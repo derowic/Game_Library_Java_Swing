@@ -193,16 +193,22 @@ public class Game implements Runnable {
 
     protected void update() {
         // Zapisujemy poprzedni stan przed aktualizacją
-        input.update();
-        mouse.update();
+
         lastTickTime = System.nanoTime();
+
+
+
+        // 2. Aktualizuj UI
+        currentGame.uiManager.update(input, mouse);
 
         //sprawdz czy coś klikniete, jeśli tak to sprawdz co i wyczysc kliniecie aby logika spritów nie wiedziała ze kliniete
 
-        W profesjonalnych silnikach gier ten mechanizm nazywa się Input Consumption (pochłanianie wejścia) lub Event Bubbling.
-                Polega on na tym, że zdarzenia wejściowe (kliknięcia, klawisze) przechodzą przez warstwy gry od najwyższej (UI)
-    do najniższej (Świat gry). Jeśli wyższa warstwa "skonsumuje" kliknięcie, niższa o nim nie wie.
-        for (UIElement e : currentGame.UIElements) {
+//        W profesjonalnych silnikach gier ten mechanizm nazywa się Input Consumption (pochłanianie wejścia) lub Event Bubbling.
+//                Polega on na tym, że zdarzenia wejściowe (kliknięcia, klawisze) przechodzą przez warstwy gry od najwyższej (UI)
+//    do najniższej (Świat gry). Jeśli wyższa warstwa "skonsumuje" kliknięcie, niższa o nim nie wie.
+
+
+        for (UIElement e : currentGame.uiManager.getElements()) {
             if(e.getClass() == InputField.class) {
                 e.update(input,mouse);
             } else {
@@ -229,15 +235,16 @@ public class Game implements Runnable {
         // (W uproszczeniu: kopiujemy referencje do nowej listy,
         // ale profesjonalnie kopiuje się wartości x, y do nowych obiektów-struktur)
         List<GameObject> snapshotSprites = new ArrayList<>(currentGame.sprites);
-        List<UIElement> snapshotUIElements = new ArrayList<>(currentGame.UIElements);
+//        List<UIElement> snapshotUIElements = new ArrayList<>(currentGame.UIElements);
 
         ConfigureData.zoom = currentGame.zoom;
         ConfigureData.camX = currentGame.camX;
         ConfigureData.camY = currentGame.camY;
         // 3. PUBLIKUJEMY - Podmieniamy całe pudełko (to jest bezpieczne dzięki volatile)
-        this.currentSnapshot = new GameState(snapshotSprites, snapshotUIElements, currentGame.tileMap, currentGame.camX, currentGame.camY, currentGame.zoom, currentGame.lastZoom);
+        this.currentSnapshot = new GameState(snapshotSprites, currentGame.uiManager, currentGame.tileMap, currentGame.camX, currentGame.camY, currentGame.zoom, currentGame.lastZoom);
 
-
+        input.update();
+        mouse.update();
     }
 
     private void render(double alpha) {
@@ -378,7 +385,7 @@ public class Game implements Runnable {
 
         // Globalne przesunięcie (Kamera + Twoje testowe 200px)
 //        worldG.translate(0 + renderState.camX, 0 + renderState.camY);
-        for (UIElement e : renderState.UIElements) {
+        for (UIElement e : renderState.uiManager.getElements()) {
             if (e.isHovered) {
                 window.getCanvas().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             } else {

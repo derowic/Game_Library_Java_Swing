@@ -57,14 +57,14 @@ public class Main extends Game {
         addGameObject(playerWalk);
 
         startButton = new Button("ZAGRAJ", 300, 250, 200, 50);
-        scoreLabel = new Text("PUNKTY: 0", 20, 40, 24);
+        scoreLabel = new Text( "PUNKTY: 0", 20, 40, 24);
         inputField = new InputField(600, 450, 200, 25, 12);
         slider = new Slider(600, 550, 200, 50);
 
-        currentGame.UIElements.add(startButton);
-        currentGame.UIElements.add(scoreLabel);
-        currentGame.UIElements.add(inputField);
-        currentGame.UIElements.add(slider);
+        currentGame.uiManager.addElement(startButton);
+        currentGame.uiManager.addElement(scoreLabel);
+        currentGame.uiManager.addElement(inputField);
+        currentGame.uiManager.addElement(slider);
 
 //        currentGame.tileMap = new TileMap("", 64);
 
@@ -141,7 +141,7 @@ public class Main extends Game {
         Rectangle enemyHitbox = new Rectangle((int)currentGame.sprites.get(1).x, (int)currentGame.sprites.get(1).y, 50, 50);
 
         // Sprawdź czy kursor jest wewnątrz hitboxa I czy kliknięto przycisk
-        if (enemyHitbox.contains(mouse.getX(), mouse.getY())) {
+        if (enemyHitbox.contains(mouse.getUIX(), mouse.getUIY())) {
             if (mouse.isButtonDown(1)) {
                 System.out.println("Trafiłeś przeciwnika!");
             }

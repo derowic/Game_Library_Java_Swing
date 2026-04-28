@@ -34,7 +34,7 @@ public class InputField extends UIElement {
     public void update(InputHandler input, MouseHandler mouse) {
         if (mouse.isButtonPressed(1)) {
             boolean previousHasFocus = hasFocus;
-            hasFocus = bounds.contains(mouse.getX(), mouse.getY());
+            hasFocus = bounds.contains(mouse.getUIX(), mouse.getUIY());
             if(hasFocus != previousHasFocus) {
                 input.resetCharBuffer();
             }
@@ -123,6 +123,7 @@ public class InputField extends UIElement {
 
         // 4. RYSOWANIE KURSORA
         if (hasFocus && cursorTimer < 30) {
+
             g.setColor(Color.CYAN);
             int cx = bounds.x + padding + cursorPixelPos - scrollOffset;
             g.drawLine(cx, bounds.y + padding, cx, bounds.y + bounds.height - padding);

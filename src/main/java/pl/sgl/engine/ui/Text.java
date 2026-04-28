@@ -14,6 +14,10 @@ public class Text extends UIElement {
         this.x = x;
         this.y = y;
         this.font = new Font("Arial", Font.PLAIN, fontSize);
+//        FontMetrics fm = g.getFontMetrics(); // To pobierze wymiary dla nowego rozmiaru
+//        String textBeforeCursor = text;
+//        int cursorPixelPos = fm.stringWidth(textBeforeCursor);
+        this.bounds = new Rectangle(x,y, text.length()*1, 10);
     }
 
     @Override

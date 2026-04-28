@@ -19,6 +19,7 @@ public class Button extends UIElement {
         this.normalColor = normalColor;
         this.hoverColor = hoverColor;
         this.textColor = textColor;
+
     }
 
     public Button(String text, int x, int y, int width, int height) {
@@ -30,7 +31,7 @@ public class Button extends UIElement {
     @Override
     //when mouse pointer is on the button isHovered = true
     public void update(MouseHandler mouse) {
-        isHovered = bounds.contains(mouse.getX(), mouse.getY());
+        isHovered = bounds.contains(mouse.getUIX(), mouse.getUIY());
     }
 
     @Override

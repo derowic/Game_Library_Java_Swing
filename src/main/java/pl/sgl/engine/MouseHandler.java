@@ -7,8 +7,8 @@ import java.awt.event.MouseMotionListener;
 public class MouseHandler implements MouseListener, MouseMotionListener {
 
     private int mouseX, mouseY;
-    private final boolean[] buttons = new boolean[10];
-    private final boolean[] buttonsLast = new boolean[10];
+    private boolean[] buttons = new boolean[10];
+    private boolean[] buttonsLast = new boolean[10];
 
     // Dane o transformacji
     private double scale = 1.0;
@@ -23,8 +23,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     }
 
     ///gettery, aby uwzględniały skalowanie (o którym pisaliśmy wcześniej)
-    public int getX() { return (int) ((mouseX - offsetX) / scale); }
-    public int getY() { return (int) ((mouseY - offsetY) / scale); }
+    public int getUIX() { return (int) ((mouseX - offsetX) / scale); }
+    public int getUIY() { return (int) ((mouseY - offsetY) / scale); }
 
     public int getWorldX() {
         double logicX = (mouseX - offsetX) / scale;
@@ -88,4 +88,17 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     @Override public void mouseClicked(MouseEvent e) {}
     @Override public void mouseEntered(MouseEvent e) {}
     @Override public void mouseExited(MouseEvent e) {}
+
+    // W MouseHandler.java
+    public void consumeButton(int button) {
+        if (button >= 0 && button < buttons.length) {
+            buttons[button] = false;
+            buttonsLast[button] = true; // Blokujemy isButtonPressed
+        }
+    }
+
+    public void reset(){
+        buttons = new boolean[10];
+        buttonsLast = new boolean[10];
+    }
 }

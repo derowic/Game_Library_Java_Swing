@@ -2,6 +2,7 @@ package pl.sgl.engine;
 
 import pl.sgl.engine.TileMaps.TileMap;
 import pl.sgl.engine.ui.UIElement;
+import pl.sgl.engine.ui.UIManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,9 @@ public class GameState {
 //    }
     public final List<Primitive> entities;
     public final List<GameObject> sprites;
-    public List<UIElement> UIElements = new ArrayList<>();
+//    public List<UIElement> UIElements = new ArrayList<>();
     public TileMap tileMap;
+    public UIManager uiManager = new UIManager();
 
     public double camX=0;
     public double camY=0;
@@ -50,10 +52,10 @@ public class GameState {
     }
 
 
-    public GameState(List<GameObject> sprites, List<UIElement> UIElements, TileMap tileMap, double camX, double camY, double zoom, double lastZoom) {
+    public GameState(List<GameObject> sprites, UIManager ui, TileMap tileMap, double camX, double camY, double zoom, double lastZoom) {
         this.entities = new ArrayList<>();
         this.sprites = new ArrayList<>(sprites);
-        this.UIElements = new ArrayList<>(UIElements);
+        this.uiManager = ui;
         this.camX = camX;
         this.camY = camY;
         this.tileMap = tileMap;
