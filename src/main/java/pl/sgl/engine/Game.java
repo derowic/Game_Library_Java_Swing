@@ -1,6 +1,8 @@
 package pl.sgl.engine;
 
 import pl.sgl.engine.audio.AudioManager;
+import pl.sgl.engine.particleSystem.Particle;
+import pl.sgl.engine.particleSystem.ParticleEmitter;
 import pl.sgl.engine.ui.InputField;
 import pl.sgl.engine.ui.UIElement;
 
@@ -39,7 +41,7 @@ public class Game implements Runnable {
 
     protected AudioManager audio = new AudioManager();
 
-    public InputHandler input = new InputHandler();
+    public InputHandler keyboard = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
     private final Object renderLock = new Object();
     private boolean isSwitching = false;
@@ -47,10 +49,18 @@ public class Game implements Runnable {
 
     public Game(String title, int width, int height) {
         window = new Window(title, width, height);
-        window.initInput(input);  // Klawiatura
+        window.initInput(keyboard);  // Klawiatura
         window.initMouse(mouse);  // Myszka
         window.show();
-        window.typeOfRenderingSprites = "pixelart";
+//        window.typeOfRenderingSprites = "pixelart";
+    }
+
+    public void addGameObject(GameObject g) {
+        currentGame.sprites.add(g);
+    }
+
+    public void addGameObject(ParticleEmitter emitter) {
+        currentGame.emitters.add(emitter);
     }
 
     public void toggleFullScreen(String mode) {
@@ -148,12 +158,13 @@ public class Game implements Runnable {
         var lastTime = System.nanoTime();
         double accumulator = 0;
 
+
         while (running) {
             long now = System.nanoTime();
-            long passedTime = now - lastTime;
+            long diffrence = now - lastTime;
             lastTime = now;
 
-            accumulator += passedTime;
+            accumulator += diffrence;
 
             int updates = 0; // Dodatkowy licznik bezpieczeństwa
 
@@ -199,7 +210,7 @@ public class Game implements Runnable {
 
 
         // 2. Aktualizuj UI
-        currentGame.uiManager.update(input, mouse);
+        currentGame.uiManager.update(keyboard, mouse);
 
         //sprawdz czy coś klikniete, jeśli tak to sprawdz co i wyczysc kliniecie aby logika spritów nie wiedziała ze kliniete
 
@@ -210,7 +221,7 @@ public class Game implements Runnable {
 
         for (UIElement e : currentGame.uiManager.getElements()) {
             if(e.getClass() == InputField.class) {
-                e.update(input,mouse);
+                e.update(keyboard,mouse);
             } else {
                 e.update(mouse);
             }
@@ -228,6 +239,10 @@ public class Game implements Runnable {
             }
         }
 
+        for (ParticleEmitter emitter : currentGame.emitters) {
+            emitter.update(deltaTime);
+        }
+
 
 
         // 2. STWÓRZ SNAPSHOT (Zdjęcie)
@@ -235,15 +250,14 @@ public class Game implements Runnable {
         // (W uproszczeniu: kopiujemy referencje do nowej listy,
         // ale profesjonalnie kopiuje się wartości x, y do nowych obiektów-struktur)
         List<GameObject> snapshotSprites = new ArrayList<>(currentGame.sprites);
-//        List<UIElement> snapshotUIElements = new ArrayList<>(currentGame.UIElements);
 
         ConfigureData.zoom = currentGame.zoom;
         ConfigureData.camX = currentGame.camX;
         ConfigureData.camY = currentGame.camY;
         // 3. PUBLIKUJEMY - Podmieniamy całe pudełko (to jest bezpieczne dzięki volatile)
-        this.currentSnapshot = new GameState(snapshotSprites, currentGame.uiManager, currentGame.tileMap, currentGame.camX, currentGame.camY, currentGame.zoom, currentGame.lastZoom);
+        this.currentSnapshot = new GameState(snapshotSprites, currentGame.emitters, currentGame.uiManager, currentGame.tileMap, currentGame.camX, currentGame.camY, currentGame.zoom, currentGame.lastZoom);
 
-        input.update();
+        keyboard.update();
         mouse.update();
     }
 
@@ -285,39 +299,41 @@ public class Game implements Runnable {
 
             GameState renderState= this.currentSnapshot;
 
-            for (Primitive e : renderState.entities) {
-                //System.out.println(e);
-                // INTERPOLACJA dla każdego obiektu z osobna
-                float drawX = e.lastX + (e.x - e.lastX) * (float)alpha;
-                float drawY = e.lastY + (e.y - e.lastY) * (float)alpha;
+//            for (Primitive e : renderState.entities) {
+//                //System.out.println(e);
+//                // INTERPOLACJA dla każdego obiektu z osobna
+//                float drawX = e.lastX + (e.x - e.lastX) * (float)alpha;
+//                float drawY = e.lastY + (e.y - e.lastY) * (float)alpha;
+//
+//                window.g.setColor(e.color);
+//
+//                if ("RECT".equals(e.type)) {
+//                    window.g.fillRect((int)drawX, (int)drawY, e.width, e.height);
+//                } else if ("CIRCLE".equals(e.type)) {
+//                    window.g.fillOval((int)drawX, (int)drawY, e.width, e.height);
+//                }
+//            }
 
-                window.g.setColor(e.color);
 
-                if ("RECT".equals(e.type)) {
-                    window.g.fillRect((int)drawX, (int)drawY, e.width, e.height);
-                } else if ("CIRCLE".equals(e.type)) {
-                    window.g.fillOval((int)drawX, (int)drawY, e.width, e.height);
+
+            for (ParticleEmitter emitter : renderState.emitters) {
+
+
+                for (Particle e : emitter.getActiveParticles()) {
+                    float drawX =e.lastX + (e.x - e.lastX) * (float) alpha;
+                    float drawY =e.lastY + (e.y - e.lastY) * (float) alpha;
+
+                    window.g.setColor(e.color);
+                    window.g.fillRect((int) drawX, (int) drawY, (int) e.size, (int) e.size);
                 }
             }
 
+
             renderWorld(alpha);
-
-            // --- RYSOWANIE STATYSTYK ---
-            window.g.setColor(Color.WHITE);
-            // Ustawiamy tło pod tekst, żeby był czytelny
-            window.g.setColor(new Color(0, 0, 0, 150)); // Półprzezroczysty czarny
-            window.g.fillRect(5, 5, 100, 45);
-
-            window.g.setColor(Color.GREEN);
-            window.g.setFont(new Font("Monospaced", Font.BOLD, 14));
-            window.g.drawString("FPS: " + currentFPS, 10, 20);
-            window.g.drawString("TPS: " + currentTPS, 10, 40);
-
-            // Wyświetlanie Alpha (opcjonalnie do debugowania płynności)
-            window.g.setColor(Color.YELLOW);
-            window.g.drawString("Alpha: " + String.format("%.2f", alpha), 10, 60);
-
             renderUI(window.g);
+            renderStats(alpha);
+
+
 
             window.render();
 
@@ -376,34 +392,38 @@ public class Game implements Runnable {
 
     private void renderUI(Graphics2D g) {
         GameState renderState = this.currentSnapshot;
-        // TWORZYMY JEDNĄ KOPIĘ DLA CAŁEGO ŚWIATA (Kamera / Globalne przesunięcie)
-//        Graphics2D worldG = (Graphics2D) window.g.create();
 
-        // Ustawiamy hinty raz dla całego świata (to przyspiesza!)
-//        worldG.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//        worldG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        if (currentGame.uiManager.isMouseCaptured() || currentGame.uiManager.isKeyboardCaptured()) {
+            window.getCanvas().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        } else {
+            window.getCanvas().setCursor(Cursor.getDefaultCursor());
+        }
 
-        // Globalne przesunięcie (Kamera + Twoje testowe 200px)
-//        worldG.translate(0 + renderState.camX, 0 + renderState.camY);
         for (UIElement e : renderState.uiManager.getElements()) {
-            if (e.isHovered) {
-                window.getCanvas().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            } else {
-                window.getCanvas().setCursor(Cursor.getDefaultCursor());
-            }
             e.draw(g);
-
         }
     }
-    public boolean isKeyPressed(int keyCode) {
-        return input.isKeyPressed(keyCode);
+
+    private void renderStats(double alpha){
+        // --- RYSOWANIE STATYSTYK ---
+        window.g.setColor(Color.WHITE);
+        // Ustawiamy tło pod tekst, żeby był czytelny
+        window.g.setColor(new Color(0, 0, 0, 150)); // Półprzezroczysty czarny
+        window.g.fillRect(5, 5, 100, 45);
+
+        window.g.setColor(Color.GREEN);
+        window.g.setFont(new Font("Monospaced", Font.BOLD, 14));
+        window.g.drawString("FPS: " + currentFPS, 10, 20);
+        window.g.drawString("TPS: " + currentTPS, 10, 40);
+
+        // Wyświetlanie Alpha (opcjonalnie do debugowania płynności)
+        window.g.setColor(Color.YELLOW);
+        window.g.drawString("Alpha: " + String.format("%.2f", alpha), 10, 60);
     }
+//    public boolean isKeyPressed(int keyCode) {
+//        return input.isKeyPressed(keyCode);
+//    }
 
-
-
-    public void addGameObject(GameObject g) {
-        currentGame.sprites.add(g);
-    }
 //    public static void main(String[] args) {
 //        new Game().start();
 //    }

@@ -4,6 +4,7 @@ import pl.sgl.engine.TileMaps.TileMap;
 import pl.sgl.engine.TileMaps.TileMapLoader;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
+import pl.sgl.engine.particleSystem.ParticleEmitter;
 import pl.sgl.engine.ui.*;
 import pl.sgl.engine.ui.Button;
 
@@ -26,6 +27,8 @@ public class Main extends Game {
     private TileMap tileMap;
 
     private TileMap level1;
+
+    private ParticleEmitter emitter;
 
 
     double x = 0;
@@ -85,110 +88,141 @@ public class Main extends Game {
 //        tileMap = new TileMap();
 //        tileMap.dr
 
+        emitter = new ParticleEmitter(100, 20, 500,25,-25,1, Color.ORANGE, 50);
+        addGameObject(emitter);
+
 
     }
     @Override
     protected void update() {
 
-        // W pętli update
-        if (isKeyPressed(KeyEvent.VK_ESCAPE)) {
-            System.out.println("switch");
-            this.toggleFullScreen("window");
+        if (!currentGame.uiManager.isKeyboardCaptured() && !currentGame.uiManager.isMouseCaptured()) {
+//            System.out.println("mouse " + currentGame.uiManager.isMouseCaptured());
+            // W pętli update
+            if (keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+                System.out.println("switch");
+                this.toggleFullScreen("window");
 //            System.exit(0);
-        }
-
-        if (isKeyPressed(KeyEvent.VK_F)) {
-            System.out.println("switch2");
-            this.toggleFullScreen("fullscreen");
-        }
-
-        if (input.isKeyDown(KeyEvent.VK_W))  currentGame.sprites.get(0).velocityY = -100;;
-        if (input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 100;;
-        if (input.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = -100;;
-        if (input.isKeyDown(KeyEvent.VK_D)) {
-            currentGame.sprites.get(0).velocityX = 100;
-        };
-
-        if (input.isKeyDown(KeyEvent.VK_LEFT))  {
-            this.x -=1;
-        };
-
-        if (input.isKeyDown(KeyEvent.VK_RIGHT))  this.x+=1;;;
-        if (input.isKeyDown(KeyEvent.VK_UP)) this.y -=1;
-        if (input.isKeyDown(KeyEvent.VK_DOWN)) this.y +=1;;
-
-        currentGame.camX = x;
-        currentGame.camY = y;
-
-        if (!input.isKeyDown(KeyEvent.VK_W) && !input.isKeyDown(KeyEvent.VK_S))  currentGame.sprites.get(0).velocityY = 0;;
-        if (!input.isKeyDown(KeyEvent.VK_D) && !input.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = 0;;
-
-        if (isKeyPressed(KeyEvent.VK_SPACE)) {
-            // Strzał, skok itp.
-        }
-
-        // Sprawdzenie pozycji
-        int mx = mouse.getWorldX();
-        int my = mouse.getWorldY();
-
-        // Reakcja na lewy przycisk myszy (MouseEvent.BUTTON1)
-        if (mouse.isButtonDown(java.awt.event.MouseEvent.BUTTON1)) {
-            // Przykładowo: postać teleportuje się tam, gdzie klikniemy
-            currentGame.sprites.get(0).x = mx;
-            currentGame.sprites.get(0).y = my;
-        }
-
-        Rectangle enemyHitbox = new Rectangle((int)currentGame.sprites.get(1).x, (int)currentGame.sprites.get(1).y, 50, 50);
-
-        // Sprawdź czy kursor jest wewnątrz hitboxa I czy kliknięto przycisk
-        if (enemyHitbox.contains(mouse.getUIX(), mouse.getUIY())) {
-            if (mouse.isButtonDown(1)) {
-                System.out.println("Trafiłeś przeciwnika!");
             }
-        }
 
-        if (isKeyPressed(KeyEvent.VK_SPACE)) {
-            audio.play("shoot"); // Dźwięk strzału przy spacji
-        }
+            if (keyboard.isKeyPressed(KeyEvent.VK_F)) {
+                System.out.println("switch2");
+                this.toggleFullScreen("fullscreen");
+            }
 
-        if (isKeyPressed(KeyEvent.VK_H)) {
+            if (keyboard.isKeyDown(KeyEvent.VK_W)) currentGame.sprites.get(0).velocityY = -100;
+            ;
+            if (keyboard.isKeyDown(KeyEvent.VK_S)) currentGame.sprites.get(0).velocityY = 100;
+            ;
+            if (keyboard.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = -100;
+            ;
+            if (keyboard.isKeyDown(KeyEvent.VK_D)) {
+                currentGame.sprites.get(0).velocityX = 100;
+            }
+            ;
+
+            if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+                this.x -= 1;
+            }
+            ;
+
+            if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) this.x += 1;
+            ;
+            ;
+            if (keyboard.isKeyDown(KeyEvent.VK_UP)) this.y -= 1;
+            if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) this.y += 1;
+            ;
+
+            currentGame.camX = x;
+            currentGame.camY = y;
+
+            if (!keyboard.isKeyDown(KeyEvent.VK_W) && !keyboard.isKeyDown(KeyEvent.VK_S))
+                currentGame.sprites.get(0).velocityY = 0;
+            ;
+            if (!keyboard.isKeyDown(KeyEvent.VK_D) && !keyboard.isKeyDown(KeyEvent.VK_A))
+                currentGame.sprites.get(0).velocityX = 0;
+            ;
+
+            if (keyboard.isKeyPressed(KeyEvent.VK_SPACE)) {
+                // Strzał, skok itp.
+            }
+
+            // Sprawdzenie pozycji
+            int mx = mouse.getWorldX();
+            int my = mouse.getWorldY();
+
+            // Reakcja na lewy przycisk myszy (MouseEvent.BUTTON1)
+            if (mouse.isButtonDown(java.awt.event.MouseEvent.BUTTON1)) {
+                // Przykładowo: postać teleportuje się tam, gdzie klikniemy
+                currentGame.sprites.get(0).x = mx;
+                currentGame.sprites.get(0).y = my;
+            }
+
+            Rectangle enemyHitbox = new Rectangle((int) currentGame.sprites.get(1).x, (int) currentGame.sprites.get(1).y, 50, 50);
+
+            // Sprawdź czy kursor jest wewnątrz hitboxa I czy kliknięto przycisk
+            if (enemyHitbox.contains(mouse.getUIX(), mouse.getUIY())) {
+                if (mouse.isButtonDown(1)) {
+                    System.out.println("Trafiłeś przeciwnika!");
+                }
+            }
+
+            if (keyboard.isKeyPressed(KeyEvent.VK_SPACE)) {
+                audio.play("shoot"); // Dźwięk strzału przy spacji
+            }
+
+            if (keyboard.isKeyPressed(KeyEvent.VK_H)) {
 //            audio.play("shoot"); // Dźwięk strzału przy spacji
-            currentGame.sprites.get(1).visible = !currentGame.sprites.get(1).visible;
-        }
+                currentGame.sprites.get(1).visible = !currentGame.sprites.get(1).visible;
+            }
 
-        if(Colision.colisionWithListOfSprites(currentGame.sprites.get(1), currentGame.sprites)) {
-            System.out.println("Colision");
-        }
+            if (Colision.colisionWithListOfSprites(currentGame.sprites.get(1), currentGame.sprites)) {
+                System.out.println("Colision");
+            }
 
-        // Aktualizacja UI
+            // Aktualizacja UI
 
-        if (mouse.isButtonPressed(MouseEvent.BUTTON1) && startButton.isClicked(mouse)) {
-//   wadsss         System.out.println("Startujemy!");
-            score++;
-            scoreLabel.text = "PUNKTY: " + score;
-        }
 
-        boolean tmp =false;
-        tmp = currentGame.tileMap.isCollidingWithWall(
-               mx,
-                my,
-                20,
-               20
+
+            boolean tmp = false;
+            tmp = currentGame.tileMap.isCollidingWithWall(
+                    mx,
+                    my,
+                    20,
+                    20
 //                currentGame.sprites.get(0).x,
 //                currentGame.sprites.get(0).y,
 //                currentGame.sprites.get(0).width,
 //                currentGame.sprites.get(0).height
-        );
+            );
 
-        if(tmp == true) {
-            System.out.println("kolizja z tilemapa");
-        }
+            if (tmp == true) {
+//                System.out.println("kolizja z tilemapa");
+            }
+
 //        System.out.println(currentGame.sprites.get(0).x);
 
 //        System.out.println(tmp);
 
-        if (input.isKeyDown(KeyEvent.VK_Q)) currentGame.zoom += 0.1;
-        if (input.isKeyDown(KeyEvent.VK_E)) currentGame.zoom -= 0.1;
+            if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.zoom += 0.1;
+            if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.zoom -= 0.1;
+
+
+            if (mouse.isButtonPressed(MouseEvent.BUTTON1)) {
+                for (int i = 0; i < 50; i++) {
+                    float angle = (float) (Math.random() * Math.PI * 2);
+                    float speed = (float) ((Math.random() * 200 + 50));
+                    emitter.emit(200, 500, (float) Math.cos(angle) * speed, (float) Math.sin(angle) * speed, 0.5f, Color.ORANGE, 5);
+                }
+
+                System.out.println("emit");
+            }
+        }
+
+        if (mouse.isButtonPressed(MouseEvent.BUTTON1) && startButton.isClicked(mouse)) {
+            score++;
+            scoreLabel.text = "PUNKTY: " + score;
+        }
 
         super.update();
     }

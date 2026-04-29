@@ -1,10 +1,25 @@
 {
-    "activeFile": "",
+    "activeFile": "test.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "file.lastUsedOpenFilter": "Wszystkie pliki (*)",
     "fileStates": {
+        "": {
+            "scaleInEditor": 4
+        },
         "#Dungeon_Tileset": {
+            "scaleInDock": 2
+        },
+        "test.tmx": {
+            "scale": 8,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 57.75,
+                "y": 64
+            }
+        },
+        "test.tmx#Dungeon_Tileset": {
             "scaleInDock": 2
         }
     },
@@ -15,10 +30,12 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
+        "test.tmx"
     ],
     "project": "test-project.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "test.tmx"
     ],
     "tileset.embedInMap": true,
     "tileset.lastUsedExportFilter": "JSON tileset files (*.tsj *.json)",

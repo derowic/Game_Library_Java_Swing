@@ -106,20 +106,12 @@ public class TileMap {
         // Zabezpieczenie przed wyjściem poza tablicę mapy
         if (left < 0 || right >= data[0].length || top < 0 || bottom >= data.length) return false;
 
-        // Jeśli którykolwiek narożnik dotyka kafelka o ID 1 (np. ściana) -> kolizja
-        boolean tmp = (
+        return (
                 isColision(data[top][left]) ||
                         isColision(data[top][right]) ||
                 isColision(data[bottom][left]) ||
                         isColision(data[bottom][right])
         );
-
-//        System.out.println( isColision(data[top][left]));
-//        System.out.println(isColision(data[top][right]));
-//        System.out.println(isColision(data[bottom][left]));
-//        System.out.println(isColision(data[bottom][right]));
-
-        return tmp;
     }
 
     public boolean isColision(int tileId) {

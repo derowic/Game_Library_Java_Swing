@@ -17,7 +17,7 @@
 [] system scen, scena menu, scena game over
 [] system cząsteczek
 [] system efektów specjalnych
-[] ukrywanie obiektów
+[x] ukrywanie obiektów
 [] object pooling
 [] zaawanswoana camera
     [] shake

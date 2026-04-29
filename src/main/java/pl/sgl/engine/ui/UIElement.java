@@ -19,6 +19,7 @@ public class UIElement {
     public boolean isClicked(MouseHandler mouse) { return false; }
     // Zwraca true, jeśli myszka jest nad tym elementem
     public boolean isMouseOver(MouseHandler mouse) {
+
         return bounds.contains(mouse.getUIX(), mouse.getUIY());
     }
 }
