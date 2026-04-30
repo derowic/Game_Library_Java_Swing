@@ -1,5 +1,6 @@
 package pl.sgl.engine.animation;
 
+import pl.sgl.engine.texture.Texture;
 import pl.sgl.engine.texture.TextureLoader;
 import pl.sgl.engine.GameObject;
 import java.awt.*;
@@ -70,55 +71,10 @@ public class AnimatedSprite extends GameObject {
 
     @Override
     public void draw(Graphics2D g, double alpha) {
-        BufferedImage frame = getCurrentFrame();
-        if (frame == null) return;
+        texture = new Texture(getCurrentFrame());
+        if (texture == null) return;
 
-        // 1. Interpolacja pozycji
-        float dX = (float) (lastX + (x - lastX) * alpha);
-        float dY = (float) (lastY + (y - lastY) * alpha);
-
-        Graphics2D g2d = (Graphics2D) g.create();
-
-        // 2. Obliczamy wymiary końcowe
-        int fW = (int)(width * scaleX);
-        int fH = (int)(height * scaleY);
-
-        // 3. Wyznaczamy Pivot (identycznie jak w klasie Sprite)
-        double pX, pY;
-        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
-            pX = fW / 2.0;
-            pY = fH / 2.0;
-        } else {
-            pX = pivotX * scaleX;
-            pY = pivotY * scaleY;
-        }
-
-        // 4. Transformacje
-        g2d.translate(dX, dY);
-        if (rotation != 0) {
-            g2d.rotate(Math.toRadians(rotation), pX, pY);
-        }
-
-        // 5. Rysowanie klatki animacji
-        g2d.drawImage(frame, 0, 0, fW, fH, null);
-
-        // 6. Rysowanie Hitboxa (Debug)
-        if (showHitBox && baseHitbox != null) {
-            g2d.setColor(Color.RED);
-            g2d.setStroke(new BasicStroke(2.0f));
-
-            // SKALUJEMY wymiary hitboxa do rysowania
-            int rx = (int)(baseHitbox.x * scaleX);
-            int ry = (int)(baseHitbox.y * scaleY);
-            int rw = (int)(baseHitbox.width * scaleX);
-            int rh = (int)(baseHitbox.height * scaleY);
-
-            g2d.drawRect(rx, ry, rw, rh);
-            g2d.setColor(new Color(255, 0, 0, 50));
-            g2d.fillRect(rx, ry, rw, rh);
-        }
-
-        g2d.dispose();
+       super.draw(g, alpha);
     }
 
     @Override

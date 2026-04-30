@@ -10,6 +10,9 @@ public class Texture {
     public Texture(String path) {
         image = TextureLoader.load(path);
     }
+    public Texture(BufferedImage img) {
+        image = img;
+    }
 
     public Rectangle getHitBox(){
         if (rectangle != null) {
