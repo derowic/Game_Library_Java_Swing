@@ -85,8 +85,8 @@ public abstract class GameObject {
         at.translate(drawX, drawY);
 
         // 2. Skalowanie wymiarów do obliczenia pivotu
-        double fW = width * scaleX;
-        double fH = height * scaleY;
+        double fW = width ;
+        double fH = height;
 
         // 3. Obliczenie Pivotu (identycznie jak w draw)
         double pX, pY;
@@ -94,8 +94,8 @@ public abstract class GameObject {
             pX = fW / 2.0;
             pY = fH / 2.0;
         } else {
-            pX = pivotX * scaleX;
-            pY = pivotY * scaleY;
+            pX = pivotX ;
+            pY = pivotY ;
         }
 
         // 4. Obrót
@@ -103,13 +103,17 @@ public abstract class GameObject {
             at.rotate(Math.toRadians(rotation), pX, pY);
         }
 
+        at.translate(width/2, height/2);
+        at.scale(scaleX, scaleY);
+        at.translate(-width/2, -height/2);
+
         // 5. Tworzymy lokalny przeskalowany prostokąt
         Rectangle rec = getCalculatedAutoHitBoxes();
         Rectangle2D.Double scaledLocalRect = new Rectangle2D.Double(
-                rec.x * scaleX,
-                rec.y * scaleY,
-                rec.width * scaleX,
-                rec.height * scaleY
+                rec.x ,
+                rec.y ,
+                rec.width ,
+                rec.height
         );
 
         return at.createTransformedShape(scaledLocalRect);

@@ -212,13 +212,6 @@ public class Game implements Runnable {
         // 2. Aktualizuj UI
         currentGame.uiManager.update(keyboard, mouse);
 
-        //sprawdz czy coś klikniete, jeśli tak to sprawdz co i wyczysc kliniecie aby logika spritów nie wiedziała ze kliniete
-
-//        W profesjonalnych silnikach gier ten mechanizm nazywa się Input Consumption (pochłanianie wejścia) lub Event Bubbling.
-//                Polega on na tym, że zdarzenia wejściowe (kliknięcia, klawisze) przechodzą przez warstwy gry od najwyższej (UI)
-//    do najniższej (Świat gry). Jeśli wyższa warstwa "skonsumuje" kliknięcie, niższa o nim nie wie.
-
-
         for (UIElement e : currentGame.uiManager.getElements()) {
             if(e.getClass() == InputField.class) {
                 e.update(keyboard,mouse);

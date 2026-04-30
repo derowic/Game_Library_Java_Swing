@@ -39,24 +39,26 @@ public class Main extends Game {
     public Main() {
         super("Test", 1280, 720);
         // Ładujemy raz przy starcie
-        Sprite s2 = new Sprite("/textures/ship2.png", 640, 100);
+        Sprite s2 = new Sprite("/textures/ship2.png", 600, 100);
 
         s2.showHitBox = true;
 //        s2.scaleX =2 ;
 
         //obrót wokół środka górnej krawędzi
-        s2.setPivot((s2.width*s2.scaleX)/2,0);
-        s2.rotation = 45;
-        s2.setScaleX(2);
+//        s2.setPivot((s2.width*s2.scaleX)/2,(s2.height*s2.scaleY)/2);
+        //s2.rotation = 45;
+//        s2.setScaleX(0.5);
+//        s2.setScaleY(0.5);
         addGameObject(s2);
 
         Animation an = new Animation("/textures/mario-walk.png",0,0,61,64,3);
-        playerWalk = new AnimatedSprite(0.1, 400, 50); // zmiana klatki co 0.1 sekundy
+        playerWalk = new AnimatedSprite(0.1, 600, 100); // zmiana klatki co 0.1 sekundy
         playerWalk.addAnimation("walk", an);
         playerWalk.showHitBox = true;
-        playerWalk.rotation = 45;
+//        playerWalk.rotation = 45;
 //        playerWalk.scaleX = 2;
-        playerWalk.setScaleX(2);
+//        playerWalk.setScaleX(2);
+        playerWalk.getRotatedShape();
         addGameObject(playerWalk);
 
         startButton = new Button("ZAGRAJ", 300, 250, 200, 50);
@@ -222,6 +224,24 @@ public class Main extends Game {
         if (mouse.isButtonPressed(MouseEvent.BUTTON1) && startButton.isClicked(mouse)) {
             score++;
             scoreLabel.text = "PUNKTY: " + score;
+        }
+//
+        if (keyboard.isKeyDown(KeyEvent.VK_T)) {
+            currentGame.sprites.get(0).scaleX += 0.05;
+            currentGame.sprites.get(0).scaleY += 0.05;
+        }
+
+        if (keyboard.isKeyDown(KeyEvent.VK_G)) {
+            currentGame.sprites.get(0).scaleX -= 0.05;
+            currentGame.sprites.get(0).scaleY -= 0.05;
+        }
+
+        if (keyboard.isKeyDown(KeyEvent.VK_Y)) {
+            currentGame.sprites.get(0).rotation += 1;
+        }
+
+        if (keyboard.isKeyDown(KeyEvent.VK_H)) {
+            currentGame.sprites.get(0).rotation -= 1;
         }
 
         super.update();
