@@ -53,7 +53,7 @@ public class Main extends Game {
 //        s2.setPivot(100, 100);
         //s2.rotation = 45;
         s2.setScaleX(0.25);
-        s2.setScaleY(0.25);
+        s2.setScaleY(0.5);
         addGameObject(s2);
 
         player = new Player("/textures/ship2.png", 600, -300);
@@ -136,25 +136,7 @@ public class Main extends Game {
             ;
             if (keyboard.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = -100;
             ;
-            if (keyboard.isKeyDown(KeyEvent.VK_D)) {
-                currentGame.sprites.get(0).velocityX = 100;
-            }
-            ;
 
-            if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
-                this.x -= 1;
-            }
-            ;
-
-            if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) this.x += 1;
-            ;
-            ;
-            if (keyboard.isKeyDown(KeyEvent.VK_UP)) this.y -= 1;
-            if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) this.y += 1;
-            ;
-
-            currentGame.camX = x;
-            currentGame.camY = y;
 
             if (!keyboard.isKeyDown(KeyEvent.VK_W) && !keyboard.isKeyDown(KeyEvent.VK_S))
                 currentGame.sprites.get(0).velocityY = 0;
@@ -193,7 +175,7 @@ public class Main extends Game {
 
             if (keyboard.isKeyPressed(KeyEvent.VK_H)) {
 //            audio.play("shoot"); // Dźwięk strzału przy spacji
-                currentGame.sprites.get(1).visible = !currentGame.sprites.get(1).visible;
+//                currentGame.sprites.get(1).visible = !currentGame.sprites.get(1).visible;
             }
 
             if (Colision.colisionWithListOfSprites(currentGame.sprites.get(1), currentGame.sprites)) {
@@ -246,7 +228,7 @@ public class Main extends Game {
 //
         if (keyboard.isKeyDown(KeyEvent.VK_T)) {
             currentGame.sprites.get(0).scaleX += 0.05;
-            currentGame.sprites.get(0).scaleY += 0.05;
+//            currentGame.sprites.get(0).scaleY += 0.05;
         }
 
         if (keyboard.isKeyDown(KeyEvent.VK_G)) {
@@ -266,11 +248,65 @@ public class Main extends Game {
         sprites.add(s2);
         player.updateCalc(deltaTime, sprites);
 
-
+        movePlayer();
         super.update();
     }
 
     public static void main(String[] args) {
         new Main().start();
+    }
+
+    public void moveCamera() {
+        if (keyboard.isKeyDown(KeyEvent.VK_D)) {
+            currentGame.sprites.get(0).velocityX = 100;
+        }
+        ;
+
+        if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+            this.x -= 1;
+        }
+        ;
+
+        if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) this.x += 1;
+        ;
+        ;
+        if (keyboard.isKeyDown(KeyEvent.VK_UP)) this.y -= 1;
+        if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) this.y += 1;
+        ;
+
+        currentGame.camX = x;
+        currentGame.camY = y;
+    }
+
+    public void movePlayer() {
+        if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+            player.velocityX = -10;
+        }
+        if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
+            player.velocityX = 100;
+        }
+
+        if (keyboard.isKeyDown(KeyEvent.VK_UP)) {
+            player.velocityY = -1;
+        }
+        if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
+            player.velocityY = 1;
+        }
+
+
+//
+//        if (!keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+//            player.velocityX = 0;
+//        }
+//        if (!keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
+//            player.velocityX = 0;
+//        }
+
+//        if (!keyboard.isKeyDown(KeyEvent.VK_UP)) {
+//            player.velocityY = 0;
+//        }
+//        if (!keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
+//            player.velocityY = 0;
+//        }
     }
 }
