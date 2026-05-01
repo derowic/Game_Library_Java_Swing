@@ -13,6 +13,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends Game {
     // Lista obiektów logicznych (w świecie gry)
@@ -42,7 +44,7 @@ public class Main extends Game {
     public Main() {
         super("Test", 1280, 720);
         // Ładujemy raz przy starcie
-        s2 = new Sprite("/textures/ship2.png", 600, 100);
+        s2 = new Sprite("/textures/ship2.png", 600, 500);
 
         s2.showHitBox = true;
 //        s2.scaleX =2 ;
@@ -54,7 +56,7 @@ public class Main extends Game {
         s2.setScaleY(0.25);
         addGameObject(s2);
 
-        player = new Player("/textures/ship2.png", 0, 0);
+        player = new Player("/textures/ship2.png", 600, -300);
 
         player.showHitBox = true;
 //        s2.scaleX =2 ;
@@ -62,8 +64,9 @@ public class Main extends Game {
         //obrót wokół środka górnej krawędzi
 //        s2.setPivot(100, 100);
         //s2.rotation = 45;
-        player.setScaleX(1);
-        player.setScaleY(1);
+
+        player.setScaleX(0.25);
+        player.setScaleY(0.25);
         addGameObject(player);
 
         Animation an = new Animation("/textures/mario-walk.png",0,0,61,64,3);
@@ -194,7 +197,7 @@ public class Main extends Game {
             }
 
             if (Colision.colisionWithListOfSprites(currentGame.sprites.get(1), currentGame.sprites)) {
-                System.out.println("Colision");
+//                System.out.println("Colision");
             }
 
             // Aktualizacja UI
@@ -258,6 +261,11 @@ public class Main extends Game {
         if (keyboard.isKeyDown(KeyEvent.VK_H)) {
             currentGame.sprites.get(0).rotation -= 1;
         }
+
+        List<GameObject> sprites = new ArrayList<>();
+        sprites.add(s2);
+        player.updateCalc(deltaTime, sprites);
+
 
         super.update();
     }

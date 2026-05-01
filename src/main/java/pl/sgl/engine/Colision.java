@@ -41,6 +41,9 @@ public class Colision {
                 // Generujemy kształt obiektu G
                 Shape shapeG = g.getRotatedShape();
                 if (checkCollision(shapeA, shapeG)) return true;
+//                if (shapeG.contains(g.x, g.y)) {
+//                    return true;
+//                }
             }
         }
         return false;

@@ -1,5 +1,6 @@
 package pl.sgl.engine;
 
+import pl.sgl.engine.GameTest.Player;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.particleSystem.Particle;
 import pl.sgl.engine.particleSystem.ParticleEmitter;
@@ -323,6 +324,8 @@ public class Game implements Runnable {
 
 
             renderWorld(alpha);
+            drawSensors(alpha);
+
             renderUI(window.g);
             renderStats(alpha);
 
@@ -336,6 +339,44 @@ public class Game implements Runnable {
         } finally {
             if (g != null) {
                 g.dispose();
+            }
+        }
+    }
+
+    private void drawSensors(double alpha) {
+        for (GameObject s : currentGame.sprites) {
+            if (s instanceof Player && s.showHitBox) { // Rysujemy tylko dla gracza
+                Graphics2D debugG = (Graphics2D) window.g.create(); // worldG to Twoja grafika z kamerą
+
+                // 1. Obliczamy pozycję wizualną identycznie jak w logice
+                float dX = (float) (s.lastX + (s.x - s.lastX) * alpha);
+                float dY = (float) (s.lastY + (s.y - s.lastY) * alpha);
+                float hW = (float) (s.width / 2.0 * s.scaleX);
+                float hH = (float) (s.height / 2.0 * s.scaleY);
+
+                // 2. Punkty nóg
+                float footL = dX - (hW);
+                float footR = dX + (hW);
+                float feetY = dY + hH;
+
+                // 3. Zakres skanowania (identyczny jak w getSurfaceYAt)
+                float lookUp = hH * 0.5f;
+                float lookDown = hH * 1.0f;
+
+                // Rysujemy lewy sensor (niebieski)
+                debugG.setColor(Color.CYAN);
+                debugG.drawLine((int)footL, (int)(feetY - lookUp), (int)footL, (int)(feetY + lookDown));
+
+                // Rysujemy prawy sensor (magenta)
+                debugG.setColor(Color.MAGENTA);
+                debugG.drawLine((int)footR, (int)(feetY - lookUp), (int)footR, (int)(feetY + lookDown));
+
+                // Rysujemy kropki w miejscu "idealnego" styku
+                debugG.setColor(Color.YELLOW);
+                debugG.fillOval((int)footL - 2, (int)feetY - 2, 4, 4);
+                debugG.fillOval((int)footR - 2, (int)feetY - 2, 4, 4);
+
+                debugG.dispose();
             }
         }
     }

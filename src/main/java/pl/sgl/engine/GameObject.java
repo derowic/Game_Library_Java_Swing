@@ -23,7 +23,7 @@ public abstract class GameObject {
     public boolean showHitBox = false;
     protected double drawX;
     protected double drawY;
-    protected boolean visible = true;
+    public boolean visible = true;
     protected double pivotX = Double.NaN;
     protected double pivotY = Double.NaN;
     public Texture texture;
@@ -51,61 +51,50 @@ public abstract class GameObject {
 
         // 2. Tworzymy izolowaną kopię Graphics2D
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.translate(drawX, drawY);
+
         // 3. Obliczamy wymiary po skalowaniu
         int fW = (int)(width);
         int fH = (int)(height);
 
         // 4. Wyznaczamy punkt obrotu (Pivot) - identycznie jak w getRotatedShape
 
-        double pX, pY;
-        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
-            pX = fW / 2.0;
-            pY = fH / 2.0;
-        } else {
-            pX = pivotX ;
-            pY = pivotY ;
-        }
+        // 1. Wyznaczamy pivot (współrzędne lokalne obrazka)
+        double pX = Double.isNaN(pivotX) ? width / 2.0 : pivotX;
+        double pY = Double.isNaN(pivotY) ? height / 2.0 : pivotY;
 
+        g2d.translate(drawX, drawY);
         if (rotation != 0) {
-            g2d.rotate(Math.toRadians(rotation), pX, pY);
+            g2d.rotate(Math.toRadians(rotation));
         }
+//        if (rotation != 0) {
+//            g2d.rotate(Math.toRadians(rotation)); // B. Obróć wokół (0,0), czyli wokół pozycji dX, dY
+//        }
+//        g2d.scale(scaleX, scaleY);       // C. Skaluj wokół (0,0)
 
         // 5. TRANSFORMACJE (Kolejność: Translate -> Rotate)
-        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
-            g2d.translate(width / 2, height / 2);
-            g2d.scale(scaleX, scaleY);
-            g2d.translate(-width / 2, -height / 2);
-        } else {
-            g2d.translate(pX, pY);
-            g2d.scale(scaleX, scaleY);
-            g2d.translate(-pX, -pY);
-        }
+//        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
+//            g2d.translate(width / 2, height / 2);
+        g2d.scale(scaleX, scaleY);
+//            g2d.translate(-width / 2, -height / 2);
+//        } else {
+//            g2d.translate(pX, pY);
+//            g2d.scale(scaleX, scaleY);
+//            g2d.translate(-pX, -pY);
+//        }
 
         // 4. SKALOWANIE - wokół pivotu
         // Aby skalować względem środka, a nie lewego górnego rogu:
         // Przesuwamy do pivotu, skalujemy, wracamy.
 
         // 6. RYSOWANIE OBRAZKA (od 0,0 bo g2d jest już przesunięte)
-        g2d.drawImage(texture.image,0 ,0 , fW, fH, null);
+        g2d.drawImage(texture.image, (int)-pX, (int)-pY, width, height, null);
 
+        // W metodzie draw (na samym końcu przed g2d.dispose)
+        g2d.setColor(Color.YELLOW);
+        g2d.fillRect((int)-5, (int)(height/2), 10, 10); // To narysuje kropkę tam, gdzie sensor szuka ziemi
+        g2d.dispose();
         // 7. RYSOWANIE HITBOXA (Lokalnie!)
         if (showHitBox) {
-//            Rectangle rec = getRotatedShape().getBounds();// Pobiera bazowy rect (np. 0,0,16,16)
-//
-//            // Rysujemy na tym samym g2d, więc NIE dodajemy dX, dY.
-//            // Musimy tylko przeskalować rozmiar samego prostokąta.
-//            int rx = (int)(rec.x * scaleX);
-//            int ry = (int)(rec.y * scaleY);
-//            int rw = (int)(rec.width * scaleX);
-//            int rh = (int)(rec.height * scaleY);
-//
-//            g2d.setColor(Color.RED);
-//            g2d.setStroke(new BasicStroke(2.0f));
-//            g2d.drawRect(rx, ry, rw, rh);
-//
-//            g2d.setColor(new Color(255, 0, 0, 50));
-//            g2d.fillRect(rx, ry, rw, rh);
             g2d = (Graphics2D) g.create();
             Shape collisionShape = getRotatedShape();
 
@@ -117,9 +106,10 @@ public abstract class GameObject {
             // Opcjonalnie: półprzezroczyste wypełnienie
             g2d.setColor(new Color(255, 0, 0, 50));
             g2d.fill(collisionShape);
+            g2d.dispose();
         }
 
-        g2d.dispose();
+
 
     }
 
@@ -156,43 +146,38 @@ public abstract class GameObject {
     public Shape getRotatedShape(float drawX, float drawY) {
         AffineTransform at = new AffineTransform();
 
-        // 1. Przesunięcie do świata
-        at.translate(drawX, drawY);
 
         // 2. Skalowanie wymiarów do obliczenia pivotu
         double fW = width ;
         double fH = height;
 
         // 3. Obliczenie Pivotu (identycznie jak w draw)
-        double pX, pY;
-        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
-            pX = fW / 2.0;
-            pY = fH / 2.0;
-        } else {
-            pX = pivotX ;
-            pY = pivotY ;
-        }
+        double pX = Double.isNaN(pivotX) ? width / 2.0 : pivotX;
+        double pY = Double.isNaN(pivotY) ? height / 2.0 : pivotY;
+
+        // 1. Przesunięcie do świata
+        at.translate(drawX, drawY);
 
         // 4. Obrót
         if (rotation != 0) {
-            at.rotate(Math.toRadians(rotation), pX, pY);
+            at.rotate(Math.toRadians(rotation));
         }
 
-        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
-            at.translate(width / 2, height / 2);
-            at.scale(scaleX, scaleY);
-            at.translate(-width / 2, -height / 2);
-        } else {
-            at.translate(pX, pY);
-            at.scale(scaleX, scaleY);
-            at.translate(-pX, -pY);
-        }
+//        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
+//            at.translate(width / 2, height / 2);
+        at.scale(scaleX, scaleY);
+//            at.translate(-width / 2, -height / 2);
+//        } else {
+//            at.translate(pX, pY);
+//            at.scale(scaleX, scaleY);
+//            at.translate(-pX, -pY);
+//        }
 
         // 5. Tworzymy lokalny przeskalowany prostokąt
         Rectangle rec = getCalculatedAutoHitBoxes();
         Rectangle2D.Double scaledLocalRect = new Rectangle2D.Double(
-                rec.x ,
-                rec.y ,
+                rec.x + (int)-pX,
+                rec.y + (int)-pY,
                 rec.width ,
                 rec.height
         );

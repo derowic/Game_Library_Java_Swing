@@ -17,76 +17,80 @@ public class Player extends Sprite {
      * Zwraca najwyższy punkt (Y) hitboxa na danej współrzędnej X.
      * @param worldX - Współrzędna X gracza (np. środek stóp)
      * @param hitbox - Obiekt Shape zwrócony przez getRotatedShape()
-     * @param currentY - Obecna pozycja Y gracza
+
      * @return Dokładna wysokość podłoża lub -1 jeśli nie ma kontaktu
      */
-    public double getSurfaceYAt(double worldX, Shape hitbox, double currentY) {
-        // Definiujemy zakres poszukiwań (np. 30 pikseli w górę i w dół od stóp)
-        double searchRange = 30.0;
-        double startY = currentY - 15.0; // Zaczynamy nieco nad obecną pozycją
+    public double getSurfaceYAt(double worldX, Shape hitbox, double feetY, double playerHalfHeight) {
+        // Szukamy w górę o 30% wysokości gracza i w dół o 50%
+        double lookUp = playerHalfHeight * 0.5;
+        double lookDown = playerHalfHeight * 1.0;
 
-        // Skanujemy z góry na dół
-        for (double testY = startY; testY < startY + searchRange; testY += 1.0) {
-            // Klucz: Twoja funkcja getRotatedShape zwraca Shape,
-            // a każdy Shape w Javie ma ultra-szybką metodę contains()
-            if (hitbox.contains(worldX, testY)) {
-                return testY; // Znaleźliśmy górną krawędź!
+        double startY = feetY - lookUp;
+
+        // Zwiększamy precyzję skanowania - przy małych obiektach skok co 0.5px jest bezpieczniejszy
+        for (double testY = startY; testY < feetY + lookDown; testY += 0.5) {
+            // Zmniejszamy sensor do 1x1 piksela dla małych obiektów
+            if (hitbox.intersects(worldX - 0.5, testY - 0.5, 1, 1)) {
+                return testY;
             }
         }
-
-        return -1; // Brak kontaktu na tej współrzędnej X
+        return -1;
     }
 
 
-    protected void updateCalc(double dt, List<Sprite> sprites) {
-        super.update(dt); // Przesuwa lastX, lastY i oblicza nowe X na podstawie velocity
+    public void updateCalc(double dt, List<GameObject> sprites) {
+        this.lastX = x;
+        this.lastY = y;
+
+        // 1. Obliczamy wymiary uwzględniając skalę (Dynamicznie!)
+        double hW = (width / 2.0) * scaleX;
+        double hH = (height / 2.0) * scaleY;
 
         double nextX = x + velocityX * dt;
-        double footL = nextX + (width * 0.2); // Lewa noga
-        double footR = nextX + (width * 0.8); // Prawa noga
+
+        // Rozstaw nóg - zawsze 50% szerokości od środka, niezależnie od skali
+        double footL = nextX - (hW);
+        double footR = nextX + (hW);
+        double feetY = y + hH;
 
         boolean onGround = false;
 
-        // Przeszukujemy obiekty (np. z listy currentGame.sprites)
         for (GameObject obj : sprites) {
-            if (obj == this) continue; // Nie koliduj ze samym sobą
+            if (obj == this || !obj.visible) continue;
 
-            // Pobieramy ten skomplikowany, obrócony hitbox przeszkody
-            Shape obstacleHitbox = obj.getRotatedShape((float)obj.x, (float)obj.y);
+            Shape obstacleHitbox = obj.getRotatedShape();
 
-            // Sprawdzamy wysokość dla obu nóg
-            double groundYL = getSurfaceYAt(footL, obstacleHitbox, y + height);
-            double groundYR = getSurfaceYAt(footR, obstacleHitbox, y + height);
+            // 2. Szybki test (AABB) również musi być proporcjonalny
+            if (!obstacleHitbox.getBounds2D().intersects(nextX - hW, y - hH, hW * 2, hH * 2 + hH)) {
+                continue;
+            }
 
-            // Jeśli choć jedna noga dotyka podłoża
-            if (groundYL != -1 || groundYR != -1) {
-                // Wybieramy najwyższy punkt styku (wyższe podłoże wygrywa)
-                double targetY = Math.min(
-                        (groundYL == -1 ? Double.MAX_VALUE : groundYL),
-                        (groundYR == -1 ? Double.MAX_VALUE : groundYR)
-                );
+            // 3. Szukamy podłoża przekazując hH
+            double gYL = getSurfaceYAt(footL, obstacleHitbox, feetY, hH);
+            double gYR = getSurfaceYAt(footR, obstacleHitbox, feetY, hH);
 
-                // Ustawiamy gracza na tej wysokości
-                y = targetY - height;
-                velocityY = 0;
+            if (gYL != -1 || gYR != -1) {
+                double highestGround = Double.MAX_VALUE;
+                if (gYL != -1) highestGround = Math.min(highestGround, gYL);
+                if (gYR != -1) highestGround = Math.min(highestGround, gYR);
+
+                // Przyklejenie do ziemi
+                this.y = highestGround - hH;
+                this.velocityY = 0;
                 onGround = true;
 
-                // Opcjonalnie: pochylenie gracza do kąta rampy
-                if (groundYL != -1 && groundYR != -1) {
-                    double angle = Math.atan2(groundYR - groundYL, footR - footL);
-                    this.rotation = Math.toDegrees(angle);
+                if (gYL != -1 && gYR != -1) {
+                    this.rotation = Math.toDegrees(Math.atan2(gYR - gYL, footR - footL));
                 }
-
-                break; // Znaleźliśmy podłoże, przerywamy pętlę po obiektach
+                break;
             }
         }
 
         if (!onGround) {
+            velocityY += 900 * dt;
             y += velocityY * dt;
-            velocityY += gravity * dt; // Spadanie
-            rotation = 0; // Powrót do pionu w powietrzu
+            rotation *= 0.9;
         }
-
         x = nextX;
     }
 }
