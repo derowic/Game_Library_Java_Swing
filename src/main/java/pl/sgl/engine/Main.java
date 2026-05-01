@@ -1,5 +1,6 @@
 package pl.sgl.engine;
 
+import pl.sgl.engine.GameTest.Player;
 import pl.sgl.engine.TileMaps.TileMap;
 import pl.sgl.engine.TileMaps.TileMapLoader;
 import pl.sgl.engine.animation.AnimatedSprite;
@@ -31,6 +32,8 @@ public class Main extends Game {
     private ParticleEmitter emitter;
 
 
+    Sprite s2;
+    Player player;
     double x = 0;
     double y=0;
     private boolean fullscreenKeyPressed = false;
@@ -39,17 +42,29 @@ public class Main extends Game {
     public Main() {
         super("Test", 1280, 720);
         // Ładujemy raz przy starcie
-        Sprite s2 = new Sprite("/textures/ship2.png", 600, 100);
+        s2 = new Sprite("/textures/ship2.png", 600, 100);
 
         s2.showHitBox = true;
 //        s2.scaleX =2 ;
 
         //obrót wokół środka górnej krawędzi
-//        s2.setPivot((s2.width*s2.scaleX)/2,(s2.height*s2.scaleY)/2);
+//        s2.setPivot(100, 100);
         //s2.rotation = 45;
-//        s2.setScaleX(0.5);
-//        s2.setScaleY(0.5);
+        s2.setScaleX(0.25);
+        s2.setScaleY(0.25);
         addGameObject(s2);
+
+        player = new Player("/textures/ship2.png", 0, 0);
+
+        player.showHitBox = true;
+//        s2.scaleX =2 ;
+
+        //obrót wokół środka górnej krawędzi
+//        s2.setPivot(100, 100);
+        //s2.rotation = 45;
+        player.setScaleX(1);
+        player.setScaleY(1);
+        addGameObject(player);
 
         Animation an = new Animation("/textures/mario-walk.png",0,0,61,64,3);
         playerWalk = new AnimatedSprite(0.1, 600, 100); // zmiana klatki co 0.1 sekundy

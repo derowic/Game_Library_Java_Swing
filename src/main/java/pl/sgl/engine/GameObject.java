@@ -72,9 +72,15 @@ public abstract class GameObject {
         }
 
         // 5. TRANSFORMACJE (Kolejność: Translate -> Rotate)
-        g2d.translate(width/2, height/2);
-        g2d.scale(scaleX, scaleY);
-        g2d.translate(-width/2, -height/2);
+        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
+            g2d.translate(width / 2, height / 2);
+            g2d.scale(scaleX, scaleY);
+            g2d.translate(-width / 2, -height / 2);
+        } else {
+            g2d.translate(pX, pY);
+            g2d.scale(scaleX, scaleY);
+            g2d.translate(-pX, -pY);
+        }
 
         // 4. SKALOWANIE - wokół pivotu
         // Aby skalować względem środka, a nie lewego górnego rogu:
@@ -172,9 +178,15 @@ public abstract class GameObject {
             at.rotate(Math.toRadians(rotation), pX, pY);
         }
 
-        at.translate(width/2, height/2);
-        at.scale(scaleX, scaleY);
-        at.translate(-width/2, -height/2);
+        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
+            at.translate(width / 2, height / 2);
+            at.scale(scaleX, scaleY);
+            at.translate(-width / 2, -height / 2);
+        } else {
+            at.translate(pX, pY);
+            at.scale(scaleX, scaleY);
+            at.translate(-pX, -pY);
+        }
 
         // 5. Tworzymy lokalny przeskalowany prostokąt
         Rectangle rec = getCalculatedAutoHitBoxes();
