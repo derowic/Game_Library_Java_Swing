@@ -15,6 +15,7 @@ class Window {
     protected int oldWidth;
     protected int oldHeight;
     public String typeOfRenderingSprites = "normal";
+    protected Color backgroundColor = Color.BLACK;
 
 
     public Window(String title, int width, int height) {
@@ -138,7 +139,7 @@ class Window {
         g = (Graphics2D) bs.getDrawGraphics();
 
         // ── tutaj rysujesz ──────────────────────
-        g.setColor(Color.BLACK);
+        g.setColor(backgroundColor);
         g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());  // czyść ekran
 
 

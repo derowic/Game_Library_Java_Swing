@@ -355,7 +355,7 @@ public class Game implements Runnable {
                 float hH = (float) (s.height / 2.0 * s.scaleY);
 
                 // 2. Punkty nóg
-                float footL = dX - (hW);
+                float footL = dX;
                 float footR = dX + (hW);
                 float feetY = dY + hH;
 
@@ -365,16 +365,16 @@ public class Game implements Runnable {
 
                 // Rysujemy lewy sensor (niebieski)
                 debugG.setColor(Color.CYAN);
-                debugG.drawLine((int)footL, (int)(feetY - lookUp), (int)footL, (int)(feetY + lookDown));
+                debugG.drawLine((int)dX, (int)(dY - lookUp), (int)footL, (int)(feetY + lookDown));
 
-                // Rysujemy prawy sensor (magenta)
-                debugG.setColor(Color.MAGENTA);
-                debugG.drawLine((int)footR, (int)(feetY - lookUp), (int)footR, (int)(feetY + lookDown));
+//                // Rysujemy prawy sensor (magenta)
+//                debugG.setColor(Color.MAGENTA);
+//                debugG.drawLine((int)footR, (int)(feetY - lookUp), (int)footR, (int)(feetY + lookDown));
 
                 // Rysujemy kropki w miejscu "idealnego" styku
                 debugG.setColor(Color.YELLOW);
                 debugG.fillOval((int)footL - 2, (int)feetY - 2, 4, 4);
-                debugG.fillOval((int)footR - 2, (int)feetY - 2, 4, 4);
+//                debugG.fillOval((int)footR - 2, (int)feetY - 2, 4, 4);
 
                 debugG.dispose();
             }
@@ -453,6 +453,10 @@ public class Game implements Runnable {
         // Wyświetlanie Alpha (opcjonalnie do debugowania płynności)
         window.g.setColor(Color.YELLOW);
         window.g.drawString("Alpha: " + String.format("%.2f", alpha), 10, 60);
+    }
+
+    public void setBackgroundColor(Color c) {
+        window.backgroundColor = c;
     }
 //    public boolean isKeyPressed(int keyCode) {
 //        return input.isKeyPressed(keyCode);

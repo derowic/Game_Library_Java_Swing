@@ -43,8 +43,9 @@ public class Main extends Game {
 
     public Main() {
         super("Test", 1280, 720);
+        setBackgroundColor(Color.WHITE);
         // Ładujemy raz przy starcie
-        s2 = new Sprite("/textures/ship2.png", 600, 500);
+        s2 = new Sprite("/textures/bridge/full_bridge.png", 600, 500);
 
         s2.showHitBox = true;
 //        s2.scaleX =2 ;
@@ -52,12 +53,16 @@ public class Main extends Game {
         //obrót wokół środka górnej krawędzi
 //        s2.setPivot(100, 100);
         //s2.rotation = 45;
-        s2.setScaleX(0.25);
-        s2.setScaleY(0.25);
+//        s2.setScaleX(0.25);
+//        s2.setScaleY(0.5);
         addGameObject(s2);
 
-        player = new Player("/textures/ship2.png", 600, -300);
-
+//        player = new Player("/textures/bridge/player.png", 600, -300);
+//
+//        player.showHitBox = true;
+        Animation an = new Animation("/textures/bridge/player_anim/sprite_sheet.png",0,0,1920,1080,31);
+        player = new Player(0.001, 600, 100); // zmiana klatki co 0.1 sekundy
+        player.addAnimation("walk", an);
         player.showHitBox = true;
 //        s2.scaleX =2 ;
 
@@ -65,17 +70,18 @@ public class Main extends Game {
 //        s2.setPivot(100, 100);
         //s2.rotation = 45;
 
-        player.setScaleX(0.25);
-        player.setScaleY(0.25);
+        player.setScaleX(0.05);
+        player.setScaleY(0.05);
         addGameObject(player);
 
-        Animation an = new Animation("/textures/mario-walk.png",0,0,61,64,3);
-        playerWalk = new AnimatedSprite(0.1, 600, 100); // zmiana klatki co 0.1 sekundy
+//        Animation an = new Animation("/textures/bridge/player_anim/sprite_sheet.png",0,0,1920,1080,31);
+        playerWalk = new AnimatedSprite(0.001, 600, 100); // zmiana klatki co 0.1 sekundy
         playerWalk.addAnimation("walk", an);
         playerWalk.showHitBox = true;
 //        playerWalk.rotation = 45;
 //        playerWalk.scaleX = 2;
-//        playerWalk.setScaleX(2);
+        playerWalk.setScaleX(0.1);
+        playerWalk.setScaleY(0.1);
         playerWalk.getRotatedShape();
         addGameObject(playerWalk);
 
@@ -136,25 +142,7 @@ public class Main extends Game {
             ;
             if (keyboard.isKeyDown(KeyEvent.VK_A)) currentGame.sprites.get(0).velocityX = -100;
             ;
-            if (keyboard.isKeyDown(KeyEvent.VK_D)) {
-                currentGame.sprites.get(0).velocityX = 100;
-            }
-            ;
 
-            if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
-                this.x -= 1;
-            }
-            ;
-
-            if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) this.x += 1;
-            ;
-            ;
-            if (keyboard.isKeyDown(KeyEvent.VK_UP)) this.y -= 1;
-            if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) this.y += 1;
-            ;
-
-            currentGame.camX = x;
-            currentGame.camY = y;
 
             if (!keyboard.isKeyDown(KeyEvent.VK_W) && !keyboard.isKeyDown(KeyEvent.VK_S))
                 currentGame.sprites.get(0).velocityY = 0;
@@ -193,7 +181,7 @@ public class Main extends Game {
 
             if (keyboard.isKeyPressed(KeyEvent.VK_H)) {
 //            audio.play("shoot"); // Dźwięk strzału przy spacji
-                currentGame.sprites.get(1).visible = !currentGame.sprites.get(1).visible;
+//                currentGame.sprites.get(1).visible = !currentGame.sprites.get(1).visible;
             }
 
             if (Colision.colisionWithListOfSprites(currentGame.sprites.get(1), currentGame.sprites)) {
@@ -246,7 +234,7 @@ public class Main extends Game {
 //
         if (keyboard.isKeyDown(KeyEvent.VK_T)) {
             currentGame.sprites.get(0).scaleX += 0.05;
-            currentGame.sprites.get(0).scaleY += 0.05;
+//            currentGame.sprites.get(0).scaleY += 0.05;
         }
 
         if (keyboard.isKeyDown(KeyEvent.VK_G)) {
@@ -264,13 +252,67 @@ public class Main extends Game {
 
         List<GameObject> sprites = new ArrayList<>();
         sprites.add(s2);
-        player.updateCalc(deltaTime, sprites);
+        player.updateCalc(deltaTime, sprites, keyboard);
 
-
+        movePlayer();
         super.update();
     }
 
     public static void main(String[] args) {
         new Main().start();
+    }
+
+    public void moveCamera() {
+        if (keyboard.isKeyDown(KeyEvent.VK_D)) {
+            currentGame.sprites.get(0).velocityX = 100;
+        }
+        ;
+
+        if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+            this.x -= 1;
+        }
+        ;
+
+        if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) this.x += 1;
+        ;
+        ;
+        if (keyboard.isKeyDown(KeyEvent.VK_UP)) this.y -= 1;
+        if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) this.y += 1;
+        ;
+
+        currentGame.camX = x;
+        currentGame.camY = y;
+    }
+
+    public void movePlayer() {
+        if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+            player.velocityX = -10;
+        }
+        if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
+            player.velocityX = 100;
+        }
+
+        if (keyboard.isKeyDown(KeyEvent.VK_UP)) {
+            player.velocityY = -1;
+        }
+        if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
+            player.velocityY = 1;
+        }
+
+
+//
+//        if (!keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+//            player.velocityX = 0;
+//        }
+//        if (!keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
+//            player.velocityX = 0;
+//        }
+
+//        if (!keyboard.isKeyDown(KeyEvent.VK_UP)) {
+//            player.velocityY = 0;
+//        }
+//        if (!keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
+//            player.velocityY = 0;
+//        }
     }
 }
