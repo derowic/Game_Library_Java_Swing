@@ -15,13 +15,15 @@ class Window {
     protected int oldWidth;
     protected int oldHeight;
     public String typeOfRenderingSprites = "normal";
+    protected Color backgroundColor;
 
 
-    public Window(String title, int width, int height) {
+    public Window(String title, int width, int height, Color c) {
         this.oldWidth = width;
         this.oldHeight = height;
         ConfigureData.oldHeight = height;
         ConfigureData.oldWidth = width;
+        backgroundColor = c;
         // 1. Włącz akcelerację sprzętową PRZED utworzeniem okna
         System.setProperty("sun.java2d.opengl", "true");
 
@@ -39,6 +41,8 @@ class Window {
         frame.add(canvas);
         frame.pack();                   // dopasuj rozmiar okna do Canvas
         frame.setLocationRelativeTo(null); // wyśrodkuj na ekranie
+
+
     }
 
     public void setFullScreen() {
@@ -138,7 +142,7 @@ class Window {
         g = (Graphics2D) bs.getDrawGraphics();
 
         // ── tutaj rysujesz ──────────────────────
-        g.setColor(Color.BLACK);
+        g.setColor(backgroundColor);
         g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());  // czyść ekran
 
 

@@ -42,7 +42,7 @@ public class Main extends Game {
 
 
     public Main() {
-        super("Test", 1280, 720);
+        super("Test", 1280, 720, Color.BLACK);
         // Ładujemy raz przy starcie
         s2 = new Sprite("/textures/ship2.png", 600, 500);
 

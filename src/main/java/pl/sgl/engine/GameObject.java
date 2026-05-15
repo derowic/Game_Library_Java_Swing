@@ -7,7 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
-public abstract class GameObject {
+public class GameObject {
     public double x = 0;
     public double y = 0;
     public double lastX = 0;
@@ -21,8 +21,6 @@ public abstract class GameObject {
     protected int width = 0;
     protected int height =0;
     public boolean showHitBox = false;
-    protected double drawX;
-    protected double drawY;
     public boolean visible = true;
     protected double pivotX = Double.NaN;
     protected double pivotY = Double.NaN;
@@ -33,12 +31,38 @@ public abstract class GameObject {
         this.y = y;
         this.lastX = x;
         this.lastY = y;
-//        info();
+    }
+
+    public GameObject(GameObject go) {
+        this.x = go.x;
+        this.y = go.y;
+        this.lastX = go.lastX;
+        this.lastY = go.lastY;
+        this.rotation = go.rotation;
+        this.didTeleport = go.didTeleport;
+        this.velocityX = go.velocityX;
+        this.velocityY = go.velocityY;
+        this.scaleX = go.scaleX;
+        this.scaleY = go.scaleY;
+        this.width =go.width;
+        this.height = go.height;
+        this.showHitBox = go.showHitBox;
+        this.visible = go.visible;
+        this.pivotX = go.pivotX;
+        this.pivotY = go.pivotY;
+        this.texture = go.texture;
+    }
+
+
+    public GameObject getCopy () {
+        return new GameObject(this);
     }
 
     public void update(double deltaTime) {}
 
     public void draw(Graphics2D g, double alpha) {
+        double drawX;
+        double drawY;
         if (didTeleport) {
 //            renderX = (float) renderState.x;
             // Interpolacja pozycji
@@ -95,6 +119,7 @@ public abstract class GameObject {
         g2d.dispose();
         // 7. RYSOWANIE HITBOXA (Lokalnie!)
         if (showHitBox) {
+//            System.out.println("render");
             g2d = (Graphics2D) g.create();
             Shape collisionShape = getRotatedShape();
 
@@ -108,9 +133,6 @@ public abstract class GameObject {
             g2d.fill(collisionShape);
             g2d.dispose();
         }
-
-
-
     }
 
     public void scale() {
@@ -118,7 +140,11 @@ public abstract class GameObject {
     }
 
     public Rectangle getCalculatedAutoHitBoxes() {
-        return new Rectangle(0,0,0,0);
+        if(texture != null) {
+           return texture.getHitBox();
+        } else {
+            return new Rectangle(0, 0, 0, 0);
+        }
     }
 
     public Rectangle getRotatedBounds() {
@@ -145,11 +171,6 @@ public abstract class GameObject {
     // WERSJA UNIWERSALNA
     public Shape getRotatedShape(float drawX, float drawY) {
         AffineTransform at = new AffineTransform();
-
-
-        // 2. Skalowanie wymiarów do obliczenia pivotu
-        double fW = width ;
-        double fH = height;
 
         // 3. Obliczenie Pivotu (identycznie jak w draw)
         double pX = Double.isNaN(pivotX) ? width / 2.0 : pivotX;

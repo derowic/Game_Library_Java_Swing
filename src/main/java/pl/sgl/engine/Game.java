@@ -48,8 +48,8 @@ public class Game implements Runnable {
     private boolean isSwitching = false;
     public String windowMode = "window";
 
-    public Game(String title, int width, int height) {
-        window = new Window(title, width, height);
+    public Game(String title, int width, int height, Color bc) {
+        window = new Window(title, width, height, bc);
         window.initInput(keyboard);  // Klawiatura
         window.initMouse(mouse);  // Myszka
         window.show();

@@ -49,8 +49,12 @@ public class GameState {
             emitters2.add(emit);
         }
         this.emitters = emitters2;
+        ArrayList<GameObject> newObjects = new ArrayList<>();
+        for (GameObject s : sprites) {
+            newObjects.add(s.getCopy());
+        }
         this.entities = new ArrayList<>();
-        this.sprites = new ArrayList<>(sprites);
+        this.sprites = newObjects;//new ArrayList<>(sprites);
         this.uiManager = ui;
         this.camX = camX;
         this.camY = camY;

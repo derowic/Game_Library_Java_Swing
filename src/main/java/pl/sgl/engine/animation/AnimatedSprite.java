@@ -15,7 +15,7 @@ public class AnimatedSprite extends GameObject {
     private double frameDuration = 0.1;
     private boolean loop = true;
     private boolean play = false;
-    private Rectangle baseHitbox; // Zmieniono nazwę na baseHitbox (oryginalne wymiary)
+//    private Rectangle baseHitbox; // Zmieniono nazwę na baseHitbox (oryginalne wymiary)
 
     public AnimatedSprite(double speed, double x, double y) {
         super(x, y);
@@ -35,7 +35,7 @@ public class AnimatedSprite extends GameObject {
             this.width = anim.frames[0].getWidth();
             this.height = anim.frames[0].getHeight();
             // Zapamiętujemy bazowy hitbox (nieprzeskalowany)
-            baseHitbox = TextureLoader.getTightHitbox(anim.frames[0]);
+//            baseHitbox = TextureLoader.getTightHitbox(anim.frames[0]);
         }
     }
 
@@ -62,6 +62,8 @@ public class AnimatedSprite extends GameObject {
                 }
             }
         }
+        texture = new Texture(getCurrentFrame());
+        if (texture == null) return;
     }
 
     public BufferedImage getCurrentFrame() {
@@ -69,18 +71,17 @@ public class AnimatedSprite extends GameObject {
         return animations.get(currentPlayedAnimation).frames[currentFrame];
     }
 
-    @Override
-    public void draw(Graphics2D g, double alpha) {
-        texture = new Texture(getCurrentFrame());
-        if (texture == null) return;
+//    @Override
+//    public void draw(Graphics2D g, double alpha) {
+//
+//
+//       super.draw(g, alpha);
+//    }
 
-       super.draw(g, alpha);
-    }
-
-    @Override
-    public Rectangle getCalculatedAutoHitBoxes() {
-        return baseHitbox;
-    }
+//    @Override
+//    public Rectangle getCalculatedAutoHitBoxes() {
+//        return baseHitbox;
+//    }
 
     // Usunięto modyfikowanie baseHitbox w setterach - teraz skala jest używana tylko przy rysowaniu i kolizjach
     @Override
