@@ -17,10 +17,11 @@ public class AnimatedSprite extends GameObject {
     private boolean play = false;
 //    private Rectangle baseHitbox; // Zmieniono nazwę na baseHitbox (oryginalne wymiary)
 
-    public AnimatedSprite(double speed, double x, double y) {
+    public AnimatedSprite(double x, double y, double speed) {
         super(x, y);
         this.frameDuration = speed;
         playAnimation();
+//        hitbox = texture.getHitBox();
     }
 
     public void playAnimation() {
@@ -34,6 +35,10 @@ public class AnimatedSprite extends GameObject {
             // Ustawiamy bazowe wymiary na podstawie pierwszej klatki
             this.width = anim.frames[0].getWidth();
             this.height = anim.frames[0].getHeight();
+            texture = new Texture(getCurrentFrame());
+            if( hitbox.width == 0 && hitbox.height ==0) {
+                hitbox = texture.getHitBox();
+            }
             // Zapamiętujemy bazowy hitbox (nieprzeskalowany)
 //            baseHitbox = TextureLoader.getTightHitbox(anim.frames[0]);
         }

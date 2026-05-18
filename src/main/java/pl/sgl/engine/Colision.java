@@ -49,9 +49,9 @@ public class Colision {
         return false;
     }
 
-    public Rectangle getHitbox(Sprite a, Sprite b) {
-        return new Rectangle((int)a.x + 10, (int)a.y + 5, a.width - 20, b.height - 10);
-    }
+//    public Rectangle getHitbox(Sprite a, Sprite b) {
+//        return new Rectangle((int)a.x + 10, (int)a.y + 5, a.width - 20, b.height - 10);
+//    }
 
     /*
     AABB

@@ -12,7 +12,9 @@ public class Sprite extends GameObject {
         texture = new Texture(pathToTexture);
         width = texture.image.getWidth();
         height = texture.image.getHeight();
-        getCalculatedAutoHitBoxes();
+        System.out.println(width);
+        hitbox = texture.getHitBox();
+        System.out.println(texture.rectangle);
 //        info();
     }
 
@@ -31,12 +33,6 @@ public class Sprite extends GameObject {
         this.lastY = this.y;
         this.y += (velocityY * deltaTime);
 
-    }
-
-    @Override
-    public Rectangle getCalculatedAutoHitBoxes() {
-
-        return texture.getHitBox();
     }
 
     @Override

@@ -8,9 +8,11 @@ public class Texture {
     public Rectangle rectangle;
 
     public Texture(String path) {
+
         image = TextureLoader.load(path);
     }
     public Texture(BufferedImage img) {
+
         image = img;
     }
 
@@ -20,9 +22,11 @@ public class Texture {
         }
         if(image != null) {
             rectangle = TextureLoader.getTightHitbox(image);
+            return rectangle;
         } else {
             System.out.println("No texture to calculate hitboxes");
         }
+        System.out.println("set texture to 0,0,0,0");
 
         return new Rectangle(0,0,0,0);
     }

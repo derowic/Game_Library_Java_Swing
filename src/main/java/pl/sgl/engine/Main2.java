@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main extends Game {
+public class Main2 extends Game {
     // Lista obiektów logicznych (w świecie gry)
 //    private List<MyPlayer> players = new ArrayList<>();
 //
@@ -41,7 +41,7 @@ public class Main extends Game {
     private boolean fullscreenKeyPressed = false;
 
 
-    public Main() {
+    public Main2() {
         super("Test", 1280, 720, Color.BLACK);
         // Ładujemy raz przy starcie
         s2 = new Sprite("/textures/ship2.png", 600, 500);
@@ -153,7 +153,7 @@ public class Main extends Game {
             int my = mouse.getWorldY();
 
             // Reakcja na lewy przycisk myszy (MouseEvent.BUTTON1)
-            if (mouse.isButtonDown(java.awt.event.MouseEvent.BUTTON1)) {
+            if (mouse.isButtonDown(MouseEvent.BUTTON1)) {
                 // Przykładowo: postać teleportuje się tam, gdzie klikniemy
                 currentGame.sprites.get(0).x = mx;
                 currentGame.sprites.get(0).y = my;
@@ -252,7 +252,7 @@ public class Main extends Game {
     }
 
     public static void main(String[] args) {
-        new Main().start();
+        new Main2().start();
     }
 
     public void moveCamera() {

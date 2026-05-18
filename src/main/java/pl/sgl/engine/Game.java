@@ -221,6 +221,11 @@ public class Game implements Runnable {
             }
         }
         for (GameObject s : currentGame.sprites) {
+            if (!s.active) {
+                currentGame.sprites.remove(s);
+            }
+        }
+        for (GameObject s : currentGame.sprites) {
             s.update(deltaTime);
 
             double diffX = (s.x - s.lastX);

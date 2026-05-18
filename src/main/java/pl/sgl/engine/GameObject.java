@@ -25,6 +25,8 @@ public class GameObject {
     protected double pivotX = Double.NaN;
     protected double pivotY = Double.NaN;
     public Texture texture;
+    public boolean active = true; // Flaga określająca stan obiektu
+    public Rectangle hitbox = new Rectangle();
 
     public GameObject(double x, double y) {
         this.x = x;
@@ -51,6 +53,8 @@ public class GameObject {
         this.pivotX = go.pivotX;
         this.pivotY = go.pivotY;
         this.texture = go.texture;
+        this.active = go.active;
+        this.hitbox = go.hitbox;
     }
 
 
@@ -139,14 +143,6 @@ public class GameObject {
 
     }
 
-    public Rectangle getCalculatedAutoHitBoxes() {
-        if(texture != null) {
-           return texture.getHitBox();
-        } else {
-            return new Rectangle(0, 0, 0, 0);
-        }
-    }
-
     public Rectangle getRotatedBounds() {
         double rad = Math.toRadians(rotation);
         double sin = Math.abs(Math.sin(rad));
@@ -195,12 +191,11 @@ public class GameObject {
 //        }
 
         // 5. Tworzymy lokalny przeskalowany prostokąt
-        Rectangle rec = getCalculatedAutoHitBoxes();
         Rectangle2D.Double scaledLocalRect = new Rectangle2D.Double(
-                rec.x + (int)-pX,
-                rec.y + (int)-pY,
-                rec.width ,
-                rec.height
+                hitbox.x + (int)-pX,
+                hitbox.y + (int)-pY,
+                hitbox.width ,
+                hitbox.height
         );
 
         return at.createTransformedShape(scaledLocalRect);

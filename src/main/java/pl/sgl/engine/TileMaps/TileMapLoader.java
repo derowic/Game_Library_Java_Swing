@@ -79,7 +79,7 @@ public class TileMapLoader {
                             if (prop.get("name").getAsString().equals("collidable") &&
                                     prop.get("value").getAsBoolean()) {
                                 collidableTiles.add(id);
-                                System.out.println("dodano clidable");
+//                                System.out.println("dodano clidable");
                             }
                         }
                     }
