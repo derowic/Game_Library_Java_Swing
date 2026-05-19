@@ -136,36 +136,36 @@ public class Player extends Sprite {
             Shape playerShape = this.getRotatedShape((float)x, (float)y);
             Shape obstacleShape = obj.getRotatedShape();
 
-            if (Colision.checkCollision(playerShape, obstacleShape)) {
-                // A. Oblicz wektor normalny
-                double rad = Math.toRadians(obj.rotation);
-                double nx = Math.sin(rad);
-                double ny = -Math.cos(rad);
-
-                // B. WYPYCHANIE (Depenetration)
-                int safetyCounter = 0;
-                while (Colision.checkCollision(this.getRotatedShape((float)x, (float)y), obstacleShape) && safetyCounter < 15) {
-                    x += nx * 0.5;
-                    y += ny * 0.5;
-                    safetyCounter++;
-                }
-
-                // C. RZUTOWANIE PRĘDKOŚCI (Sliding)
-                double dotProduct = (velocityX * nx + velocityY * ny);
-                if (dotProduct < 0) {
-                    velocityX -= dotProduct * nx;
-                    velocityY -= dotProduct * ny;
-                }
-
-                // D. Czy to podłoże?
-                if (ny < -0.5) {
-                    onGround = true;
-                    this.rotation = Math.toDegrees(Math.atan2(nx, -ny));
-                } else {
-                    velocityX = 0;
-                    // ny blisko 0.0 np. miedzy -0.5 a 0.5 to jest zderzenie z  ściana
-                }
-            }
+//            if (Colision.checkCollision(playerShape, obstacleShape)) {
+//                // A. Oblicz wektor normalny
+//                double rad = Math.toRadians(obj.rotation);
+//                double nx = Math.sin(rad);
+//                double ny = -Math.cos(rad);
+//
+//                // B. WYPYCHANIE (Depenetration)
+//                int safetyCounter = 0;
+//                while (Colision.checkCollision(this.getRotatedShape((float)x, (float)y), obstacleShape) && safetyCounter < 15) {
+//                    x += nx * 0.5;
+//                    y += ny * 0.5;
+//                    safetyCounter++;
+//                }
+//
+//                // C. RZUTOWANIE PRĘDKOŚCI (Sliding)
+//                double dotProduct = (velocityX * nx + velocityY * ny);
+//                if (dotProduct < 0) {
+//                    velocityX -= dotProduct * nx;
+//                    velocityY -= dotProduct * ny;
+//                }
+//
+//                // D. Czy to podłoże?
+//                if (ny < -0.5) {
+//                    onGround = true;
+//                    this.rotation = Math.toDegrees(Math.atan2(nx, -ny));
+//                } else {
+//                    velocityX = 0;
+//                    // ny blisko 0.0 np. miedzy -0.5 a 0.5 to jest zderzenie z  ściana
+//                }
+//            }
         }
 
         // Jeśli gracz jest w powietrzu, powoli wraca do pionu

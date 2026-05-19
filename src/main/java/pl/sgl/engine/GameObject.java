@@ -244,7 +244,9 @@ public class GameObject {
     }
 
     public void setScaleY(double scaleY) {
+
         this.scaleY = scaleY;
+//        hitbox.setSize(hitbox.width, (int) (hitbox.height * scaleY));
     }
 
     public void setScaleX(double scaleX) {

@@ -35,17 +35,17 @@ public class Sprite extends GameObject {
 
     }
 
-    @Override
-    public void setScaleY(double scaleY) {
-        this.scaleY = scaleY;
-        // USUNIĘTO: texture.rectangle.height *= scaleY; // NIGDY TEGO NIE RÓB
-    }
-
-    @Override
-    public void setScaleX(double scaleX) {
-        this.scaleX = scaleX;
-        // USUNIĘTO: texture.rectangle.width *= scaleX; // NIGDY TEGO NIE RÓB
-    }
+//    @Override
+//    public void setScaleY(double scaleY) {
+//        this.scaleY = scaleY;
+//        // USUNIĘTO: texture.rectangle.height *= scaleY; // NIGDY TEGO NIE RÓB
+//    }
+//
+//    @Override
+//    public void setScaleX(double scaleX) {
+//        this.scaleX = scaleX;
+//        // USUNIĘTO: texture.rectangle.width *= scaleX; // NIGDY TEGO NIE RÓB
+//    }
 
     public boolean intersects(Sprite s) {
         return this.texture.rectangle.intersects(s.texture.rectangle);

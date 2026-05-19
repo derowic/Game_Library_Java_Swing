@@ -7,17 +7,19 @@ import java.util.List;
 
 public class Colision {
 
-    public static boolean colision(GameObject a, GameObject b) {
+    private static boolean colision(GameObject a, GameObject b) {
         return a.x < b.x + b.width &&
                 a.x + a.width > b.x &&
                 a.y < b.y + b.height &&
                 a.y + a.height > b.y;
     }
 
-    public static boolean checkCollision(Shape shape1, Shape shape2) {
+    public static boolean checkCollision(GameObject g1, GameObject g2) {
         // 1. Szybki test (Broad Phase)
         // Jeśli proste prostokąty otaczające (AABB) się nie stykają,
         // to te obrócone tym bardziej. To oszczędza dużo procesora.
+        Shape shape1 = g1.getRotatedShape();
+        Shape shape2 = g2.getRotatedShape();
         if (!shape1.getBounds2D().intersects(shape2.getBounds2D())) {
             return false;
         }
@@ -34,16 +36,9 @@ public class Colision {
     }
 
     public static boolean colisionWithListOfSprites(GameObject a, List<GameObject> sprites) {
-        Shape shapeA = a.getRotatedShape();
-
         for(GameObject g : sprites) {
             if(a != g) {
-                // Generujemy kształt obiektu G
-                Shape shapeG = g.getRotatedShape();
-                if (checkCollision(shapeA, shapeG)) return true;
-//                if (shapeG.contains(g.x, g.y)) {
-//                    return true;
-//                }
+                if (checkCollision(a, g)) return true;
             }
         }
         return false;

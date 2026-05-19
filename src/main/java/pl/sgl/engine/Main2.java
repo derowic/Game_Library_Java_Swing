@@ -35,11 +35,9 @@ public class Main2 extends Game {
 
 
     Sprite s2;
-    Player player;
+    Sprite player;
     double x = 0;
     double y=0;
-    private boolean fullscreenKeyPressed = false;
-
 
     public Main2() {
         super("Test", 1280, 720, Color.BLACK);
@@ -50,14 +48,13 @@ public class Main2 extends Game {
 //        s2.scaleX =2 ;
 
         //obrót wokół środka górnej krawędzi
-//        s2.setPivot(100, 100);
-        //s2.rotation = 45;
+       s2.setPivot(100, 100);
+//        s2.rotation = 180;
         s2.setScaleX(0.25);
         s2.setScaleY(0.5);
-        s2.velocityX = 10;
         addGameObject(s2);
 
-        player = new Player("/textures/ship2.png", 600, -300);
+        player = new Sprite("/textures/ship2.png", 600, -300);
 
         player.showHitBox = true;
 //        s2.scaleX =2 ;
@@ -101,16 +98,6 @@ public class Main2 extends Game {
         level1.collidableTiles = TileMapLoader.loadCollisionsFromTileset("/tileMaps/dungeon3.json");
         System.out.println(level1.collidableTiles);
         currentGame.tileMap = level1;
-//        audio.load("bg_music", "/audio/alex-productions-racing-sport-gaming-racing(chosic.com).wav");
-//        audio.load("shoot", "/audio/zap-hiphop-a.wav");
-//
-//        audio.loop("bg_music"); // Start muzyki w tle
-
-//        tileMap = new TileMap();
-//        tileMap.dr
-
-        emitter = new ParticleEmitter(100, 20, 500,25,-25,1, Color.ORANGE, 50);
-        addGameObject(emitter);
     }
     @Override
     protected void update() {
@@ -242,12 +229,14 @@ public class Main2 extends Game {
         if (keyboard.isKeyDown(KeyEvent.VK_H)) {
             currentGame.sprites.get(0).rotation -= 1;
         }
+//        player.updateCalc(deltaTime, sprites);
 
-        List<GameObject> sprites = new ArrayList<>();
-        sprites.add(s2);
-        player.updateCalc(deltaTime, sprites);
+        if(Colision.checkCollision(s2, player)) {
+            System.out.println("colsion ");
+        }
 
         movePlayer();
+        moveCamera();
         super.update();
     }
 
@@ -291,21 +280,5 @@ public class Main2 extends Game {
         if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
             player.velocityY = 1;
         }
-
-
-//
-//        if (!keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
-//            player.velocityX = 0;
-//        }
-//        if (!keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
-//            player.velocityX = 0;
-//        }
-
-//        if (!keyboard.isKeyDown(KeyEvent.VK_UP)) {
-//            player.velocityY = 0;
-//        }
-//        if (!keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
-//            player.velocityY = 0;
-//        }
     }
 }
