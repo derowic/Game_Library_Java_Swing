@@ -17,23 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main2 extends Game {
-    // Lista obiektów logicznych (w świecie gry)
-//    private List<MyPlayer> players = new ArrayList<>();
-//
-    private BufferedImage playerShip;
     private AnimatedSprite playerWalk;
-    private UIElement startButton;
-    private UIElement scoreLabel;
-    private UIElement inputField;
-    private UIElement slider;
     private volatile int score = 0;
-    private TileMap tileMap;
-
-    private TileMap level1;
-
-    private ParticleEmitter emitter;
-
-
     Sprite s2;
     Sprite player;
     double x = 0;
@@ -45,10 +30,7 @@ public class Main2 extends Game {
         s2 = new Sprite("/textures/ship2.png", 600, 500);
 
         s2.showHitBox = true;
-//        s2.scaleX =2 ;
-
-        //obrót wokół środka górnej krawędzi
-       s2.setPivot(100, 100);
+       s2.setPivot(300, 100);
 //        s2.rotation = 180;
         s2.setScaleX(0.25);
         s2.setScaleY(0.5);
@@ -76,28 +58,6 @@ public class Main2 extends Game {
 //        playerWalk.setScaleX(2);
         playerWalk.getRotatedShape();
         addGameObject(playerWalk);
-
-        startButton = new Button("ZAGRAJ", 300, 250, 200, 50);
-        scoreLabel = new Text( "PUNKTY: 0", 20, 40, 24);
-        inputField = new InputField(600, 450, 200, 25, 12);
-        slider = new Slider(600, 550, 200, 50);
-
-        currentGame.uiManager.addElement(startButton);
-        currentGame.uiManager.addElement(scoreLabel);
-        currentGame.uiManager.addElement(inputField);
-        currentGame.uiManager.addElement(slider);
-
-//        currentGame.tileMap = new TileMap("", 64);
-
-
-        // 1. Wczytujemy dane kafelków z JSON
-        int[][] data = TileMapLoader.loadMap("/tileMaps/dungeon3.json");
-        // 2. Tworzymy obiekt TileMap (używając Twojej klasy, którą pisaliśmy wcześniej)
-        // Zakładamy, że konstruktor przyjmuje tablicę int[][], ścieżkę do obrazka i rozmiar kafelka
-        level1 = new TileMap(data, "/tileMaps/dungeon_tile.png", 16);
-        level1.collidableTiles = TileMapLoader.loadCollisionsFromTileset("/tileMaps/dungeon3.json");
-        System.out.println(level1.collidableTiles);
-        currentGame.tileMap = level1;
     }
     @Override
     protected void update() {
@@ -172,46 +132,15 @@ public class Main2 extends Game {
 
 
 
-            boolean tmp = false;
-            tmp = currentGame.tileMap.isCollidingWithWall(
-                    mx,
-                    my,
-                    20,
-                    20
-//                currentGame.sprites.get(0).x,
-//                currentGame.sprites.get(0).y,
-//                currentGame.sprites.get(0).width,
-//                currentGame.sprites.get(0).height
-            );
-
-            if (tmp == true) {
-//                System.out.println("kolizja z tilemapa");
-            }
-
-//        System.out.println(currentGame.sprites.get(0).x);
-
-//        System.out.println(tmp);
 
             if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.zoom += 0.1;
             if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.zoom -= 0.1;
 
 
-            if (mouse.isButtonPressed(MouseEvent.BUTTON1)) {
-                for (int i = 0; i < 50; i++) {
-                    float angle = (float) (Math.random() * Math.PI * 2);
-                    float speed = (float) ((Math.random() * 200 + 50));
-                    emitter.emit(200, 500, (float) Math.cos(angle) * speed, (float) Math.sin(angle) * speed, 0.5f, Color.ORANGE, 5);
-                }
 
-                System.out.println("emit");
-            }
         }
 
-        if (mouse.isButtonPressed(MouseEvent.BUTTON1) && startButton.isClicked(mouse)) {
-            score++;
-            scoreLabel.text = "PUNKTY: " + score;
-        }
-//
+
         if (keyboard.isKeyDown(KeyEvent.VK_T)) {
             currentGame.sprites.get(0).scaleX += 0.05;
 //            currentGame.sprites.get(0).scaleY += 0.05;
