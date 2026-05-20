@@ -1,3 +1,6 @@
+[] give name to object and in class Game method update logic change only thes gameobject what move or change. Background left from prevoious snap
+[] don't render objects that camera don't see
+
 [x] scale hitbox with the sprite
 [x] scaling UI for fullscreen
 [x] scaling and rotating at setted point

@@ -76,9 +76,12 @@ public class GameObject {
         this.srcY = y;
         this.srcW = w;
         this.srcH = h;
+    }
+
+    public void fitHitboxToTexture(){
         // Aktualizujemy rozmiar bazowy obiektu, aby skala 1:1 pasowała do wycinka
-        this.width = w;
-        this.height = h;
+        this.width = this.srcW;
+        this.height = this.srcH;
         this.needsRefresh = true; // Sygnał dla renderera, żeby przeliczył kafelki
         hitbox = new Rectangle(srcX, srcY, srcW, srcH);
     }
@@ -155,25 +158,8 @@ public class GameObject {
         if (rotation != 0) {
             g2d.rotate(Math.toRadians(rotation));
         }
-//        if (rotation != 0) {
-//            g2d.rotate(Math.toRadians(rotation)); // B. Obróć wokół (0,0), czyli wokół pozycji dX, dY
-//        }
-//        g2d.scale(scaleX, scaleY);       // C. Skaluj wokół (0,0)
 
-        // 5. TRANSFORMACJE (Kolejność: Translate -> Rotate)
-//        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
-//            g2d.translate(width / 2, height / 2);
         g2d.scale(scaleX, scaleY);
-//            g2d.translate(-width / 2, -height / 2);
-//        } else {
-//            g2d.translate(pX, pY);
-//            g2d.scale(scaleX, scaleY);
-//            g2d.translate(-pX, -pY);
-//        }
-
-        // 4. SKALOWANIE - wokół pivotu
-        // Aby skalować względem środka, a nie lewego górnego rogu:
-        // Przesuwamy do pivotu, skalujemy, wracamy.
 
         // 6. RYSOWANIE OBRAZKA (od 0,0 bo g2d jest już przesunięte)
 //        g2d.drawImage(texture.image, (int)-pX, (int)-pY, width, height, null);
@@ -182,12 +168,6 @@ public class GameObject {
 //                srcX, srcY, srcX + srcW, srcY + srcH,
 //                null
 //        );
-        if (fillMode == FillMode.STRETCH) {
-            // --- TRYB ROZCIĄGANIA ---
-            g2d.drawImage(texture.image,
-                    (int)-pX, (int)-pY, (int)(-pX + width), (int)(-pY + height),
-                    srcX, srcY, srcX + srcW, srcY + srcH, null);
-        }
         if (fillMode == FillMode.STRETCH) {
             g2d.drawImage(texture.image, (int)-pX, (int)-pY, (int)(-pX + width), (int)(-pY + height),
                     srcX, srcY, srcX + srcW, srcY + srcH, null);

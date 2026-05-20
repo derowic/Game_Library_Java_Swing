@@ -62,7 +62,7 @@ public class Main2 extends Game {
         addGameObject(playerWalk);
 
         stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 100, 100);
-        stoneBlock.setTextureRegion(0,0,16,15);
+        stoneBlock.setTextureRegion(0,0,16,16);
         stoneBlock.showHitBox = true;
         stoneBlock.setSpriteSize(32,32);
 //        s2.setPivot(300, 100);
