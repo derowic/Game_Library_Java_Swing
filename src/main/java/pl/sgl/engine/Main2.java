@@ -5,6 +5,7 @@ import pl.sgl.engine.TileMaps.TileMap;
 import pl.sgl.engine.TileMaps.TileMapLoader;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
+import pl.sgl.engine.math.Vector2D;
 import pl.sgl.engine.particleSystem.ParticleEmitter;
 import pl.sgl.engine.ui.*;
 import pl.sgl.engine.ui.Button;
@@ -61,14 +62,15 @@ public class Main2 extends Game {
         playerWalk.getRotatedShape();
         addGameObject(playerWalk);
 
-        stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 100, 100);
-        stoneBlock.setTextureRegion(0,0,16,16);
+        stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0,0);
+        stoneBlock.setPivot(0,0);
+        stoneBlock.setTextureRegion(32,32,16,16);
         stoneBlock.showHitBox = true;
-        stoneBlock.setSpriteSize(32,32);
+        stoneBlock.setSpriteSize(32*6,32*6);
 //        s2.setPivot(300, 100);
 ////        s2.rotation = 180;
-        stoneBlock.setScaleX(5);
-        stoneBlock.setScaleY(5);
+        stoneBlock.setScaleX(2);
+        stoneBlock.setScaleY(2);
         addGameObject(stoneBlock);
     }
     @Override
@@ -145,8 +147,8 @@ public class Main2 extends Game {
 
 
 
-            if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.zoom += 0.1;
-            if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.zoom -= 0.1;
+            if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.cam.zoom += 0.1;
+            if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.cam.zoom -= 0.1;
 
 
 
@@ -172,7 +174,7 @@ public class Main2 extends Game {
         }
 //        player.updateCalc(deltaTime, sprites);
 
-        if(Colision.checkCollision(s2, player)) {
+        if(Colision.checkCollision(s2, stoneBlock)) {
             System.out.println("colsion ");
         }
 
@@ -196,15 +198,19 @@ public class Main2 extends Game {
         }
         ;
 
-        if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) this.x += 1;
+        if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
+            currentGame.cam.move(1,0);
+//            currentGame.cam.velocity.x = 2;
+//            currentGame.cam.setPose(32,32);
+            System.out.println("right click");
+        }
         ;
         ;
         if (keyboard.isKeyDown(KeyEvent.VK_UP)) this.y -= 1;
         if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) this.y += 1;
         ;
 
-        currentGame.camX = x;
-        currentGame.camY = y;
+
     }
 
     public void movePlayer() {

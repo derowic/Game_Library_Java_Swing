@@ -12,15 +12,12 @@ class Window {
     public BufferStrategy bs;
     public Graphics2D g;
     public boolean showMouse = true;
-    protected int oldWidth;
-    protected int oldHeight;
     public String typeOfRenderingSprites = "normal";
     protected Color backgroundColor;
 
 
     public Window(String title, int width, int height, Color c) {
-        this.oldWidth = width;
-        this.oldHeight = height;
+
         ConfigureData.oldHeight = height;
         ConfigureData.oldWidth = width;
         backgroundColor = c;
@@ -172,7 +169,9 @@ class Window {
                     new Point(0, 0), "blank"));
         }
         g.dispose(); // zawsze zwalniaj Graphics
-        bs.show();   // zamień bufory – tylny staje się widocznym
+        if(bs != null) {
+            bs.show();   // zamień bufory – tylny staje się widocznym
+        }
     }
 
     public void initInput(InputHandler input) {

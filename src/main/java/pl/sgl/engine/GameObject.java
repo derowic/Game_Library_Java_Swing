@@ -89,7 +89,7 @@ public class GameObject {
     public void setSpriteSize(int w, int h) {
         this.width = w;
         this.height = h;
-        hitbox = new Rectangle(srcX, srcY, w, h);
+        hitbox = new Rectangle(0, 0, w, h);
     }
 
     // Wywołaj tę metodę zawsze, gdy zmienisz width lub height sprite'a!
@@ -121,7 +121,20 @@ public class GameObject {
         return new GameObject(this);
     }
 
-    public void update(double deltaTime) {}
+
+    public void update(double deltaTime)
+    {
+        this.lastX = this.x;
+        this.x += (velocityX * deltaTime);
+
+        this.lastY = this.y;
+        this.y += (velocityY * deltaTime);
+
+    }
+    public void move(double dx, double dy) {
+        this.x += dx;
+        this.y += dy;
+    }
 
     public void draw(Graphics2D g, double alpha) {
 
@@ -140,15 +153,8 @@ public class GameObject {
             drawX = lastX + (x - lastX) * (float) alpha;
             drawY = lastY + (y - lastY) * (float) alpha;
         }
-
         // 2. Tworzymy izolowaną kopię Graphics2D
         Graphics2D g2d = (Graphics2D) g.create();
-
-        // 3. Obliczamy wymiary po skalowaniu
-        int fW = (int)(width);
-        int fH = (int)(height);
-
-        // 4. Wyznaczamy punkt obrotu (Pivot) - identycznie jak w getRotatedShape
 
         // 1. Wyznaczamy pivot (współrzędne lokalne obrazka)
         double pX = Double.isNaN(pivotX) ? width / 2.0 : pivotX;
@@ -169,11 +175,11 @@ public class GameObject {
 //                null
 //        );
         if (fillMode == FillMode.STRETCH) {
-            g2d.drawImage(texture.image, (int)-pX, (int)-pY, (int)(-pX + width), (int)(-pY + height),
+            g2d.drawImage(texture.image, (int) -pX, (int) -pY, (int) (-pX + width), (int) (-pY + height),
                     srcX, srcY, srcX + srcW, srcY + srcH, null);
-        }   else if (fillMode == FillMode.TILE) {
+        } else if (fillMode == FillMode.TILE) {
             // TERAZ TO JEST TYLKO JEDNA OPERACJA - bardzo szybka!
-            g2d.drawImage(tiledCache, (int)-pX, (int)-pY, null);
+            g2d.drawImage(tiledCache, (int) -pX, (int) -pY, null);
         }
 
         // 7. RYSOWANIE HITBOXA (Lokalnie!)
@@ -316,6 +322,18 @@ public class GameObject {
     public void resetPivotToCenter() {
         this.pivotX = Double.NaN;
         this.pivotY = Double.NaN;
+    }
+
+    // W klasie GameObject
+    public boolean isVisibleOnScreen(Rectangle2D.Double viewport, float drawX, float drawY) {
+        if (!visible) return false;
+
+        // Pobieramy kształt obiektu (już obrócony i skalowany)
+        Shape shape = getRotatedShape(drawX, drawY);
+
+        // getBounds2D() zwraca najmniejszy pionowy prostokąt, który mieści ten kształt
+        // To jest bardzo szybka operacja
+        return viewport.intersects(shape.getBounds2D());
     }
 
 

@@ -200,8 +200,8 @@ public class Main extends Game {
 
 //        System.out.println(tmp);
 
-            if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.zoom += 0.1;
-            if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.zoom -= 0.1;
+            if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.cam.zoom += 0.1;
+            if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.cam.zoom -= 0.1;
 
 
             if (mouse.isButtonPressed(MouseEvent.BUTTON1)) {
@@ -268,8 +268,8 @@ public class Main extends Game {
         if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) this.y += 1;
         ;
 
-        currentGame.camX = x;
-        currentGame.camY = y;
+        currentGame.cam.x = x;
+        currentGame.cam.y = y;
     }
 
     public void movePlayer() {

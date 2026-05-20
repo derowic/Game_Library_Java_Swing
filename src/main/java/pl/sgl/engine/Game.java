@@ -8,6 +8,7 @@ import pl.sgl.engine.ui.InputField;
 import pl.sgl.engine.ui.UIElement;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,7 +113,7 @@ public class Game implements Runnable {
     private void startRenderLoop() {
         Thread renderThread = new Thread(() -> {
             // 1. Definiujemy parametry limitu
-            final double TARGET_FPS = 120.0;
+            final double TARGET_FPS = 240.0;
             final double NS_PER_FRAME = 1_000_000_000.0 / TARGET_FPS;
             long lastFrameTime = System.nanoTime();
 
@@ -250,14 +251,42 @@ public class Game implements Runnable {
         // ale profesjonalnie kopiuje się wartości x, y do nowych obiektów-struktur)
         List<GameObject> snapshotSprites = new ArrayList<>(currentGame.sprites);
 
-        ConfigureData.zoom = currentGame.zoom;
-        ConfigureData.camX = currentGame.camX;
-        ConfigureData.camY = currentGame.camY;
+        currentGame.cam.prepareForUpdate();
+        currentGame.cam.update(deltaTime);
+        ConfigureData.zoom = currentGame.cam.zoom;
+        ConfigureData.camX = currentGame.cam.x;
+        ConfigureData.camY = currentGame.cam.y;
         // 3. PUBLIKUJEMY - Podmieniamy całe pudełko (to jest bezpieczne dzięki volatile)
-        this.currentSnapshot = new GameState(snapshotSprites, currentGame.emitters, currentGame.uiManager, currentGame.tileMap, currentGame.camX, currentGame.camY, currentGame.zoom, currentGame.lastZoom);
+        this.currentSnapshot = new GameState(snapshotSprites, currentGame.emitters, currentGame.uiManager, currentGame.tileMap, currentGame.cam);
 
         keyboard.update();
         mouse.update();
+    }
+
+    public Rectangle2D.Double getVisibleWorldRect(double alpha) {
+        GameState s = this.currentSnapshot;
+
+        // 1. Interpolacja parametrów kamery
+        float drawZoom = (float) (s.cam.lastZoom + (s.cam.zoom - s.cam.lastZoom) * alpha);
+        float drawCamX = (float) (s.cam.lastX + (s.cam.x - s.cam.lastX) * alpha);
+        float drawCamY = (float) (s.cam.lastY + (s.cam.y - s.cam.lastY) * alpha);
+
+        // Twoja rozdzielczość wirtualna
+        int vW = ConfigureData.oldWidth;
+        int vH = ConfigureData.oldHeight;
+
+        // 2. Obliczamy jak dużo świata widać przez Zoom
+        double visibleW = vW / drawZoom;
+        double visibleH = vH / drawZoom;
+
+        // 3. Obliczamy lewy górny róg widoku w świecie
+        // Skoro zoomujemy do środka, to widok rozszerza/zwęża się symetrycznie
+        double x = drawCamX + (vW / 2.0) - (visibleW / 2.0);
+        double y = drawCamY + (vH / 2.0) - (visibleH / 2.0);
+
+        // Dodajemy mały margines (padding) np. 100px, żeby obiekty nie znikały
+        // gwałtownie przy samym brzegu przez rotację
+        return new Rectangle2D.Double(x - 100, y - 100, visibleW + 200, visibleH + 200);
     }
 
     private void render(double alpha) {
@@ -275,8 +304,8 @@ public class Game implements Runnable {
 
         try {
             // Rozmiar wirtualny (Twojej gry)
-            int virtualW = window.oldWidth;
-            int virtualH = window.oldHeight;
+            int virtualW = ConfigureData.oldWidth;;
+            int virtualH = ConfigureData.oldHeight;
 
             // Rozmiar rzeczywisty (Okna/Fullscreena)
             int screenW = window.getCanvas().getWidth();
@@ -388,10 +417,16 @@ public class Game implements Runnable {
 
     private void renderWorld(double alpha) {
         GameState renderState = this.currentSnapshot;
+        // --- KLUCZ: Obliczamy wizualne parametry raz dla całej metody ---
+        float drawZoom = (float) (renderState.cam.lastZoom + (renderState.cam.zoom - renderState.cam.lastZoom) * alpha);
+        float drawCamX = (float) (renderState.cam.lastX + (renderState.cam.x - renderState.cam.lastX) * alpha);
+        float drawCamY = (float) (renderState.cam.lastY + (renderState.cam.y - renderState.cam.lastY) * alpha);
 
+        // Pobieramy viewport używając tych samych wartości (przekażemy je jako argumenty)
+        Rectangle2D.Double viewport = getVisibleWorldRect(alpha);
         // 1. Obliczamy zinterpolowany zoom
 //        float drawZoom = (float) (renderState.zoom+ (renderState.zoom) * alpha);
-        float drawZoom = (float) renderState.zoom;
+
 
         // TWORZYMY JEDNĄ KOPIĘ DLA CAŁEGO ŚWIATA (Kamera / Globalne przesunięcie)
         Graphics2D worldG = (Graphics2D) window.g.create();
@@ -400,8 +435,8 @@ public class Game implements Runnable {
 
         // --- MAGIA ZOOMU (Wyśrodkowanego) ---
         // Pobieramy rozmiar wirtualny (np. 1280x720)
-        int vW = window.oldWidth;
-        int vH = window.oldHeight;
+        int vW = ConfigureData.oldWidth;;
+        int vH = ConfigureData.oldHeight;
 
         // A. Przesuwamy punkt (0,0) na środek ekranu wirtualnego
         worldG.translate(vW / 2.0, vH / 2.0);
@@ -412,18 +447,32 @@ public class Game implements Runnable {
 
 
         // Globalne przesunięcie (Kamera + Twoje testowe 200px)
-        worldG.translate(0 - renderState.camX, 0 - renderState.camY);
+//        worldG.translate(0 - renderState.camX, 0 - renderState.camY);
+        worldG.translate(-drawCamX, -drawCamY); // <--- Używamy drawCamX/Y!
+
+        drawDebugGrid(worldG);
+
+        // 1. Pobieramy aktualny prostokąt widoczności
+
 
         // 2. Rysowanie Mapy (użytkownik musi ją dodać do klasy Main)
         if (renderState.tileMap != null) {
-            renderState.tileMap.draw(worldG, renderState.camX, renderState.camY, window.getCanvas().getWidth(), window.getCanvas().getHeight());
+            renderState.tileMap.draw(worldG, renderState.cam.x, renderState.cam.y, window.getCanvas().getWidth(), window.getCanvas().getHeight());
         }
+
+
         for (GameObject s : renderState.sprites) {
             // Wywołujemy draw, przekazując mu worldG.
             // Metoda s.draw() sama zajmie się stworzeniem swojej izolowanej kopii.
-            if (!s.visible) continue;
+            if (s.visible) {
+                float dX = (float) (s.lastX + (s.x - s.lastX) * alpha);
+                float dY = (float) (s.lastY + (s.y - s.lastY) * alpha);
 
-            s.draw(worldG, alpha);
+                // Culling - sprawdzenie widoczności
+                if (s.isVisibleOnScreen(viewport, dX, dY)) {
+                    s.draw(worldG, alpha);
+                }
+            }
         }
 
         worldG.dispose(); // Zwalniamy świat
@@ -457,8 +506,53 @@ public class Game implements Runnable {
 
         // Wyświetlanie Alpha (opcjonalnie do debugowania płynności)
         window.g.setColor(Color.YELLOW);
-        window.g.drawString("Alpha: " + String.format("%.2f", alpha), 10, 60);
+        window.g.drawString("Delta Time: " + String.format("%.2f", alpha), 10, 60);
     }
+
+    private void drawDebugGrid(Graphics2D g) {
+        GameState s = this.currentSnapshot;
+
+        // 1. Parametry siatki
+        int gridSize = 100; // Linia co 100 pikseli
+        int worldLimit = 5000; // Jak daleko siatka ma sięgać
+
+        // Pobieramy zinterpolowany zoom dla poprawnego wyświetlania tekstu
+        float drawZoom = (float) (s.cam.lastZoom + (s.cam.zoom - s.cam.lastZoom) * deltaTime);
+
+        // 2. Ustawienia linii pomocniczych (cienkie i szare)
+        g.setStroke(new BasicStroke(1.0f / drawZoom)); // Skalujemy grubość linii, by zawsze miała 1px na ekranie
+        g.setFont(new Font("Arial", Font.PLAIN, (int)(12 / drawZoom))); // Skalujemy czcionkę
+        FontMetrics fm = g.getFontMetrics();
+
+        for (int i = -worldLimit; i <= worldLimit; i += gridSize) {
+            // --- LINIE PIONOWE (Oś X) ---
+            if (i == 0) g.setColor(Color.GREEN); // Oś Y (X=0) jest zielona
+            else g.setColor(new Color(100, 100, 100, 50)); // Reszta szara, półprzezroczysta
+
+            g.drawLine(i, -worldLimit, i, worldLimit);
+
+            // Etykiety X (liczby)
+            g.setColor(Color.WHITE);
+            g.drawString(i + "px", i + 2, (int)s.cam.y + fm.getAscent() + 5);
+
+            // --- LINIE POZIOME (Oś Y) ---
+            if (i == 0) g.setColor(Color.RED); // Oś X (Y=0) jest czerwona
+            else g.setColor(new Color(100, 100, 100, 50));
+
+            g.drawLine(-worldLimit, i, worldLimit, i);
+
+            // Etykiety Y (liczby)
+            g.setColor(Color.WHITE);
+            g.drawString(i + "px", (int)s.cam.y + 5, i - 2);
+        }
+
+        // 3. Punkt ZERO (0,0) - mały celownik
+        g.setColor(Color.YELLOW);
+        int crossSize = 10;
+        g.drawLine(-crossSize, 0, crossSize, 0);
+        g.drawLine(0, -crossSize, 0, crossSize);
+    }
+
 //    public boolean isKeyPressed(int keyCode) {
 //        return input.isKeyPressed(keyCode);
 //    }

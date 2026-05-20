@@ -17,10 +17,7 @@ public class GameState {
     public TileMap tileMap;
     public UIManager uiManager = new UIManager();
 
-    public double camX=0;
-    public double camY=0;
-    public double zoom = 1.0;
-    public double lastZoom = 1.0;
+    public Camera cam = new Camera();
 // Zaktualizuj konstruktor GameState, aby przyjmował te wartości.
 
     public GameState(List<Primitive> primitives, List<Sprite> sprites, List<ParticleEmitter> emitters) {
@@ -36,7 +33,7 @@ public class GameState {
     }
 
 
-    public GameState(List<GameObject> sprites, List<ParticleEmitter> emitters, UIManager ui, TileMap tileMap, double camX, double camY, double zoom, double lastZoom) {
+    public GameState(List<GameObject> sprites, List<ParticleEmitter> emitters, UIManager ui, TileMap tileMap, Camera cam) {
 //         public Particle(float x, float y, float vx, float vy, float life, float decay, Color color, float size) {
         List<ParticleEmitter> emitters2 = new ArrayList<>();
         for (ParticleEmitter emitter : emitters) {
@@ -56,11 +53,8 @@ public class GameState {
         this.entities = new ArrayList<>();
         this.sprites = newObjects;//new ArrayList<>(sprites);
         this.uiManager = ui;
-        this.camX = camX;
-        this.camY = camY;
         this.tileMap = tileMap;
-        this.zoom = zoom;
-        this.lastZoom = lastZoom;
+        this.cam = cam;
     }
 
     public GameState() {
