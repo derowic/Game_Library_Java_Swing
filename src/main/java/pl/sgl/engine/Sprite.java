@@ -15,6 +15,10 @@ public class Sprite extends GameObject {
         System.out.println(width);
         hitbox = texture.getHitBox();
         System.out.println(texture.rectangle);
+        this.srcX = 0;
+        this.srcY = 0;
+        this.srcW = texture.image.getWidth();
+        this.srcH = texture.image.getHeight();
 //        info();
     }
 

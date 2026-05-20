@@ -6,8 +6,10 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 public class GameObject {
+    public FillMode fillMode = FillMode.TILE; // Domyślnie rozciąganie
     public double x = 0;
     public double y = 0;
     public double lastX = 0;
@@ -27,6 +29,10 @@ public class GameObject {
     public Texture texture;
     public boolean active = true; // Flaga określająca stan obiektu
     public Rectangle hitbox = new Rectangle();
+
+    //draw texture fragment, these varuables set x,y and how much o tex you take
+    protected int srcX, srcY;
+    protected int srcW, srcH;
 
     public GameObject(double x, double y) {
         this.x = x;
@@ -55,6 +61,22 @@ public class GameObject {
         this.texture = go.texture;
         this.active = go.active;
         this.hitbox = go.hitbox;
+        this.srcX = go.srcX;
+        this.srcY = go.srcY;
+        this.srcW = go.srcW;
+        this.srcH = go.srcH;
+        this.fillMode = go.fillMode;
+    }
+
+    // Metoda do wycinania konkretnego kawałka
+    public void setTextureRegion(int x, int y, int w, int h) {
+        this.srcX = x;
+        this.srcY = y;
+        this.srcW = w;
+        this.srcH = h;
+        // Aktualizujemy rozmiar bazowy obiektu, aby skala 1:1 pasowała do wycinka
+        this.width = w;
+        this.height = h;
     }
 
 
@@ -115,12 +137,35 @@ public class GameObject {
         // Przesuwamy do pivotu, skalujemy, wracamy.
 
         // 6. RYSOWANIE OBRAZKA (od 0,0 bo g2d jest już przesunięte)
-        g2d.drawImage(texture.image, (int)-pX, (int)-pY, width, height, null);
+//        g2d.drawImage(texture.image, (int)-pX, (int)-pY, width, height, null);
+//        g2d.drawImage(texture.image,
+//                (int)-pX, (int)-pY, (int)(-pX + width), (int)(-pY + height),
+//                srcX, srcY, srcX + srcW, srcY + srcH,
+//                null
+//        );
+        if (fillMode == FillMode.STRETCH) {
+            // --- TRYB ROZCIĄGANIA ---
+            g2d.drawImage(texture.image,
+                    (int)-pX, (int)-pY, (int)(-pX + width), (int)(-pY + height),
+                    srcX, srcY, srcX + srcW, srcY + srcH, null);
+        }
+        else if (fillMode == FillMode.TILE) {
+            // --- TRYB POWTARZANIA (TILING) ---
 
-        // W metodzie draw (na samym końcu przed g2d.dispose)
-        g2d.setColor(Color.YELLOW);
-        g2d.fillRect((int)-5, (int)(height/2), 10, 10); // To narysuje kropkę tam, gdzie sensor szuka ziemi
-        g2d.dispose();
+            // Wycinamy fragment tekstury (Region), który ma być powtarzany
+            BufferedImage subImage = texture.image.getSubimage(srcX, srcY, srcW, srcH);
+
+            // Tworzymy "kotwicę" (anchor) - gdzie zaczyna się pierwszy kafel względem pivota
+            Rectangle2D anchor = new Rectangle2D.Double(-pX, -pY, srcW, srcH);
+
+            // Tworzymy pędzel z teksturą
+            TexturePaint tp = new TexturePaint(subImage, anchor);
+            g2d.setPaint(tp);
+
+            // Wypełniamy prostokąt o wymiarach width/height tym pędzlem
+            g2d.fillRect((int)-pX, (int)-pY, width, height);
+        }
+
         // 7. RYSOWANIE HITBOXA (Lokalnie!)
         if (showHitBox) {
 //            System.out.println("render");

@@ -38,6 +38,10 @@ public class AnimatedSprite extends GameObject {
             texture = new Texture(getCurrentFrame());
             if( hitbox.width == 0 && hitbox.height ==0) {
                 hitbox = texture.getHitBox();
+                this.srcX = 0;
+                this.srcY = 0;
+                this.srcW = texture.image.getWidth();
+                this.srcH = texture.image.getHeight();
             }
             // Zapamiętujemy bazowy hitbox (nieprzeskalowany)
 //            baseHitbox = TextureLoader.getTightHitbox(anim.frames[0]);
