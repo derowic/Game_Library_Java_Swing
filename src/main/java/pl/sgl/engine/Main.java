@@ -28,18 +28,13 @@ public class Main extends Game {
     private UIElement slider;
     private volatile int score = 0;
     private TileMap tileMap;
-
     private TileMap level1;
-
     private ParticleEmitter emitter;
-
-
     Sprite s2;
     Player player;
     double x = 0;
     double y=0;
     private boolean fullscreenKeyPressed = false;
-
 
     public Main() {
         super("Test", 1280, 720, Color.BLACK);

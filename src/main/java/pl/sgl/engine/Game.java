@@ -470,5 +470,12 @@ public class Game implements Runnable {
     // Lista obiektów logicznych (w świecie gry)
 //    private List<MyPlayer> players = new ArrayList<>();
 //
+    public void setRenderPixelArt(){
+        window.typeOfRenderingSprites = "pixelart";
+    }
+
+    public void setRenderWithSmooth() {
+        window.typeOfRenderingSprites = "normal";
+    }
 
 }

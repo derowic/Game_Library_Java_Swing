@@ -29,6 +29,8 @@ public class GameObject {
     public Texture texture;
     public boolean active = true; // Flaga określająca stan obiektu
     public Rectangle hitbox = new Rectangle();
+    private BufferedImage tiledCache = null; // Tu trzymamy gotowy obraz
+    private boolean needsRefresh = true;     // Flaga: czy trzeba wygenerować obraz na nowo?
 
     //draw texture fragment, these varuables set x,y and how much o tex you take
     protected int srcX, srcY;
@@ -77,6 +79,38 @@ public class GameObject {
         // Aktualizujemy rozmiar bazowy obiektu, aby skala 1:1 pasowała do wycinka
         this.width = w;
         this.height = h;
+        this.needsRefresh = true; // Sygnał dla renderera, żeby przeliczył kafelki
+        hitbox = new Rectangle(srcX, srcY, srcW, srcH);
+    }
+
+    public void setSpriteSize(int w, int h) {
+        this.width = w;
+        this.height = h;
+        hitbox = new Rectangle(srcX, srcY, w, h);
+    }
+
+    // Wywołaj tę metodę zawsze, gdy zmienisz width lub height sprite'a!
+    public void refreshTiledCache() {
+        if (width <= 0 || height <= 0) return;
+
+        // Tworzymy pusty obraz o docelowych wymiarach
+        tiledCache = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = tiledCache.createGraphics();
+
+        // Ustawiamy jakość (Nearest Neighbor dla Pixel Artu)
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+
+        // Przygotowujemy kafelek
+        BufferedImage tile = texture.image.getSubimage(srcX, srcY, srcW, srcH);
+        Rectangle2D anchor = new Rectangle2D.Double(0, 0, srcW, srcH);
+
+        // Malujemy kafelki RAZ na tym nowym obrazie
+        TexturePaint tp = new TexturePaint(tile, anchor);
+        g.setPaint(tp);
+        g.fillRect(0, 0, width, height);
+
+        g.dispose(); // Zwalniamy zasoby graficzne
+        needsRefresh = false;
     }
 
 
@@ -87,6 +121,11 @@ public class GameObject {
     public void update(double deltaTime) {}
 
     public void draw(Graphics2D g, double alpha) {
+
+        if (fillMode == FillMode.TILE && (needsRefresh || tiledCache == null)) {
+            refreshTiledCache();
+        }
+
         double drawX;
         double drawY;
         if (didTeleport) {
@@ -149,21 +188,12 @@ public class GameObject {
                     (int)-pX, (int)-pY, (int)(-pX + width), (int)(-pY + height),
                     srcX, srcY, srcX + srcW, srcY + srcH, null);
         }
-        else if (fillMode == FillMode.TILE) {
-            // --- TRYB POWTARZANIA (TILING) ---
-
-            // Wycinamy fragment tekstury (Region), który ma być powtarzany
-            BufferedImage subImage = texture.image.getSubimage(srcX, srcY, srcW, srcH);
-
-            // Tworzymy "kotwicę" (anchor) - gdzie zaczyna się pierwszy kafel względem pivota
-            Rectangle2D anchor = new Rectangle2D.Double(-pX, -pY, srcW, srcH);
-
-            // Tworzymy pędzel z teksturą
-            TexturePaint tp = new TexturePaint(subImage, anchor);
-            g2d.setPaint(tp);
-
-            // Wypełniamy prostokąt o wymiarach width/height tym pędzlem
-            g2d.fillRect((int)-pX, (int)-pY, width, height);
+        if (fillMode == FillMode.STRETCH) {
+            g2d.drawImage(texture.image, (int)-pX, (int)-pY, (int)(-pX + width), (int)(-pY + height),
+                    srcX, srcY, srcX + srcW, srcY + srcH, null);
+        }   else if (fillMode == FillMode.TILE) {
+            // TERAZ TO JEST TYLKO JEDNA OPERACJA - bardzo szybka!
+            g2d.drawImage(tiledCache, (int)-pX, (int)-pY, null);
         }
 
         // 7. RYSOWANIE HITBOXA (Lokalnie!)

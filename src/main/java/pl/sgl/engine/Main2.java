@@ -23,9 +23,11 @@ public class Main2 extends Game {
     Sprite player;
     double x = 0;
     double y=0;
+    Sprite stoneBlock;
 
     public Main2() {
         super("Test", 1280, 720, Color.BLACK);
+        setRenderPixelArt();
         // Ładujemy raz przy starcie
         s2 = new Sprite("/textures/ship2.png", 600, 500);
 
@@ -58,6 +60,16 @@ public class Main2 extends Game {
 //        playerWalk.setScaleX(2);
         playerWalk.getRotatedShape();
         addGameObject(playerWalk);
+
+        stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 100, 100);
+        stoneBlock.setTextureRegion(0,0,16,15);
+        stoneBlock.showHitBox = true;
+        stoneBlock.setSpriteSize(32,32);
+//        s2.setPivot(300, 100);
+////        s2.rotation = 180;
+        stoneBlock.setScaleX(5);
+        stoneBlock.setScaleY(5);
+        addGameObject(stoneBlock);
     }
     @Override
     protected void update() {
