@@ -25,7 +25,7 @@ public class Main2 extends Game {
     double x = 0;
     double y=0;
     Sprite stoneBlock;
-
+    Sprite downBlocks;
     public Main2() {
         //w 32 * 40  h: 32 * 30
         super("Test", 1280, 960, Color.BLACK);
@@ -39,38 +39,50 @@ public class Main2 extends Game {
 
 //        s2.setPivot(300, 100);
 ////        s2.rotation = 180;
-//        stoneBlock.setScaleX(2);
-//        stoneBlock.setScaleY(2);
+        stoneBlock.setScaleX(2);
+        stoneBlock.setScaleY(2);
         addGameObject(stoneBlock);
 
+        downBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0,928);
+        downBlocks.setPivot(0,0);
+        downBlocks.setTextureRegion(32,32,16,16);
+//        stoneBlock.showHitBox = true;
+        downBlocks.setSpriteSize(1280,16, FillMode.TILE);
 
-        // Ładujemy raz przy starcie
-        s2 = new Sprite("/textures/ship2.png", 600, 500);
+//        s2.setPivot(300, 100);
+////        s2.rotation = 180;
+        downBlocks.setScaleX(2);
+        downBlocks.setScaleY(2);
+        addGameObject(downBlocks);
 
-        s2.showHitBox = true;
-       s2.setPivot(300, 100);
-//        s2.rotation = 180;
-        s2.setScaleX(0.25);
-        s2.setScaleY(0.5);
-        addGameObject(s2);
 
-        player = new Sprite("/textures/ship2.png", 600, -300);
+//        // Ładujemy raz przy starcie
+//        s2 = new Sprite("/textures/ship2.png", 600, 500);
+//
+//        s2.showHitBox = true;
+//       s2.setPivot(300, 100);
+////        s2.rotation = 180;
+//        s2.setScaleX(0.25);
+//        s2.setScaleY(0.5);
+//        addGameObject(s2);
 
-        player.showHitBox = true;
-//        s2.scaleX =2 ;
-
-        //obrót wokół środka górnej krawędzi
-//        s2.setPivot(100, 100);
-        //s2.rotation = 45;
-
-        player.setScaleX(0.25);
-        player.setScaleY(0.25);
-        addGameObject(player);
+//        player = new Sprite("/textures/ship2.png", 600, -300);
+//
+//        player.showHitBox = true;
+////        s2.scaleX =2 ;
+//
+//        //obrót wokół środka górnej krawędzi
+////        s2.setPivot(100, 100);
+//        //s2.rotation = 45;
+//
+//        player.setScaleX(0.25);
+//        player.setScaleY(0.25);
+//        addGameObject(player);
 
         Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
         Animation walk = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,64,32,32,8);
 
-        playerWalk = new AnimatedSprite( 600, 250, 0.1); // zmiana klatki co 0.1 sekundy
+        playerWalk = new AnimatedSprite( 640, 876, 0.1); // zmiana klatki co 0.1 sekundy
         playerWalk.addAnimation("idle", idle);
         playerWalk.addAnimation("walk", walk);
         playerWalk.setAnimation("walk");
@@ -78,7 +90,8 @@ public class Main2 extends Game {
         playerWalk.showHitBox = true;
 //        playerWalk.rotation = 45;
 //        playerWalk.scaleX = 2;
-//        playerWalk.setScaleX(2);
+        playerWalk.setScaleX(-4);
+        playerWalk.setScaleY(4);
         playerWalk.getRotatedShape();
         addGameObject(playerWalk);
 

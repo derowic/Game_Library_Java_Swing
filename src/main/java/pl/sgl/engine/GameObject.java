@@ -70,9 +70,6 @@ public class GameObject {
         this.fillMode = go.fillMode;
         this.tiledCache = go.tiledCache;
         this.needsRefresh = go.needsRefresh;
-        if(go.tiledCache == null) {
-            System.out.println("pusty");
-        }
     }
 
     // Metoda do wycinania konkretnego kawałka
