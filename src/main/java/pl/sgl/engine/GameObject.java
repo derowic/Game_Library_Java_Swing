@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class GameObject {
-    public FillMode fillMode = FillMode.TILE; // Domyślnie rozciąganie
+    public FillMode fillMode = FillMode.STRETCH; // Domyślnie rozciąganie
     public double x = 0;
     public double y = 0;
     public double lastX = 0;
@@ -68,6 +68,11 @@ public class GameObject {
         this.srcW = go.srcW;
         this.srcH = go.srcH;
         this.fillMode = go.fillMode;
+        this.tiledCache = go.tiledCache;
+        this.needsRefresh = go.needsRefresh;
+        if(go.tiledCache == null) {
+            System.out.println("pusty");
+        }
     }
 
     // Metoda do wycinania konkretnego kawałka
@@ -78,6 +83,15 @@ public class GameObject {
         this.srcH = h;
     }
 
+    public void setTileTexture(){
+        this.fillMode = FillMode.TILE;
+        refreshTiledCache();
+    }
+
+    public void setStretchTexture(){
+        this.fillMode = FillMode.STRETCH;
+    }
+
     public void fitHitboxToTexture(){
         // Aktualizujemy rozmiar bazowy obiektu, aby skala 1:1 pasowała do wycinka
         this.width = this.srcW;
@@ -86,10 +100,17 @@ public class GameObject {
         hitbox = new Rectangle(srcX, srcY, srcW, srcH);
     }
 
-    public void setSpriteSize(int w, int h) {
+    public void setSpriteSize(int w, int h, FillMode fm) {
         this.width = w;
         this.height = h;
         hitbox = new Rectangle(0, 0, w, h);
+        if (fm == FillMode.TILE) {
+            setTileTexture();
+            refreshTiledCache();
+        } else {
+            setStretchTexture();
+            refreshTiledCache();
+        }
     }
 
     // Wywołaj tę metodę zawsze, gdy zmienisz width lub height sprite'a!

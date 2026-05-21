@@ -25,7 +25,7 @@ public class TextureLoader {
     }
 
     public static BufferedImage[] loadOneAnimation(String path,int x, int y, int width, int height, int framesCount) {
-        if (animations.containsKey(path)) return animations.get(path);
+        if (animations.containsKey(x+y+width+height+path)) return animations.get(path);
 
         BufferedImage sheet = load(path);
 

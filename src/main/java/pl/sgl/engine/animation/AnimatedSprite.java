@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class AnimatedSprite extends GameObject {
     protected HashMap<String, Animation> animations = new HashMap<>();
-    private String currentPlayedAnimation = "";
+    public String currentPlayedAnimation = "";
     private int currentFrame = 0;
     private double frameTimer = 0;
     private double frameDuration = 0.1;
@@ -47,6 +47,8 @@ public class AnimatedSprite extends GameObject {
 //            baseHitbox = TextureLoader.getTightHitbox(anim.frames[0]);
         }
     }
+
+
 
     @Override
     public void update(double deltaTime) {

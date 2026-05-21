@@ -27,8 +27,23 @@ public class Main2 extends Game {
     Sprite stoneBlock;
 
     public Main2() {
-        super("Test", 1280, 720, Color.BLACK);
+        //w 32 * 40  h: 32 * 30
+        super("Test", 1280, 960, Color.BLACK);
         setRenderPixelArt();
+
+        stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0,0);
+        stoneBlock.setPivot(0,0);
+//        stoneBlock.setTextureRegion(32,32,16,16);
+//        stoneBlock.showHitBox = true;
+        stoneBlock.setSpriteSize(1280,960, FillMode.TILE);
+
+//        s2.setPivot(300, 100);
+////        s2.rotation = 180;
+//        stoneBlock.setScaleX(2);
+//        stoneBlock.setScaleY(2);
+        addGameObject(stoneBlock);
+
+
         // Ładujemy raz przy starcie
         s2 = new Sprite("/textures/ship2.png", 600, 500);
 
@@ -52,9 +67,14 @@ public class Main2 extends Game {
         player.setScaleY(0.25);
         addGameObject(player);
 
-        Animation an = new Animation("/textures/mario-walk.png",0,0,61,64,3);
-        playerWalk = new AnimatedSprite( 600, 100, 0.1); // zmiana klatki co 0.1 sekundy
-        playerWalk.addAnimation("walk", an);
+        Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
+        Animation walk = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,64,32,32,8);
+
+        playerWalk = new AnimatedSprite( 600, 250, 0.1); // zmiana klatki co 0.1 sekundy
+        playerWalk.addAnimation("idle", idle);
+        playerWalk.addAnimation("walk", walk);
+        playerWalk.setAnimation("walk");
+//        playerWalk.currentPlayedAnimation = "walk";
         playerWalk.showHitBox = true;
 //        playerWalk.rotation = 45;
 //        playerWalk.scaleX = 2;
@@ -62,16 +82,7 @@ public class Main2 extends Game {
         playerWalk.getRotatedShape();
         addGameObject(playerWalk);
 
-        stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0,0);
-        stoneBlock.setPivot(0,0);
-        stoneBlock.setTextureRegion(32,32,16,16);
-        stoneBlock.showHitBox = true;
-        stoneBlock.setSpriteSize(32*6,32*6);
-//        s2.setPivot(300, 100);
-////        s2.rotation = 180;
-        stoneBlock.setScaleX(2);
-        stoneBlock.setScaleY(2);
-        addGameObject(stoneBlock);
+
     }
     @Override
     protected void update() {
@@ -175,7 +186,7 @@ public class Main2 extends Game {
 //        player.updateCalc(deltaTime, sprites);
 
         if(Colision.checkCollision(s2, stoneBlock)) {
-            System.out.println("colsion ");
+//            System.out.println("colsion ");
         }
 
         movePlayer();
@@ -188,27 +199,18 @@ public class Main2 extends Game {
     }
 
     public void moveCamera() {
-        if (keyboard.isKeyDown(KeyEvent.VK_D)) {
-            currentGame.sprites.get(0).velocityX = 100;
-        }
-        ;
-
         if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
-            this.x -= 1;
+            currentGame.cam.move(-1,0);;
         }
-        ;
-
         if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
             currentGame.cam.move(1,0);
-//            currentGame.cam.velocity.x = 2;
-//            currentGame.cam.setPose(32,32);
-            System.out.println("right click");
         }
-        ;
-        ;
-        if (keyboard.isKeyDown(KeyEvent.VK_UP)) this.y -= 1;
-        if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) this.y += 1;
-        ;
+        if (keyboard.isKeyDown(KeyEvent.VK_UP)) {
+            currentGame.cam.move(0, -1);;
+        }
+        if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
+            currentGame.cam.move(0,1);;
+        }
 
 
     }

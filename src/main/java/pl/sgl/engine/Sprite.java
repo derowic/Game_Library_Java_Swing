@@ -19,6 +19,7 @@ public class Sprite extends GameObject {
         this.srcY = 0;
         this.srcW = texture.image.getWidth();
         this.srcH = texture.image.getHeight();
+//        refreshTiledCache();
 //        info();
     }
 

@@ -518,7 +518,7 @@ public class Game implements Runnable {
 
         // Pobieramy zinterpolowany zoom dla poprawnego wyświetlania tekstu
         float drawZoom = (float) (s.cam.lastZoom + (s.cam.zoom - s.cam.lastZoom) * deltaTime);
-
+        drawZoom = (float) s.cam.zoom;
         // 2. Ustawienia linii pomocniczych (cienkie i szare)
         g.setStroke(new BasicStroke(1.0f / drawZoom)); // Skalujemy grubość linii, by zawsze miała 1px na ekranie
         g.setFont(new Font("Arial", Font.PLAIN, (int)(12 / drawZoom))); // Skalujemy czcionkę
