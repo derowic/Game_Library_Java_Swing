@@ -1,27 +1,15 @@
 package pl.sgl.engine;
 
-import pl.sgl.engine.GameTest.Player;
-import pl.sgl.engine.TileMaps.TileMap;
-import pl.sgl.engine.TileMaps.TileMapLoader;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
-import pl.sgl.engine.math.Vector2D;
-import pl.sgl.engine.particleSystem.ParticleEmitter;
-import pl.sgl.engine.ui.*;
-import pl.sgl.engine.ui.Button;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main2 extends Game {
-    private AnimatedSprite playerWalk;
+    private AnimatedSprite player;
     private volatile int score = 0;
-    Sprite s2;
-    Sprite player;
     double x = 0;
     double y=0;
     Sprite stoneBlock;
@@ -82,18 +70,18 @@ public class Main2 extends Game {
         Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
         Animation walk = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,64,32,32,8);
 
-        playerWalk = new AnimatedSprite( 640, 876, 0.1); // zmiana klatki co 0.1 sekundy
-        playerWalk.addAnimation("idle", idle);
-        playerWalk.addAnimation("walk", walk);
-        playerWalk.setAnimation("walk");
+        player = new AnimatedSprite( 640, 876, 0.1); // zmiana klatki co 0.1 sekundy
+        player.addAnimation("idle", idle);
+        player.addAnimation("walk", walk);
+        player.setAnimation("walk");
 //        playerWalk.currentPlayedAnimation = "walk";
-        playerWalk.showHitBox = true;
+        player.showHitBox = true;
 //        playerWalk.rotation = 45;
 //        playerWalk.scaleX = 2;
-        playerWalk.setScaleX(-4);
-        playerWalk.setScaleY(4);
-        playerWalk.getRotatedShape();
-        addGameObject(playerWalk);
+        player.setScaleX(-4);
+        player.setScaleY(4);
+        player.getRotatedShape();
+        addGameObject(player);
 
 
     }
@@ -117,8 +105,6 @@ public class Main2 extends Game {
             if (keyboard.isKeyDown(KeyEvent.VK_W)) currentGame.sprites.get(0).velocityY = -100;
             if (keyboard.isKeyDown(KeyEvent.VK_S)) currentGame.sprites.get(0).velocityY = 100;
             ;
-            if (keyboard.isKeyDown(KeyEvent.VK_A)) s2.velocityX = -100;
-            if (keyboard.isKeyDown(KeyEvent.VK_D)) s2.velocityX = 100;
             ;
 
 
@@ -198,12 +184,12 @@ public class Main2 extends Game {
         }
 //        player.updateCalc(deltaTime, sprites);
 
-        if(Colision.checkCollision(s2, stoneBlock)) {
-//            System.out.println("colsion ");
-        }
+//        if(Colision.checkCollision(s2, stoneBlock)) {
+////            System.out.println("colsion ");
+//        }
 
         movePlayer();
-        moveCamera();
+//        moveCamera();
         super.update();
     }
 
@@ -214,6 +200,7 @@ public class Main2 extends Game {
     public void moveCamera() {
         if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
             currentGame.cam.move(-1,0);;
+
         }
         if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
             currentGame.cam.move(1,0);
@@ -230,17 +217,25 @@ public class Main2 extends Game {
 
     public void movePlayer() {
         if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
-            player.velocityX = -10;
+            player.move(-5,0);
+            player.setAnimation("walk");
+            player.setScaleX(-4);
         }
         if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
-            player.velocityX = 100;
+            player.move(5,0);
+            player.setAnimation("walk");
+            player.setScaleX(4);
+        }
+
+        if (!keyboard.isKeyDown(KeyEvent.VK_RIGHT) && !keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+            player.setAnimation("idle");
         }
 
         if (keyboard.isKeyDown(KeyEvent.VK_UP)) {
-            player.velocityY = -1;
+            player.move(0,-5);
         }
         if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
-            player.velocityY = 1;
+            player.move(0,5);
         }
     }
 }
