@@ -12,15 +12,30 @@ public class Sprite extends GameObject {
         texture = new Texture(pathToTexture);
         width = texture.image.getWidth();
         height = texture.image.getHeight();
-        System.out.println(width);
         hitbox = texture.getHitBox();
-        System.out.println(texture.rectangle);
         this.srcX = 0;
         this.srcY = 0;
         this.srcW = texture.image.getWidth();
         this.srcH = texture.image.getHeight();
 //        refreshTiledCache();
 //        info();
+    }
+    public Sprite(Sprite s) {
+        super(s.x,s.y);
+        texture = s.texture;
+        width = texture.image.getWidth();
+        height = texture.image.getHeight();
+        hitbox = texture.getHitBox();
+        this.srcX = 0;
+        this.srcY = 0;
+        this.srcW = texture.image.getWidth();
+        this.srcH = texture.image.getHeight();
+//        refreshTiledCache();
+//        info();
+    }
+
+    public Sprite() {
+        super(0,0);
     }
 
     public void info()

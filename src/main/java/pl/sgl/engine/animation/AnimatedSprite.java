@@ -52,10 +52,7 @@ public class AnimatedSprite extends GameObject {
 
     @Override
     public void update(double deltaTime) {
-        this.lastX = this.x;
-        this.x += (velocityX * deltaTime);
-        this.lastY = this.y;
-        this.y += (velocityY * deltaTime);
+        super.update(deltaTime);
 
         updateAnimationLogic(deltaTime);
     }

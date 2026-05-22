@@ -142,13 +142,17 @@ public class GameObject {
 
     public void update(double deltaTime)
     {
+
+    }
+
+    public void moveByVelocity(double deltaTime) {
         this.lastX = this.x;
         this.x += (velocityX * deltaTime);
 
         this.lastY = this.y;
         this.y += (velocityY * deltaTime);
-
     }
+
     public void move(double dx, double dy) {
         this.x += dx;
         this.y += dy;
