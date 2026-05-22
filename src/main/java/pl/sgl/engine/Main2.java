@@ -9,11 +9,11 @@ import java.awt.event.MouseEvent;
 
 public class Main2 extends Game {
     private AnimatedSprite player;
-    private volatile int score = 0;
-    double x = 0;
-    double y=0;
     Sprite stoneBlock;
     Sprite downBlocks;
+    Sprite leftBlocks;
+    Sprite rightBlocks;
+
     public Main2() {
         //w 32 * 40  h: 32 * 30
         super("Test", 1280, 960, Color.BLACK);
@@ -21,12 +21,8 @@ public class Main2 extends Game {
 
         stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0,0);
         stoneBlock.setPivot(0,0);
-//        stoneBlock.setTextureRegion(32,32,16,16);
-//        stoneBlock.showHitBox = true;
-        stoneBlock.setSpriteSize(1280,960, FillMode.TILE);
 
-//        s2.setPivot(300, 100);
-////        s2.rotation = 180;
+        stoneBlock.setSpriteSize(640,480, FillMode.TILE);
         stoneBlock.setScaleX(2);
         stoneBlock.setScaleY(2);
         addGameObject(stoneBlock);
@@ -34,50 +30,34 @@ public class Main2 extends Game {
         downBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0,928);
         downBlocks.setPivot(0,0);
         downBlocks.setTextureRegion(32,32,16,16);
-//        stoneBlock.showHitBox = true;
-        downBlocks.setSpriteSize(1280,16, FillMode.TILE);
-
-//        s2.setPivot(300, 100);
-////        s2.rotation = 180;
+        downBlocks.setSpriteSize(640,16, FillMode.TILE);
         downBlocks.setScaleX(2);
         downBlocks.setScaleY(2);
         addGameObject(downBlocks);
 
+        leftBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0,0);
+        leftBlocks.setPivot(0,0);
+        leftBlocks.setTextureRegion(32,32,16,16);
+        leftBlocks.setSpriteSize(16,480, FillMode.TILE);
+        leftBlocks.setScaleX(2);
+        leftBlocks.setScaleY(2);
+        addGameObject(leftBlocks);
 
-//        // Ładujemy raz przy starcie
-//        s2 = new Sprite("/textures/ship2.png", 600, 500);
-//
-//        s2.showHitBox = true;
-//       s2.setPivot(300, 100);
-////        s2.rotation = 180;
-//        s2.setScaleX(0.25);
-//        s2.setScaleY(0.5);
-//        addGameObject(s2);
-
-//        player = new Sprite("/textures/ship2.png", 600, -300);
-//
-//        player.showHitBox = true;
-////        s2.scaleX =2 ;
-//
-//        //obrót wokół środka górnej krawędzi
-////        s2.setPivot(100, 100);
-//        //s2.rotation = 45;
-//
-//        player.setScaleX(0.25);
-//        player.setScaleY(0.25);
-//        addGameObject(player);
+        rightBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 1248,0);
+        rightBlocks.setPivot(0,0);
+        rightBlocks.setTextureRegion(32,32,16,16);
+        rightBlocks.setSpriteSize(16,480, FillMode.TILE);
+        rightBlocks.setScaleX(2);
+        rightBlocks.setScaleY(2);
+        addGameObject(rightBlocks);
 
         Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
         Animation walk = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,64,32,32,8);
-
         player = new AnimatedSprite( 640, 876, 0.1); // zmiana klatki co 0.1 sekundy
         player.addAnimation("idle", idle);
         player.addAnimation("walk", walk);
         player.setAnimation("walk");
-//        playerWalk.currentPlayedAnimation = "walk";
         player.showHitBox = true;
-//        playerWalk.rotation = 45;
-//        playerWalk.scaleX = 2;
         player.setScaleX(-4);
         player.setScaleY(4);
         player.getRotatedShape();
@@ -88,154 +68,35 @@ public class Main2 extends Game {
     @Override
     protected void update() {
 
-        if (!currentGame.uiManager.isKeyboardCaptured() && !currentGame.uiManager.isMouseCaptured()) {
-//            System.out.println("mouse " + currentGame.uiManager.isMouseCaptured());
-            // W pętli update
-            if (keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-                System.out.println("switch");
-                this.toggleFullScreen("window");
-//            System.exit(0);
-            }
-
-            if (keyboard.isKeyPressed(KeyEvent.VK_F)) {
-                System.out.println("switch2");
-                this.toggleFullScreen("fullscreen");
-            }
-
-            if (keyboard.isKeyDown(KeyEvent.VK_W)) currentGame.sprites.get(0).velocityY = -100;
-            if (keyboard.isKeyDown(KeyEvent.VK_S)) currentGame.sprites.get(0).velocityY = 100;
-            ;
-            ;
-
-
-            if (!keyboard.isKeyDown(KeyEvent.VK_W) && !keyboard.isKeyDown(KeyEvent.VK_S))
-                currentGame.sprites.get(0).velocityY = 0;
-            ;
-            if (!keyboard.isKeyDown(KeyEvent.VK_D) && !keyboard.isKeyDown(KeyEvent.VK_A))
-                currentGame.sprites.get(0).velocityX = 0;
-            ;
-
-            if (keyboard.isKeyPressed(KeyEvent.VK_SPACE)) {
-                // Strzał, skok itp.
-            }
-
-            // Sprawdzenie pozycji
-            int mx = mouse.getWorldX();
-            int my = mouse.getWorldY();
-
-            // Reakcja na lewy przycisk myszy (MouseEvent.BUTTON1)
-            if (mouse.isButtonDown(MouseEvent.BUTTON1)) {
-                // Przykładowo: postać teleportuje się tam, gdzie klikniemy
-                currentGame.sprites.get(0).x = mx;
-                currentGame.sprites.get(0).y = my;
-            }
-
-            Rectangle enemyHitbox = new Rectangle((int) currentGame.sprites.get(1).x, (int) currentGame.sprites.get(1).y, 50, 50);
-
-            // Sprawdź czy kursor jest wewnątrz hitboxa I czy kliknięto przycisk
-            if (enemyHitbox.contains(mouse.getUIX(), mouse.getUIY())) {
-                if (mouse.isButtonDown(1)) {
-                    System.out.println("Trafiłeś przeciwnika!");
-                }
-            }
-
-            if (keyboard.isKeyPressed(KeyEvent.VK_SPACE)) {
-                audio.play("shoot"); // Dźwięk strzału przy spacji
-            }
-
-            if (keyboard.isKeyPressed(KeyEvent.VK_H)) {
-//            audio.play("shoot"); // Dźwięk strzału przy spacji
-//                currentGame.sprites.get(1).visible = !currentGame.sprites.get(1).visible;
-            }
-
-            if (Colision.colisionWithListOfSprites(currentGame.sprites.get(1), currentGame.sprites)) {
-//                System.out.println("Colision");
-            }
-
-            // Aktualizacja UI
-
-
-
-
-            if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.cam.zoom += 0.1;
-            if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.cam.zoom -= 0.1;
-
-
-
-        }
-
-
-        if (keyboard.isKeyDown(KeyEvent.VK_T)) {
-            currentGame.sprites.get(0).scaleX += 0.05;
-//            currentGame.sprites.get(0).scaleY += 0.05;
-        }
-
-        if (keyboard.isKeyDown(KeyEvent.VK_G)) {
-            currentGame.sprites.get(0).scaleX -= 0.05;
-            currentGame.sprites.get(0).scaleY -= 0.05;
-        }
-
-        if (keyboard.isKeyDown(KeyEvent.VK_Y)) {
-            currentGame.sprites.get(0).rotation += 1;
-        }
-
-        if (keyboard.isKeyDown(KeyEvent.VK_H)) {
-            currentGame.sprites.get(0).rotation -= 1;
-        }
-//        player.updateCalc(deltaTime, sprites);
-
-//        if(Colision.checkCollision(s2, stoneBlock)) {
-////            System.out.println("colsion ");
-//        }
-
         movePlayer();
-//        moveCamera();
         super.update();
     }
 
-    public static void main(String[] args) {
-        new Main2().start();
-    }
-
-    public void moveCamera() {
-        if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
-            currentGame.cam.move(-1,0);;
-
-        }
-        if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
-            currentGame.cam.move(1,0);
-        }
-        if (keyboard.isKeyDown(KeyEvent.VK_UP)) {
-            currentGame.cam.move(0, -1);;
-        }
-        if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
-            currentGame.cam.move(0,1);;
-        }
-
-
-    }
-
     public void movePlayer() {
-        if (keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+        if (keyboard.isKeyDown(KeyEvent.VK_A)) {
             player.move(-5,0);
             player.setAnimation("walk");
             player.setScaleX(-4);
         }
-        if (keyboard.isKeyDown(KeyEvent.VK_RIGHT)) {
+        if (keyboard.isKeyDown(KeyEvent.VK_D)) {
             player.move(5,0);
             player.setAnimation("walk");
             player.setScaleX(4);
         }
 
-        if (!keyboard.isKeyDown(KeyEvent.VK_RIGHT) && !keyboard.isKeyDown(KeyEvent.VK_LEFT)) {
+        if (!keyboard.isKeyDown(KeyEvent.VK_D) && !keyboard.isKeyDown(KeyEvent.VK_A)) {
             player.setAnimation("idle");
         }
 
-        if (keyboard.isKeyDown(KeyEvent.VK_UP)) {
+        if (keyboard.isKeyDown(KeyEvent.VK_W)) {
             player.move(0,-5);
         }
-        if (keyboard.isKeyDown(KeyEvent.VK_DOWN)) {
+        if (keyboard.isKeyDown(KeyEvent.VK_S)) {
             player.move(0,5);
         }
+    }
+
+    public static void main(String[] args) {
+        new Main2().start();
     }
 }

@@ -358,7 +358,7 @@ public class Game implements Runnable {
 
 
             renderWorld(alpha);
-            drawSensors(alpha);
+//            drawSensors(alpha);
 
             renderUI(window.g);
             renderStats(alpha);
@@ -450,7 +450,7 @@ public class Game implements Runnable {
 //        worldG.translate(0 - renderState.camX, 0 - renderState.camY);
         worldG.translate(-drawCamX, -drawCamY); // <--- Używamy drawCamX/Y!
 
-        drawDebugGrid(worldG);
+//        drawDebugGrid(worldG);
 
         // 1. Pobieramy aktualny prostokąt widoczności
 
