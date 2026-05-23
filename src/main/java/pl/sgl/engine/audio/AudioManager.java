@@ -27,4 +27,17 @@ public class AudioManager {
             sounds.get(name).stop();
         }
     }
+
+    public void stopAll(){
+        for (Map.Entry<String, AudioClip> entry : sounds.entrySet()) {
+            String name = entry.getKey();
+            AudioClip clip = entry.getValue();
+            clip.stop();
+        }
+
+    }
+
+    public void clearAllData() {
+        sounds.clear();
+    }
 }

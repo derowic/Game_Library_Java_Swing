@@ -14,6 +14,8 @@ class Window {
     public boolean showMouse = true;
     public String typeOfRenderingSprites = "normal";
     protected Color backgroundColor;
+    private GraphicsDevice gd;
+    private Cursor blankCursor; // Pole klasy
 
 
     public Window(String title, int width, int height, Color c) {
@@ -39,14 +41,14 @@ class Window {
         frame.pack();                   // dopasuj rozmiar okna do Canvas
         frame.setLocationRelativeTo(null); // wyśrodkuj na ekranie
 
-
+        BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank");
     }
 
     public void setFullScreen() {
             bs = null; // Zatrzymujemy renderowanie na starym buforze
 
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice gd = ge.getDefaultScreenDevice();
+            this.gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
             if (gd.isFullScreenSupported()) {
                 // 1. Zamknij zasoby okna, aby zmienić jego styl
@@ -86,8 +88,7 @@ class Window {
     }
 
     public void setWindowedMode(int width, int height) {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        this.gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
         // 1. Wyłączamy tryb Fullscreen w systemie
         gd.setFullScreenWindow(null);
@@ -163,13 +164,12 @@ class Window {
 
         // rysuj obiekty gry...
         // ───────────────────────────────────────
-        if(!showMouse) {
-            canvas.setCursor(canvas.getToolkit().createCustomCursor(
-                    new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB),
-                    new Point(0, 0), "blank"));
+        if (!showMouse && canvas.getCursor() != blankCursor) {
+            canvas.setCursor(blankCursor);
         }
         g.dispose(); // zawsze zwalniaj Graphics
         if(bs != null) {
+
             bs.show();   // zamień bufory – tylny staje się widocznym
         }
     }

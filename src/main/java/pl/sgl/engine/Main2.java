@@ -2,11 +2,13 @@ package pl.sgl.engine;
 
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
+import pl.sgl.engine.math.Vector2D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Main2 extends Game {
     private AnimatedSprite player;
@@ -14,16 +16,20 @@ public class Main2 extends Game {
     Sprite downBlocks;
     Sprite leftBlocks;
     Sprite rightBlocks;
-    public List<GameObject> blocks = new ArrayList<>();
+    public List<GameObject> platforms = new ArrayList<>();
     Boolean playerOnGround = true;
-
-    Sprite platform;
-
+    int startPos = 64;
+    Random rand = new Random();
+    float startPosY = 960;
+    boolean run = false;
 
     public Main2() {
         //w 32 * 40  h: 32 * 30
         super("Test", 1280, 960, Color.BLACK);
         setRenderPixelArt();
+
+        int min = 32, max = 1248;
+        startPos = rand.nextInt((max - min) + 1) + min;
 
         stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0,0);
         stoneBlock.setPivot(0,0);
@@ -39,7 +45,9 @@ public class Main2 extends Game {
         downBlocks.setSpriteSize(640,16, FillMode.TILE);
         downBlocks.setScaleX(2);
         downBlocks.setScaleY(2);
+        downBlocks.velocityY = 50;
         addGameObject(downBlocks);
+
 
         leftBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0,0);
         leftBlocks.setPivot(0,0);
@@ -49,15 +57,6 @@ public class Main2 extends Game {
         leftBlocks.setScaleY(2);
         addGameObject(leftBlocks);
 
-        platform = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 500,800);
-        platform.setPivot(0,0);
-        platform.setTextureRegion(128,16,16,16);
-        platform.setSpriteSize(64,16, FillMode.TILE);
-        platform.setScaleX(2);
-        platform.setScaleY(2);
-        addGameObject(platform);
-        blocks.add(platform);
-
         rightBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 1248,0);
         rightBlocks.setPivot(0,0);
         rightBlocks.setTextureRegion(32,32,16,16);
@@ -66,9 +65,12 @@ public class Main2 extends Game {
         rightBlocks.setScaleY(2);
         addGameObject(rightBlocks);
 
+
+        generatePlatforms();
+
         Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
         Animation walk = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,64,32,32,8);
-        player = new AnimatedSprite( 640, 676, 0.1); // zmiana klatki co 0.1 sekundy
+        player = new AnimatedSprite( 600, 880, 0.1); // zmiana klatki co 0.1 sekundy
         player.addAnimation("idle", idle);
         player.addAnimation("walk", walk);
         player.setAnimation("walk");
@@ -77,8 +79,6 @@ public class Main2 extends Game {
         player.getRotatedShape();
         player.setPivot(player.width/2, player.height/2);
         addGameObject(player);
-
-
     }
     @Override
     protected void update() {
@@ -87,8 +87,89 @@ public class Main2 extends Game {
 
         playerInput();
         colisionWithOutline();
+        if (run) {
+            movePlatformsDown();
+            generatePlatforms();
+        }
 
         super.update();
+    }
+
+    public void movePlatformsDown() {
+        for (GameObject p : platforms) {
+            p.moveByVelocity(deltaTime);
+            if (downBlocks.y > 1500) {
+                downBlocks.y = 1500;
+            } else {
+                downBlocks.moveByVelocity(deltaTime);
+            }
+        }
+    }
+
+    public void generatePlatforms() {
+        if (platforms.size() <= 1) {
+
+            for(int i =0; i < 20; i++) {
+                platforms.add(getRandomPlatform(startPosY));
+                startPosY -= 100;
+            }
+        } else {
+            for (GameObject p : platforms) {
+                if(p.y > 1000) {
+                    p.move(getRandomPlatformPosition(p.width), startPosY);
+                }
+            }
+        }
+    }
+
+    public int getRandomPlatformPosition(int randPlatformLenght) {
+        int min = 0;
+        int max = 0;
+
+        if (startPos > 640 ) {
+            // 2. Random integer within a specific range (e.g., 10 to 50)
+            min = 32;
+            max = 600 - randPlatformLenght * 16;
+        } else {
+            min = 600;
+            max = 1248 - randPlatformLenght * 16;
+        }
+//        System.out.println("max: " + max + " min: " + min);
+        try {
+            int randPosX = rand.nextInt((max - min) + 1) + min;
+            startPos = randPosX;
+            return  randPosX;
+        } catch (Exception e) {
+            System.out.println("max: " + max + " min: " + min);
+            System.out.println("Wystąpił inny, nieznany błąd: " + e.getMessage());
+        } finally {
+            System.out.println("max: " + max + " min: " + min);
+        }
+        return 32;
+    }
+
+    public Sprite getRandomPlatform(double basePos) {
+        //64
+        //1248
+        int min0 = 4, max0 = 6;
+        int randPlatformLenght= rand.nextInt((max0- min0) + 1) + min0;
+        int min = 0;
+        int max = 0;
+
+        int randPosX = getRandomPlatformPosition(randPlatformLenght);
+        startPos = randPosX;
+
+
+        Sprite platform = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", (float) randPosX, (float) (basePos -200));
+        platform.setPivot(0,0);
+        platform.setTextureRegion(128,16,16,16);
+        platform.setSpriteSize(randPlatformLenght * 16,16, FillMode.TILE);
+        platform.setScaleX(2);
+        platform.setScaleY(2);
+        platform.velocityY = 50;
+        addGameObject(platform);
+
+        return platform;
     }
 
     public void playerInput() {
@@ -172,12 +253,12 @@ public class Main2 extends Game {
             }
             player.y = oldY;      // Cofamy ruch w Y
             player.velocityY = 0; // Zatrzymujemy opadanie/skok
+            run = true;
         }
-
     }
 
     private boolean isCollidingWithPlatofrms() {
-        if(Colision.colisionWithListOfSprites(player, blocks)) return true;
+        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
         return false;
     }
 

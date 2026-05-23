@@ -35,8 +35,6 @@ public class TextureLoader {
 
         BufferedImage[] frames = new BufferedImage[framesCount];
 
-        System.out.println("frames count: " + framesCount);
-
         for (int i = 0; i < framesCount; i++) {
             frames[i] = sheet.getSubimage(x + i * width, y, width, height);
         }

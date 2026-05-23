@@ -40,14 +40,13 @@ public class Game implements Runnable {
 
     // Czas ostatniego pomiaru
     private long lastTimer = System.currentTimeMillis();
-
     protected AudioManager audio = new AudioManager();
-
     public InputHandler keyboard = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
     private final Object renderLock = new Object();
     private boolean isSwitching = false;
     public String windowMode = "window";
+    private long lastToggleTime = 0;
 
     public Game(String title, int width, int height, Color bc) {
         window = new Window(title, width, height, bc);
@@ -55,6 +54,16 @@ public class Game implements Runnable {
         window.initMouse(mouse);  // Myszka
         window.show();
 //        window.typeOfRenderingSprites = "pixelart";
+        // W konstruktorze Engine lub Game
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            audio.stopAll();
+            audio = null;
+            currentSnapshot = null;
+            currentGame = null;
+            running = false;
+            window = null;
+
+        }));
     }
 
     public void addGameObject(GameObject g) {
@@ -66,6 +75,9 @@ public class Game implements Runnable {
     }
 
     public void toggleFullScreen(String mode) {
+        long now = System.currentTimeMillis();
+        if (now - lastToggleTime < 1000) return; // Blokada na 1 sekundę
+        lastToggleTime = now;
         System.out.println(mode);
         if (isSwitching) return; // Blokada, jeśli proces trwa
 
@@ -105,6 +117,7 @@ public class Game implements Runnable {
 
         // Wątek LOGIKI (Update)
         Thread logicThread = new Thread(this, "LogicThread");
+        logicThread.setDaemon(true); // <--- To sprawi, że wątek zginie razem z aplikacją
         logicThread.start();
         // poprzez this przekazujesz cały obiekt Game z oknem do wątku
         startRenderLoop();
