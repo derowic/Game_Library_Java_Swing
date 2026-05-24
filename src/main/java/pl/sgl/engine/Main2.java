@@ -78,6 +78,7 @@ public class Main2 extends Game {
         player.setScaleY(4);
         player.getRotatedShape();
         player.setPivot(player.width/2, player.height/2);
+//        player.showHitBox = true;
         addGameObject(player);
     }
     @Override
@@ -85,10 +86,13 @@ public class Main2 extends Game {
         if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.cam.zoom += 0.1;
         if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.cam.zoom -= 0.1;
 
+        if (run) {
+            movePlatformsDown();
+
+        }
         playerInput();
         colisionWithOutline();
         if (run) {
-            movePlatformsDown();
             generatePlatforms();
         }
 
@@ -113,34 +117,37 @@ public class Main2 extends Game {
                 platforms.add(getRandomPlatform(startPosY));
                 startPosY -= 100;
             }
+//            startPosY -= 100;
         } else {
             for (GameObject p : platforms) {
                 if(p.y > 1000) {
-                    p.move(getRandomPlatformPosition(p.width), startPosY);
+                    p.setPosition(getRandomPlatformPosition((p.width * 2)), startPosY);
                 }
             }
         }
     }
 
     public int getRandomPlatformPosition(int randPlatformLenght) {
-        int min = 0;
-        int max = 0;
+        int min;
+        int max;
 
+        // place platform opossite side
         if (startPos > 640 ) {
-            // 2. Random integer within a specific range (e.g., 10 to 50)
             min = 32;
-            max = 600 - randPlatformLenght * 16;
+            max = 600;
         } else {
             min = 600;
-            max = 1248 - randPlatformLenght * 16;
+            max = 1248 - randPlatformLenght;
         }
-//        System.out.println("max: " + max + " min: " + min);
+
         try {
             int randPosX = rand.nextInt((max - min) + 1) + min;
             startPos = randPosX;
+            System.out.println(startPos);
+            System.out.println(randPosX);
             return  randPosX;
         } catch (Exception e) {
-            System.out.println("max: " + max + " min: " + min);
+            System.out.println("max: " + max + " min: " + min + " lenght "+ randPlatformLenght);
             System.out.println("Wystąpił inny, nieznany błąd: " + e.getMessage());
         } finally {
             System.out.println("max: " + max + " min: " + min);
@@ -156,7 +163,7 @@ public class Main2 extends Game {
         int min = 0;
         int max = 0;
 
-        int randPosX = getRandomPlatformPosition(randPlatformLenght);
+        int randPosX = getRandomPlatformPosition(randPlatformLenght * 32);
         startPos = randPosX;
 
 
@@ -166,7 +173,8 @@ public class Main2 extends Game {
         platform.setSpriteSize(randPlatformLenght * 16,16, FillMode.TILE);
         platform.setScaleX(2);
         platform.setScaleY(2);
-        platform.velocityY = 50;
+        platform.velocityY = 100;
+//        platform.showHitBox = true;
         addGameObject(platform);
 
         return platform;
@@ -258,7 +266,12 @@ public class Main2 extends Game {
     }
 
     private boolean isCollidingWithPlatofrms() {
-        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
+//        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
+        for (GameObject p : platforms) {
+            if(Colision.checkCollision(player,p) && (player.y+ (double) player.height /2) < p.y && player.velocityY > 0) {
+                return true;
+            }
+        }
         return false;
     }
 

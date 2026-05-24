@@ -159,6 +159,13 @@ public class GameObject {
         this.y += dy;
     }
 
+    public void setPosition(double dx, double dy) {
+        this.x = dx;
+        this.y = dy;
+        this.lastX = dx;
+        this.lastY = dy;
+    }
+
     public void draw(Graphics2D g, double alpha) {
 
         if (fillMode == FillMode.TILE && (needsRefresh || tiledCache == null)) {
