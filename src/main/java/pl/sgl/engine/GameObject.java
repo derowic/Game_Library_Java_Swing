@@ -20,8 +20,8 @@ public class GameObject {
     public double velocityY = 0.0;
     protected double scaleX = 1.0;
     protected double scaleY= 1.0;
-    protected int width = 0;
-    protected int height =0;
+    public int width = 0;
+    public int height = 0;
     public boolean showHitBox = false;
     public boolean visible = true;
     protected double pivotX = Double.NaN;

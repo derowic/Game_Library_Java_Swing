@@ -1,5 +1,7 @@
 package pl.sgl.engine;
 
+import pl.sgl.engine.GameTest.Platform;
+import pl.sgl.engine.GameTest.Player;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
 import pl.sgl.engine.math.Vector2D;
@@ -11,14 +13,14 @@ import java.util.List;
 import java.util.Random;
 
 public class Main2 extends Game {
-    private AnimatedSprite player;
+
+    Player player;
     Sprite stoneBlock;
     Sprite downBlocks;
     Sprite leftBlocks;
     Sprite rightBlocks;
     public List<GameObject> platforms = new ArrayList<>();
-    Boolean playerOnGround = true;
-    int startPos = 64;
+    int startPos;
     Random rand = new Random();
     float startPosY = 960;
     boolean run = false;
@@ -68,18 +70,8 @@ public class Main2 extends Game {
 
         generatePlatforms();
 
-        Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
-        Animation walk = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,64,32,32,8);
-        player = new AnimatedSprite( 600, 880, 0.1); // zmiana klatki co 0.1 sekundy
-        player.addAnimation("idle", idle);
-        player.addAnimation("walk", walk);
-        player.setAnimation("walk");
-        player.setScaleX(-4);
-        player.setScaleY(4);
-        player.getRotatedShape();
-        player.setPivot(player.width/2, player.height/2);
-//        player.showHitBox = true;
-        addGameObject(player);
+        player = new Player();
+        addGameObject(player.sprite);
     }
     @Override
     protected void update() {
@@ -88,16 +80,18 @@ public class Main2 extends Game {
 
         if (run) {
             movePlatformsDown();
-
         }
         playerInput();
         colisionWithOutline();
         if (run) {
             generatePlatforms();
         }
+        player.playerAnimationLogic();
 
         super.update();
     }
+
+
 
     public void movePlatformsDown() {
         for (GameObject p : platforms) {
@@ -143,14 +137,14 @@ public class Main2 extends Game {
         try {
             int randPosX = rand.nextInt((max - min) + 1) + min;
             startPos = randPosX;
-            System.out.println(startPos);
-            System.out.println(randPosX);
+//            System.out.println(startPos);
+//            System.out.println(randPosX);
             return  randPosX;
         } catch (Exception e) {
-            System.out.println("max: " + max + " min: " + min + " lenght "+ randPlatformLenght);
+//            System.out.println("max: " + max + " min: " + min + " lenght "+ randPlatformLenght);
             System.out.println("Wystąpił inny, nieznany błąd: " + e.getMessage());
         } finally {
-            System.out.println("max: " + max + " min: " + min);
+//            System.out.println("max: " + max + " min: " + min);
         }
         return 32;
     }
@@ -167,7 +161,7 @@ public class Main2 extends Game {
         startPos = randPosX;
 
 
-        Sprite platform = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", (float) randPosX, (float) (basePos -200));
+        Platform platform = new Platform("/textures/brackeys_platformer_assets/sprites/world_tileset.png", (float) randPosX, (float) (basePos -200));
         platform.setPivot(0,0);
         platform.setTextureRegion(128,16,16,16);
         platform.setSpriteSize(randPlatformLenght * 16,16, FillMode.TILE);
@@ -183,29 +177,30 @@ public class Main2 extends Game {
     public void playerInput() {
         if (keyboard.isKeyDown(KeyEvent.VK_A)) {
 
-            player.velocityX = -400;
+            player.sprite.velocityX = -400;
 //            if(player.velocityX <= -400) {
 //                player.velocityX = -400;
 //            }
-            player.setAnimation("walk");
-            player.setScaleX(-4);
+
+            player.sprite.setScaleX(-4);
         }
         if (keyboard.isKeyDown(KeyEvent.VK_D)) {
-            player.velocityX = 400;
+            player.sprite.velocityX = 400;
 //            if(player.velocityX >= 400) {
 //                player.velocityX = 400;
 //            }
-            player.setAnimation("walk");
-            player.setScaleX(4);
+
+            player.sprite.setScaleX(4);
         }
 
         if (!keyboard.isKeyDown(KeyEvent.VK_D) && !keyboard.isKeyDown(KeyEvent.VK_A)) {
-            player.setAnimation("idle");
-            player.velocityX = 0;
+            player.sprite.velocityX = 0;
         }
 
-        if (keyboard.isKeyDown(KeyEvent.VK_W) && playerOnGround) {
-            player.velocityY = -750;
+        if (keyboard.isKeyDown(KeyEvent.VK_W) && player.playerStatus.equals("onGround")) {
+            player.sprite.velocityY = -750;
+            player.playerStatus = "jumping";
+
         }
 //        if (keyboard.isKeyDown(KeyEvent.VK_S)) {
 //            player.move(0,5);
@@ -213,79 +208,73 @@ public class Main2 extends Game {
     }
 
     public void colisionWithOutline(){
-        // 2. Aplikacja grawitacji (dodajemy do velocityY)
-        player.velocityY += 20; // Stała grawitacji (dostosuj wartość)
-
-        // --- RUCH PO OSI X ---
-        double oldX = player.x;
-//        if(player.velocityX < 0) {
-//            player.x += -400 * deltaTime;
-//        }
-//        if(player.velocityX > 0) {
-//            player.x += 400 * deltaTime;
-//        }
-        player.x += player.velocityX * deltaTime;
+        double oldX = player.sprite.x;
+        player.sprite.x += player.sprite.velocityX * deltaTime;
 
         // Sprawdzamy kolizję po ruchu w X
         if (isCollidingWithWall()) {
-            player.x = oldX;      // Cofamy ruch w X
-            player.velocityX = 0; // Zatrzymujemy się na ścianie
+            player.sprite.x = oldX;      // Cofamy ruch w X
+            player.sprite.velocityX = 0; // Zatrzymujemy się na ścianie
         }
 
         // Sprawdzamy kolizję po ruchu w X
-        if (isCollidingWithPlatofrms()) {
-            player.x = oldX;      // Cofamy ruch w X
-            player.velocityX = 0; // Zatrzymujemy się na ścianie
+        int indexOfPlatformPLayerHaveColision =  isCollidingWithPlatofrms();
+        if ( indexOfPlatformPLayerHaveColision > -1) {
+            player.sprite.x = oldX;      // Cofamy ruch w X
+            player.sprite.velocityX = 0; // Zatrzymujemy się na ścianie
         }
 
         // --- RUCH PO OSI Y ---
-        double oldY = player.y;
-        player.y += player.velocityY * deltaTime;
-        playerOnGround = false;
+        if (!player.playerStatus.trim().equals("onGround")) {
+            player.sprite.velocityY += 20; // Stała grawitacji (dostosuj wartość)
+            double oldY = player.sprite.y;
+            player.sprite.y += player.sprite.velocityY * deltaTime;
+            player.playerStatus = "falling";
 
-        // Sprawdzamy kolizję po ruchu w Y
-        if (isCollidingWithdDown()) {
-            // Jeśli spadaliśmy (velocityY > 0), to uderzyliśmy w ziemię
-            if (player.velocityY > 0) {
-                playerOnGround = true;
+            // Sprawdzamy kolizję po ruchu w Y
+            if (isCollidingWithdDown()) {
+                player.playerStatus = "onGround".trim();
+                player.sprite.y = oldY;      // Cofamy ruch w Y
+                player.sprite.velocityY = 0; // Zatrzymujemy opadanie/skok
             }
-            player.y = oldY;      // Cofamy ruch w Y
-            player.velocityY = 0; // Zatrzymujemy opadanie/skok
-        }
 
-        // Sprawdzamy kolizję po ruchu w Y
-        if (isCollidingWithPlatofrms()) {
-            // Jeśli spadaliśmy (velocityY > 0), to uderzyliśmy w ziemię
-            if (player.velocityY > 0) {
-                playerOnGround = true;
+            // Sprawdzamy kolizję po ruchu w Y z plaftormami
+            indexOfPlatformPLayerHaveColision = isCollidingWithPlatofrms();
+            if (indexOfPlatformPLayerHaveColision > -1) {
+                // Jeśli spadaliśmy (velocityY > 0), to uderzyliśmy w ziemię
+                player.playerStatus = "onGround".trim();
+                player.sprite.y = oldY;      // Cofamy ruch w Y
+//            player.velocityY = platforms.get(indexOfPlatformPLayerHaveColision).velocityY;
+                player.sprite.velocityY = platforms.get(indexOfPlatformPLayerHaveColision).velocityY; // Zatrzymujemy opadanie/skok
+                run = true;
             }
-            player.y = oldY;      // Cofamy ruch w Y
-            player.velocityY = 0; // Zatrzymujemy opadanie/skok
-            run = true;
+        } else {
+            player.sprite.y += player.sprite.velocityY * deltaTime;
         }
     }
 
-    private boolean isCollidingWithPlatofrms() {
+    private int isCollidingWithPlatofrms() {
 //        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
-        for (GameObject p : platforms) {
-            if(Colision.checkCollision(player,p) && (player.y+ (double) player.height /2) < p.y && player.velocityY > 0) {
-                return true;
+        for (int i = 0; i < platforms.size(); i++) {
+            GameObject p = platforms.get(i);
+            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.height / 2) < p.y && player.sprite.velocityY > 0) {
+                return i; // Zwraca indeks platformy, z którą nastąpiła kolizja
             }
         }
-        return false;
+        return -1; // Zwraca -1, jeśli nie wykryto żadnej kolizji
     }
 
     // Metoda pomocnicza sprawdzająca kolizję z listą bloków
     private boolean isCollidingWithWall() {
 
-        if (Colision.checkCollision(player, leftBlocks)) return true;
-        if (Colision.checkCollision(player, rightBlocks)) return true;
+        if (Colision.checkCollision(player.sprite, leftBlocks)) return true;
+        if (Colision.checkCollision(player.sprite, rightBlocks)) return true;
         // ... tutaj dodaj resztę bloków z listy 'blocks'
         return false;
     }
 
     private boolean isCollidingWithdDown() {
-        if (Colision.checkCollision(player, downBlocks)) return true;
+        if (Colision.checkCollision(player.sprite, downBlocks)) return true;
         // ... tutaj dodaj resztę bloków z listy 'blocks'
         return false;
     }
