@@ -2,9 +2,6 @@ package pl.sgl.engine;
 
 import pl.sgl.engine.GameTest.Platform;
 import pl.sgl.engine.GameTest.Player;
-import pl.sgl.engine.animation.AnimatedSprite;
-import pl.sgl.engine.animation.Animation;
-import pl.sgl.engine.math.Vector2D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -81,17 +78,18 @@ public class Main2 extends Game {
         if (run) {
             movePlatformsDown();
         }
+        colisionWithEnv();
+
         playerInput();
-        colisionWithOutline();
+        player.playerAnimationLogic();
+
+
         if (run) {
             generatePlatforms();
         }
-        player.playerAnimationLogic();
 
         super.update();
     }
-
-
 
     public void movePlatformsDown() {
         for (GameObject p : platforms) {
@@ -197,17 +195,32 @@ public class Main2 extends Game {
             player.sprite.velocityX = 0;
         }
 
-        if (keyboard.isKeyDown(KeyEvent.VK_W) && player.playerStatus.equals("onGround")) {
-            player.sprite.velocityY = -750;
+        if (keyboard.isKeyPressed(KeyEvent.VK_W) && player.doubleJump && (player.playerStatus.equals("jumping") || player.playerStatus.equals("falling"))) {
+            player.sprite.velocityY = -750 *1.5;
+            player.sprite.setAnimation("roll");
+            player.sprite.playAnimation();
             player.playerStatus = "jumping";
-
+            player.doubleJump = false;
         }
-//        if (keyboard.isKeyDown(KeyEvent.VK_S)) {
-//            player.move(0,5);
-//        }
+
+        if (keyboard.isKeyPressed(KeyEvent.VK_W) && player.playerStatus.equals("onGround")) {
+            player.sprite.velocityY = -750 *1.5 ;
+            player.playerStatus = "jumping";
+        }
     }
 
-    public void colisionWithOutline(){
+    public void colisionWithEnv(){
+
+        if (player.playerCollideWith != null) {
+            // Obliczamy o ile platforma przesunęła się w tej klatce
+            double deltaX = player.playerCollideWith.velocityX * deltaTime;
+            double deltaY = player.playerCollideWith.velocityY * deltaTime;
+
+            // Dodajemy to przesunięcie do gracza ZANIM obliczymy jego własny ruch
+            player.sprite.x += deltaX;
+            player.sprite.y += deltaY;
+        }
+
         double oldX = player.sprite.x;
         player.sprite.x += player.sprite.velocityX * deltaTime;
 
@@ -225,31 +238,35 @@ public class Main2 extends Game {
         }
 
         // --- RUCH PO OSI Y ---
-        if (!player.playerStatus.trim().equals("onGround")) {
-            player.sprite.velocityY += 20; // Stała grawitacji (dostosuj wartość)
-            double oldY = player.sprite.y;
-            player.sprite.y += player.sprite.velocityY * deltaTime;
-            player.playerStatus = "falling";
 
-            // Sprawdzamy kolizję po ruchu w Y
-            if (isCollidingWithdDown()) {
-                player.playerStatus = "onGround".trim();
-                player.sprite.y = oldY;      // Cofamy ruch w Y
-                player.sprite.velocityY = 0; // Zatrzymujemy opadanie/skok
-            }
+        player.sprite.velocityY += 25; // Stała grawitacji (dostosuj wartość)
+        double oldY = player.sprite.y;
+        player.sprite.y += player.sprite.velocityY * deltaTime;
+        player.playerStatus = "falling";
 
-            // Sprawdzamy kolizję po ruchu w Y z plaftormami
-            indexOfPlatformPLayerHaveColision = isCollidingWithPlatofrms();
-            if (indexOfPlatformPLayerHaveColision > -1) {
-                // Jeśli spadaliśmy (velocityY > 0), to uderzyliśmy w ziemię
-                player.playerStatus = "onGround".trim();
-                player.sprite.y = oldY;      // Cofamy ruch w Y
-//            player.velocityY = platforms.get(indexOfPlatformPLayerHaveColision).velocityY;
-                player.sprite.velocityY = platforms.get(indexOfPlatformPLayerHaveColision).velocityY; // Zatrzymujemy opadanie/skok
-                run = true;
-            }
-        } else {
-            player.sprite.y += player.sprite.velocityY * deltaTime;
+        // Sprawdzamy kolizję po ruchu w Y
+        if (isCollidingWithdDown()) {
+            player.playerStatus = "onGround".trim();
+            player.doubleJump = true;
+            player.sprite.y = oldY;      // Cofamy ruch w Y
+            player.sprite.velocityY = 0; // Zatrzymujemy opadanie/skok
+            player.playerCollideWith = null;
+        }
+
+        // Sprawdzamy kolizję po ruchu w Y z plaftormami
+        indexOfPlatformPLayerHaveColision = isCollidingWithPlatofrms();
+        if (indexOfPlatformPLayerHaveColision > -1) {
+            // Jeśli spadaliśmy (velocityY > 0), to uderzyliśmy w ziemię
+            player.playerStatus = "onGround".trim();
+            player.doubleJump = true;
+            player.sprite.velocityY = 0;
+            player.sprite.y = oldY;
+            player.playerCollideWith = platforms.get(indexOfPlatformPLayerHaveColision);
+            run = true;
+        }
+
+        if(player.playerStatus.equals("falling") && player.doubleJump) {
+            player.playerStatus = "jumping";
         }
     }
 
@@ -257,7 +274,7 @@ public class Main2 extends Game {
 //        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
         for (int i = 0; i < platforms.size(); i++) {
             GameObject p = platforms.get(i);
-            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.height / 2) < p.y && player.sprite.velocityY > 0) {
+            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.height) < p.y && player.sprite.velocityY > 0) {
                 return i; // Zwraca indeks platformy, z którą nastąpiła kolizja
             }
         }

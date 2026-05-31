@@ -13,8 +13,8 @@ public class AnimatedSprite extends GameObject {
     private int currentFrame = 0;
     private double frameTimer = 0;
     private double frameDuration = 0.1;
-    private boolean loop = true;
     private boolean play = false;
+    private boolean playCycle = false;
 //    private Rectangle baseHitbox; // Zmieniono nazwę na baseHitbox (oryginalne wymiary)
 
     public AnimatedSprite(double x, double y, double speed) {
@@ -23,9 +23,15 @@ public class AnimatedSprite extends GameObject {
         playAnimation();
 //        hitbox = texture.getHitBox();
     }
-
     public void playAnimation() {
         play = true;
+        playCycle = false;
+        currentFrame = 0;
+    }
+
+    public void playAnimationInCycle() {
+        play = false;
+        playCycle = true;
     }
 
     public void addAnimation(String animationName, Animation anim) {
@@ -58,14 +64,14 @@ public class AnimatedSprite extends GameObject {
     }
 
     private void updateAnimationLogic(double deltaTime) {
-        if (play && !currentPlayedAnimation.equals("")) {
+        if ((play || playCycle) && !currentPlayedAnimation.equals("")) {
             frameTimer += deltaTime;
             if (frameTimer >= frameDuration) {
                 frameTimer = 0;
                 currentFrame++;
                 Animation anim = animations.get(currentPlayedAnimation);
                 if (currentFrame >= anim.frames.length) {
-                    if (loop) currentFrame = 0;
+                    if (playCycle) currentFrame = 0;
                     else currentFrame = anim.frames.length - 1;
                 }
             }

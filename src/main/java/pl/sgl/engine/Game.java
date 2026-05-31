@@ -22,7 +22,7 @@ public class Game implements Runnable {
     private volatile boolean running = false;
 
     //ustawienia czasu
-    private final int TICKS_PER_SECOND = 60;
+    private final int TICKS_PER_SECOND = 120;
     private final double SKIP_TICKS = 1_000_000_000.0 / TICKS_PER_SECOND;
     // Czas trwania jednego ticku w sekundach (dla 60 TPS to ~0.0166s)
     protected final double deltaTime = 1.0 / TICKS_PER_SECOND;

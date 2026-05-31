@@ -7,5 +7,4 @@ public class Platform extends Sprite {
     public Platform(String pathToTexture, float x, float y){
         super(pathToTexture, x, y);
     }
-
 }
