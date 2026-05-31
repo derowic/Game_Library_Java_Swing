@@ -230,8 +230,9 @@ public class GameObject {
         }
     }
 
-    public void scale() {
-
+    public void scale(double scaleX, double scaleY) {
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
     }
 
     public Rectangle getRotatedBounds() {
@@ -364,6 +365,14 @@ public class GameObject {
         // getBounds2D() zwraca najmniejszy pionowy prostokąt, który mieści ten kształt
         // To jest bardzo szybka operacja
         return viewport.intersects(shape.getBounds2D());
+    }
+
+    public double getWidth(){
+        return width * scaleX;
+    }
+
+    public double getHeight(){
+        return height * scaleX;
     }
 
 

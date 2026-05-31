@@ -1,7 +1,9 @@
 package pl.sgl.engine;
 
+import pl.sgl.engine.GameTest.Coin;
 import pl.sgl.engine.GameTest.Platform;
 import pl.sgl.engine.GameTest.Player;
+import pl.sgl.engine.animation.Animation;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -16,7 +18,8 @@ public class Main2 extends Game {
     Sprite downBlocks;
     Sprite leftBlocks;
     Sprite rightBlocks;
-    public List<GameObject> platforms = new ArrayList<>();
+    public List<Platform> platforms = new ArrayList<>();
+    public List<Coin> coins = new ArrayList<>();
     int startPos;
     Random rand = new Random();
     float startPosY = 960;
@@ -65,10 +68,12 @@ public class Main2 extends Game {
         addGameObject(rightBlocks);
 
 
-        generatePlatforms();
+
 
         player = new Player();
         addGameObject(player.sprite);
+
+        generatePlatforms();
     }
     @Override
     protected void update() {
@@ -92,14 +97,21 @@ public class Main2 extends Game {
     }
 
     public void movePlatformsDown() {
-        for (GameObject p : platforms) {
+        for (Platform p : platforms) {
             p.moveByVelocity(deltaTime);
+
             if (downBlocks.y > 1500) {
                 downBlocks.y = 1500;
             } else {
                 downBlocks.moveByVelocity(deltaTime);
+
             }
         }
+
+        for (Coin s : coins) {
+            s.moveByVelocity(deltaTime);
+        }
+
     }
 
     public void generatePlatforms() {
@@ -147,7 +159,7 @@ public class Main2 extends Game {
         return 32;
     }
 
-    public Sprite getRandomPlatform(double basePos) {
+    public Platform getRandomPlatform(double basePos) {
         //64
         //1248
         int min0 = 4, max0 = 6;
@@ -168,6 +180,17 @@ public class Main2 extends Game {
         platform.velocityY = 100;
 //        platform.showHitBox = true;
         addGameObject(platform);
+
+        Coin c = new Coin((float) ((float) platform.x + platform.width/2 *platform.scaleX), (float) platform.y, 0.1, 1);
+        Animation coinAnim = new Animation("/textures/brackeys_platformer_assets/sprites/coin2.png",0,0, 16,16,12);
+        c.addAnimation("base", coinAnim);
+        c.setPosition(((float) platform.x + platform.width/2 *platform.scaleX), (float) platform.y - platform.height *2);
+        c.playAnimationInCycle();
+        c.scale(4,4);
+        c.velocityY = 100;
+        c.setPosition(player.sprite.x + player.sprite.width, 850);
+        coins.add(c);
+        addGameObject(c);
 
         return platform;
     }
@@ -211,7 +234,7 @@ public class Main2 extends Game {
 
     public void colisionWithEnv(){
 
-        if (player.playerCollideWith != null) {
+        if (player.playerCollideWith != null && run) {
             // Obliczamy o ile platforma przesunęła się w tej klatce
             double deltaX = player.playerCollideWith.velocityX * deltaTime;
             double deltaY = player.playerCollideWith.velocityY * deltaTime;

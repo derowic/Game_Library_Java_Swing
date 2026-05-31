@@ -11,6 +11,12 @@ public class Texture {
 
         image = TextureLoader.load(path);
     }
+
+    public Texture(String path, int x, int y, int width, int height) {
+
+        image = TextureLoader.load(path, x, y, width, height);
+    }
+
     public Texture(BufferedImage img) {
 
         image = img;

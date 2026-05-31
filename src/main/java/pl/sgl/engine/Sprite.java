@@ -5,8 +5,6 @@ import pl.sgl.engine.texture.Texture;
 import java.awt.*;
 
 public class Sprite extends GameObject {
-
-
     public Sprite(String pathToTexture, float x, float y) {
         super(x,y);
         texture = new Texture(pathToTexture);
@@ -17,9 +15,20 @@ public class Sprite extends GameObject {
         this.srcY = 0;
         this.srcW = texture.image.getWidth();
         this.srcH = texture.image.getHeight();
-//        refreshTiledCache();
-//        info();
     }
+
+    public Sprite(String pathToTexture, float x, float y, int texX, int texY, int texWidth, int texHeight) {
+        super(x,y);
+        texture = new Texture(pathToTexture, texX, texY, texWidth, texHeight);
+        width = texture.image.getWidth();
+        height = texture.image.getHeight();
+        hitbox = texture.getHitBox();
+        this.srcX = 0;
+        this.srcY = 0;
+        this.srcW = texture.image.getWidth();
+        this.srcH = texture.image.getHeight();
+    }
+
     public Sprite(Sprite s) {
         super(s.x,s.y);
         texture = s.texture;
