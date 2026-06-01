@@ -24,8 +24,8 @@ public class GameObject {
     public int height = 0;
     public boolean showHitBox = false;
     public boolean visible = true;
-    protected double pivotX = Double.NaN;
-    protected double pivotY = Double.NaN;
+    public double pivotX = 0;
+    public double pivotY = 0;
     public Texture texture;
     public boolean active = true; // Flaga określająca stan obiektu
     public Rectangle hitbox = new Rectangle();
@@ -205,7 +205,7 @@ public class GameObject {
 //                null
 //        );
         if (fillMode == FillMode.STRETCH) {
-            g2d.drawImage(texture.image, (int) -pX, (int) -pY, (int) (-pX + width), (int) (-pY + height),
+            g2d.drawImage(texture.image, (int) -pX, (int) -pY, (int) (-pX + srcW), (int) (-pY + srcH),
                     srcX, srcY, srcX + srcW, srcY + srcH, null);
         } else if (fillMode == FillMode.TILE) {
             // TERAZ TO JEST TYLKO JEDNA OPERACJA - bardzo szybka!
@@ -232,7 +232,9 @@ public class GameObject {
 
     public void scale(double scaleX, double scaleY) {
         this.scaleX = scaleX;
+        width *= scaleX;
         this.scaleY = scaleY;
+        height *= scaleY;
     }
 
     public Rectangle getRotatedBounds() {
@@ -272,15 +274,7 @@ public class GameObject {
             at.rotate(Math.toRadians(rotation));
         }
 
-//        if (Double.isNaN(pivotX) || Double.isNaN(pivotY)) {
-//            at.translate(width / 2, height / 2);
         at.scale(scaleX, scaleY);
-//            at.translate(-width / 2, -height / 2);
-//        } else {
-//            at.translate(pX, pY);
-//            at.scale(scaleX, scaleY);
-//            at.translate(-pX, -pY);
-//        }
 
         // 5. Tworzymy lokalny przeskalowany prostokąt
         Rectangle2D.Double scaledLocalRect = new Rectangle2D.Double(
@@ -338,11 +332,13 @@ public class GameObject {
     public void setScaleY(double scaleY) {
 
         this.scaleY = scaleY;
+        height *= scaleY;
 //        hitbox.setSize(hitbox.width, (int) (hitbox.height * scaleY));
     }
 
     public void setScaleX(double scaleX) {
         this.scaleX = scaleX;
+        width *= scaleX;
     }
 
     public void setPivot(double x, double y) {

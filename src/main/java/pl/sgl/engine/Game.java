@@ -406,8 +406,6 @@ public class Game implements Runnable {
         // TWORZYMY JEDNĄ KOPIĘ DLA CAŁEGO ŚWIATA (Kamera / Globalne przesunięcie)
         Graphics2D worldG = (Graphics2D) window.g.create();
 
-
-
         // --- MAGIA ZOOMU (Wyśrodkowanego) ---
         // Pobieramy rozmiar wirtualny (np. 1280x720)
         int vW = ConfigureData.oldWidth;;

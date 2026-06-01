@@ -182,13 +182,17 @@ public class Main2 extends Game {
         addGameObject(platform);
 
         Coin c = new Coin((float) ((float) platform.x + platform.width/2 *platform.scaleX), (float) platform.y, 0.1, 1);
-        Animation coinAnim = new Animation("/textures/brackeys_platformer_assets/sprites/coin2.png",0,0, 16,16,12);
+        Animation coinAnim = new Animation("/textures/brackeys_platformer_assets/sprites/coin.png",0,0, 16,16,12);
         c.addAnimation("base", coinAnim);
-        c.setPosition(((float) platform.x + platform.width/2 *platform.scaleX), (float) platform.y - platform.height *2);
-        c.playAnimationInCycle();
         c.scale(4,4);
+//        c.setPivot(c.width/2, c.height/2);
+//        c.setPosition(((float) platform.x + platform.width), (float) platform.y - c.height);
+        c.setPosition(platform.x + platform.width/2 - c.width /2, platform.y - c.height);
+        c.playAnimationInCycle();
+
         c.velocityY = 100;
-        c.setPosition(player.sprite.x + player.sprite.width, 850);
+
+//        c.setPosition(player.sprite.x + player.sprite.width, 850);
         coins.add(c);
         addGameObject(c);
 

@@ -26,12 +26,13 @@ public class Player  {
         sprite.setScaleX(-4);
         sprite.setScaleY(4);
         sprite.getRotatedShape();
-//        sprite.setPivot(sprite.width/2, sprite.height/2);
-//        sprite.setPosition(sprite.width* 2, sprite.y);
+//        sprite.rotation = 45;
+        sprite.setPivot(sprite.width/2, sprite.height/2);
+//        sprite.setPosition(64, sprite.y);
         sprite.playAnimationInCycle();
 //        player.showHitBox = true;
-        System.out.println(sprite.width);
-        System.out.println(sprite.height);
+        System.out.println(sprite.pivotX);
+        System.out.println(sprite.pivotY);
 
     }
 
