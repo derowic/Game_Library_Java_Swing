@@ -1,14 +1,9 @@
 package pl.sgl.engine;
 
-import pl.sgl.engine.GameTest.Coin;
-import pl.sgl.engine.GameTest.Platform;
-import pl.sgl.engine.GameTest.Player;
-import pl.sgl.engine.animation.Animation;
+import pl.sgl.engine.GameTest.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class Main2 extends Game {
@@ -18,11 +13,10 @@ public class Main2 extends Game {
     Sprite downBlocks;
     Sprite leftBlocks;
     Sprite rightBlocks;
-    public List<Platform> platforms = new ArrayList<>();
-    public List<Coin> coins = new ArrayList<>();
-    int startPos;
-    Random rand = new Random();
-    float startPosY = 960;
+    PlatformManager platformManager;
+    CoinManager coinManager;
+
+
     boolean run = false;
 
     public Main2() {
@@ -30,8 +24,8 @@ public class Main2 extends Game {
         super("Test", 1280, 960, Color.BLACK);
         setRenderPixelArt();
 
-        int min = 32, max = 1248;
-        startPos = rand.nextInt((max - min) + 1) + min;
+
+
 
         stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0,0);
         stoneBlock.setPivot(0,0);
@@ -67,21 +61,20 @@ public class Main2 extends Game {
         rightBlocks.setScaleY(2);
         addGameObject(rightBlocks);
 
-
-
+        //coinManager after platforms bc it base on platforms posX
+        platformManager = new PlatformManager();
+        coinManager = new CoinManager(platformManager.platforms);
 
         player = new Player();
         addGameObject(player.sprite);
-
-        generatePlatforms();
     }
     @Override
     protected void update() {
-        if (keyboard.isKeyDown(KeyEvent.VK_Q)) currentGame.cam.zoom += 0.1;
-        if (keyboard.isKeyDown(KeyEvent.VK_E)) currentGame.cam.zoom -= 0.1;
+        if (keyboard.isKeyPressed(KeyEvent.VK_Q)) currentGame.cam.zoom += 0.1;
+        if (keyboard.isKeyPressed(KeyEvent.VK_E)) currentGame.cam.zoom -= 0.1;
 
         if (run) {
-            movePlatformsDown();
+            moveDown();
         }
         colisionWithEnv();
 
@@ -90,114 +83,36 @@ public class Main2 extends Game {
 
 
         if (run) {
-            generatePlatforms();
+            platformManager.generatePlatforms();
         }
+        cycle();
 
         super.update();
     }
 
-    public void movePlatformsDown() {
-        for (Platform p : platforms) {
-            p.moveByVelocity(deltaTime);
-
-            if (downBlocks.y > 1500) {
-                downBlocks.y = 1500;
-            } else {
-                downBlocks.moveByVelocity(deltaTime);
-
+    public void cycle () {
+        for( Platform p : platformManager.platforms) {
+            if (p.y <= platformManager.startPosY) {
+                coinManager.recycle(p);
             }
         }
-
-        for (Coin s : coins) {
-            s.moveByVelocity(deltaTime);
-        }
-
     }
 
-    public void generatePlatforms() {
-        if (platforms.size() <= 1) {
 
-            for(int i =0; i < 20; i++) {
-                platforms.add(getRandomPlatform(startPosY));
-                startPosY -= 100;
-            }
-//            startPosY -= 100;
+    public void moveDown() {
+        if (downBlocks.y > 1500) {
+            downBlocks.y = 1500;
         } else {
-            for (GameObject p : platforms) {
-                if(p.y > 1000) {
-                    p.setPosition(getRandomPlatformPosition((p.width * 2)), startPosY);
-                }
-            }
+            downBlocks.moveByVelocity(deltaTime);
+
         }
+        platformManager.move(deltaTime);
+        coinManager.move(deltaTime);
     }
 
-    public int getRandomPlatformPosition(int randPlatformLenght) {
-        int min;
-        int max;
-
-        // place platform opossite side
-        if (startPos > 640 ) {
-            min = 32;
-            max = 600;
-        } else {
-            min = 600;
-            max = 1248 - randPlatformLenght;
-        }
-
-        try {
-            int randPosX = rand.nextInt((max - min) + 1) + min;
-            startPos = randPosX;
-//            System.out.println(startPos);
-//            System.out.println(randPosX);
-            return  randPosX;
-        } catch (Exception e) {
-//            System.out.println("max: " + max + " min: " + min + " lenght "+ randPlatformLenght);
-            System.out.println("Wystąpił inny, nieznany błąd: " + e.getMessage());
-        } finally {
-//            System.out.println("max: " + max + " min: " + min);
-        }
-        return 32;
-    }
-
-    public Platform getRandomPlatform(double basePos) {
-        //64
-        //1248
-        int min0 = 4, max0 = 6;
-        int randPlatformLenght= rand.nextInt((max0- min0) + 1) + min0;
-        int min = 0;
-        int max = 0;
-
-        int randPosX = getRandomPlatformPosition(randPlatformLenght * 32);
-        startPos = randPosX;
 
 
-        Platform platform = new Platform("/textures/brackeys_platformer_assets/sprites/world_tileset.png", (float) randPosX, (float) (basePos -200));
-        platform.setPivot(0,0);
-        platform.setTextureRegion(128,16,16,16);
-        platform.setSpriteSize(randPlatformLenght * 16,16, FillMode.TILE);
-        platform.setScaleX(2);
-        platform.setScaleY(2);
-        platform.velocityY = 100;
-//        platform.showHitBox = true;
-        addGameObject(platform);
 
-        Coin c = new Coin((float) ((float) platform.x + platform.width/2 *platform.scaleX), (float) platform.y, 0.1, 1);
-        Animation coinAnim = new Animation("/textures/brackeys_platformer_assets/sprites/coin.png",0,0, 16,16,12);
-        c.addAnimation("base", coinAnim);
-        c.scale(4,4);
-//        c.setPivot(c.width/2, c.height/2);
-//        c.setPosition(((float) platform.x + platform.width), (float) platform.y - c.height);
-        c.setPosition(platform.x + platform.width/2 - c.width /2, platform.y - c.height);
-        c.playAnimationInCycle();
-
-        c.velocityY = 100;
-
-//        c.setPosition(player.sprite.x + player.sprite.width, 850);
-        coins.add(c);
-        addGameObject(c);
-
-        return platform;
-    }
 
     public void playerInput() {
         if (keyboard.isKeyDown(KeyEvent.VK_A)) {
@@ -288,7 +203,7 @@ public class Main2 extends Game {
             player.doubleJump = true;
             player.sprite.velocityY = 0;
             player.sprite.y = oldY;
-            player.playerCollideWith = platforms.get(indexOfPlatformPLayerHaveColision);
+            player.playerCollideWith = platformManager.platforms.get(indexOfPlatformPLayerHaveColision);
             run = true;
         }
 
@@ -299,8 +214,8 @@ public class Main2 extends Game {
 
     private int isCollidingWithPlatofrms() {
 //        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
-        for (int i = 0; i < platforms.size(); i++) {
-            GameObject p = platforms.get(i);
+        for (int i = 0; i < platformManager.platforms.size(); i++) {
+            GameObject p = platformManager.platforms.get(i);
             if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.height) < p.y && player.sprite.velocityY > 0) {
                 return i; // Zwraca indeks platformy, z którą nastąpiła kolizja
             }

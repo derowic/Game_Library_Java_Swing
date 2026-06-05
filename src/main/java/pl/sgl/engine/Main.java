@@ -1,4 +1,4 @@
-//package pl.sgl.engine;
+package pl.sgl.engine;//package pl.sgl.engine;
 //
 //import pl.sgl.engine.GameTest.Player;
 //import pl.sgl.engine.TileMaps.TileMap;
@@ -305,3 +305,4 @@
 ////        }
 //    }
 //}
+

@@ -18,7 +18,7 @@ public class GameObject {
     public boolean didTeleport = false;
     public double velocityX = 0.0;
     public double velocityY = 0.0;
-    protected double scaleX = 1.0;
+    public double scaleX = 1.0;
     protected double scaleY= 1.0;
     public int width = 0;
     public int height = 0;

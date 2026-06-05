@@ -1,0 +1,53 @@
+package pl.sgl.engine.GameTest;
+
+import pl.sgl.engine.Game;
+import pl.sgl.engine.GameObject;
+import pl.sgl.engine.animation.Animation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CoinManager {
+    public List<Coin> coins = new ArrayList<>();
+
+    public CoinManager(List<Platform> platforms) {
+        for(Platform p : platforms) {
+            generate(p);
+        }
+    }
+
+    public Coin generate(Platform platform) {
+        Coin c = new Coin((float) ((float) platform.x + platform.width / 2 * platform.scaleX), (float) platform.y, 0.1, 1);
+        Animation coinAnim = new Animation("/textures/brackeys_platformer_assets/sprites/coin.png", 0, 0, 16, 16, 12);
+        c.addAnimation("base", coinAnim);
+        c.scale(4, 4);
+        c.setPosition(platform.x + platform.width / 2 - c.width / 2, platform.y - c.height);
+        c.playAnimationInCycle();
+
+        c.velocityY = 100;
+
+        coins.add(c);
+        Game.instance.addGameObject(c);
+        return c;
+    }
+
+    public void recycle (Platform platform) {
+        for (Coin c: coins) {
+            if (c.y >= 1000 ) {
+                c.setPosition(platform.x + platform.width / 2 - c.width / 2, platform.y - c.height);
+                c.velocityY = platform.velocityY;
+                System.out.println("add coind");
+            }
+        }
+    }
+
+    public void move (double deltaTime) {
+        for (Coin s : coins) {
+            if(s.y < 1500) {
+                s.moveByVelocity(deltaTime);
+            }
+        }
+    }
+
+
+}

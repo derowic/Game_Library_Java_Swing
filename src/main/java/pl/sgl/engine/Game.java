@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game implements Runnable {
+    public static Game instance;
     //buffor to send data to rendering function
     protected GameState currentSnapshot = new GameState();
     // W klasie Engine
@@ -49,6 +50,7 @@ public class Game implements Runnable {
     private long lastToggleTime = 0;
 
     public Game(String title, int width, int height, Color bc) {
+
         window = new Window(title, width, height, bc);
         window.initInput(keyboard);  // Klawiatura
         window.initMouse(mouse);  // Myszka
@@ -64,7 +66,10 @@ public class Game implements Runnable {
             window = null;
 
         }));
+
+        instance = this;
     }
+
 
     public void addGameObject(GameObject g) {
         currentGame.sprites.add(g);
