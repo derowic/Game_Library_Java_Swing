@@ -44,6 +44,7 @@ public class AnimatedSprite extends GameObject {
             texture = new Texture(getCurrentFrame());
             if( hitbox.width == 0 && hitbox.height ==0) {
                 hitbox = texture.getHitBox();
+//                hitbox = new Rectangle(0,0, texture.image.getWidth(), texture.image.getHeight());
                 this.srcX = 0;
                 this.srcY = 0;
                 this.srcW = texture.image.getWidth();
@@ -98,10 +99,10 @@ public class AnimatedSprite extends GameObject {
 //    }
 
     // Usunięto modyfikowanie baseHitbox w setterach - teraz skala jest używana tylko przy rysowaniu i kolizjach
-    @Override
-    public void setScaleY(double scaleY) { this.scaleY = scaleY; }
-    @Override
-    public void setScaleX(double scaleX) { this.scaleX = scaleX; }
+//    @Override
+//    public void setScaleY(double scaleY) { this.scaleY = scaleY; }
+//    @Override
+//    public void setScaleX(double scaleX) { this.scaleX = scaleX; }
 
     public void setAnimation(String name) {
         if (animations.containsKey(name) && !currentPlayedAnimation.equals(name)) {

@@ -36,7 +36,7 @@ public class CoinManager {
             if (c.y >= 1000 ) {
                 c.setPosition(platform.x + platform.width / 2 - c.width / 2, platform.y - c.height);
                 c.velocityY = platform.velocityY;
-                System.out.println("add coind");
+//                System.out.println("add coind");
             }
         }
     }

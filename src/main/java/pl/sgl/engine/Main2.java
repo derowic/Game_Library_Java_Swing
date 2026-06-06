@@ -9,12 +9,14 @@ import java.util.Random;
 public class Main2 extends Game {
 
     Player player;
+    Player player2;
     Sprite stoneBlock;
     Sprite downBlocks;
     Sprite leftBlocks;
     Sprite rightBlocks;
     PlatformManager platformManager;
     CoinManager coinManager;
+    EnemyManager enemyManager;
 
 
     boolean run = false;
@@ -66,7 +68,12 @@ public class Main2 extends Game {
         coinManager = new CoinManager(platformManager.platforms);
 
         player = new Player();
+        player2 = new Player();
         addGameObject(player.sprite);
+        addGameObject(player2.sprite);
+        player2.sprite.setPosition(player2.sprite.x + player2.sprite.width, player.sprite.y);
+
+        enemyManager = new EnemyManager(platformManager.platforms);
     }
     @Override
     protected void update() {
@@ -81,7 +88,6 @@ public class Main2 extends Game {
         playerInput();
         player.playerAnimationLogic();
 
-
         if (run) {
             platformManager.generatePlatforms();
         }
@@ -94,8 +100,10 @@ public class Main2 extends Game {
         for( Platform p : platformManager.platforms) {
             if (p.y <= platformManager.startPosY) {
                 coinManager.recycle(p);
+                enemyManager.recycle(p);
             }
         }
+
     }
 
 
@@ -108,6 +116,7 @@ public class Main2 extends Game {
         }
         platformManager.move(deltaTime);
         coinManager.move(deltaTime);
+        enemyManager.move(deltaTime);
     }
 
 

@@ -1,5 +1,6 @@
 package pl.sgl.engine;
 
+import pl.sgl.engine.GameTest.Enemy;
 import pl.sgl.engine.GameTest.Player;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.particleSystem.Particle;
@@ -468,6 +469,8 @@ public class Game implements Runnable {
         for (UIElement e : renderState.uiManager.getElements()) {
             e.draw(g);
         }
+
+        drawDebugGrid(g);
     }
 
     private void renderStats(double alpha){
@@ -485,6 +488,8 @@ public class Game implements Runnable {
         // Wyświetlanie Alpha (opcjonalnie do debugowania płynności)
         window.g.setColor(Color.YELLOW);
         window.g.drawString("Delta Time: " + String.format("%.2f", alpha), 10, 60);
+
+
     }
 
     private void drawDebugGrid(Graphics2D g) {
@@ -549,5 +554,4 @@ public class Game implements Runnable {
     public void setRenderWithSmooth() {
         window.typeOfRenderingSprites = "normal";
     }
-
 }

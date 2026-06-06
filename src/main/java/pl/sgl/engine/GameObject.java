@@ -332,13 +332,13 @@ public class GameObject {
     public void setScaleY(double scaleY) {
 
         this.scaleY = scaleY;
-        height *= scaleY;
+//        height *= scaleY;
 //        hitbox.setSize(hitbox.width, (int) (hitbox.height * scaleY));
     }
 
     public void setScaleX(double scaleX) {
         this.scaleX = scaleX;
-        width *= scaleX;
+//        width *= scaleX;
     }
 
     public void setPivot(double x, double y) {
