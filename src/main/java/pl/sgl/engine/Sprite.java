@@ -2,14 +2,12 @@ package pl.sgl.engine;
 
 import pl.sgl.engine.texture.Texture;
 
-import java.awt.*;
-
 public class Sprite extends GameObject {
     public Sprite(String pathToTexture, float x, float y) {
         super(x,y);
         texture = new Texture(pathToTexture);
-        width = texture.image.getWidth();
-        height = texture.image.getHeight();
+        frameWidth = texture.image.getWidth();
+        frameHeight = texture.image.getHeight();
         hitbox = texture.getHitBox();
         this.srcX = 0;
         this.srcY = 0;
@@ -20,8 +18,8 @@ public class Sprite extends GameObject {
     public Sprite(String pathToTexture, float x, float y, int texX, int texY, int texWidth, int texHeight) {
         super(x,y);
         texture = new Texture(pathToTexture, texX, texY, texWidth, texHeight);
-        width = texture.image.getWidth();
-        height = texture.image.getHeight();
+        frameWidth = texture.image.getWidth();
+        frameHeight = texture.image.getHeight();
         hitbox = texture.getHitBox();
         this.srcX = 0;
         this.srcY = 0;
@@ -32,8 +30,8 @@ public class Sprite extends GameObject {
     public Sprite(Sprite s) {
         super(s.x,s.y);
         texture = s.texture;
-        width = texture.image.getWidth();
-        height = texture.image.getHeight();
+        frameWidth = texture.image.getWidth();
+        frameHeight = texture.image.getHeight();
         hitbox = texture.getHitBox();
         this.srcX = 0;
         this.srcY = 0;
@@ -49,8 +47,8 @@ public class Sprite extends GameObject {
 
     public void info()
     {
-        System.out.println("width: " +width);
-        System.out.println("height: " +height);
+        System.out.println("width: " + frameWidth);
+        System.out.println("height: " + frameHeight);
     }
 
 

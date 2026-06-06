@@ -2,16 +2,15 @@ package pl.sgl.engine;
 
 import java.awt.*;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public class Colision {
 
     private static boolean colision(GameObject a, GameObject b) {
-        return a.x < b.x + b.width &&
-                a.x + a.width > b.x &&
-                a.y < b.y + b.height &&
-                a.y + a.height > b.y;
+        return a.x < b.x + b.frameWidth &&
+                a.x + a.frameWidth > b.x &&
+                a.y < b.y + b.frameHeight &&
+                a.y + a.frameHeight > b.y;
     }
 
     public static boolean checkCollision(GameObject g1, GameObject g2) {

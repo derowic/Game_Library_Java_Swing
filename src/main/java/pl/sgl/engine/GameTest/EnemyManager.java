@@ -12,7 +12,7 @@ public class EnemyManager {
     public EnemyManager(List<Platform> platforms) {
         for(Platform p : platforms) {
             generate(p);
-            System.out.println("create enemey");
+//            System.out.println("create enemey");
         }
     }
 
@@ -27,9 +27,10 @@ public class EnemyManager {
     public void recycle (Platform platform) {
         for (Enemy c: enemies) {
             if (c.y >= 1000 ) {
-                c.setPosition(platform.x + platform.width / 2 - c.width / 2, platform.y - c.height);
+//                c.setPosition(platform.x + platform.width / 2 - c.width / 2, platform.y - c.height);
+                c.setPosition(platform.x + c.getWidth()/2, platform.y - c.getHeight()/2);
                 c.velocityY = platform.velocityY;
-                System.out.println("add enemy");
+//                System.out.println("add enemy");
             }
         }
     }
@@ -39,6 +40,7 @@ public class EnemyManager {
             if(e.y < 1500) {
                 e.moveByVelocity(deltaTime);
             }
+            e.ai();
         }
     }
 

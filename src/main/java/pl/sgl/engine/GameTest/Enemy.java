@@ -14,13 +14,29 @@ public class Enemy extends AnimatedSprite {
         showHitBox = true;
         addAnimation("walk", walk);
         playAnimationInCycle();
-        setPivot(width/2,height/2);
+
         scale(4, 4);
-        setPosition(p.x + width/2, p.y - height /2);
+        setPivot(frameWidth/2,frameHeight/2+2);
+        setPosition(p.x + getWidth(), p.y - getHeight()/2);
 
-        minX = (int) p.x;
-        maxX = (int) (p.x + p.getWidth());
+        minX = (int) ((int) p.x + getWidth()/2);
+        maxX = (int) (p.x + p.getWidth() - getWidth()/2);
+        velocityX = 0.25;
 
+        System.out.println("frameHeightx:" +frameHeight);
+        System.out.println("witdth: " + getHeight());
+        System.out.println("hitbox width " + hitbox.getHeight());
         Game.instance.addGameObject(this);
+    }
+
+    public void ai() {
+        if(x >= maxX) {
+            velocityX *= -1;
+        }
+        if(x <= minX) {
+            velocityX *= -1;
+        }
+        move(velocityX,0);
+
     }
 }

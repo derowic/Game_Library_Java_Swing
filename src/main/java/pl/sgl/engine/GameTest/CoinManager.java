@@ -17,11 +17,11 @@ public class CoinManager {
     }
 
     public Coin generate(Platform platform) {
-        Coin c = new Coin((float) ((float) platform.x + platform.width / 2 * platform.scaleX), (float) platform.y, 0.1, 1);
+        Coin c = new Coin((float) ((float) platform.x + platform.getWidth() / 2 * platform.scaleX), (float) platform.y, 0.1, 1);
         Animation coinAnim = new Animation("/textures/brackeys_platformer_assets/sprites/coin.png", 0, 0, 16, 16, 12);
         c.addAnimation("base", coinAnim);
         c.scale(4, 4);
-        c.setPosition(platform.x + platform.width / 2 - c.width / 2, platform.y - c.height);
+        c.setPosition(platform.x + platform.getWidth() / 2 - c.getWidth() / 2, platform.y - c.getHeight());
         c.playAnimationInCycle();
 
         c.velocityY = 100;
@@ -34,7 +34,7 @@ public class CoinManager {
     public void recycle (Platform platform) {
         for (Coin c: coins) {
             if (c.y >= 1000 ) {
-                c.setPosition(platform.x + platform.width / 2 - c.width / 2, platform.y - c.height);
+                c.setPosition(platform.x + platform.getWidth() / 2 - c.getWidth() / 2, platform.y - c.getHeight());
                 c.velocityY = platform.velocityY;
 //                System.out.println("add coind");
             }

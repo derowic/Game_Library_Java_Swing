@@ -1,9 +1,8 @@
 package pl.sgl.engine.animation;
 
 import pl.sgl.engine.texture.Texture;
-import pl.sgl.engine.texture.TextureLoader;
 import pl.sgl.engine.GameObject;
-import java.awt.*;
+
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
@@ -39,11 +38,13 @@ public class AnimatedSprite extends GameObject {
         if (currentPlayedAnimation.equals("")) {
             currentPlayedAnimation = animationName;
             // Ustawiamy bazowe wymiary na podstawie pierwszej klatki
-            this.width = anim.frames[0].getWidth();
-            this.height = anim.frames[0].getHeight();
+            this.frameWidth = (int) (anim.frames[0].getWidth() * scaleX);
+            this.frameHeight = (int) (anim.frames[0].getHeight() * scaleY);
             texture = new Texture(getCurrentFrame());
             if( hitbox.width == 0 && hitbox.height ==0) {
                 hitbox = texture.getHitBox();
+//                width = (int) hitbox.getWidth();
+//                height = (int) hitbox.getHeight();
 //                hitbox = new Rectangle(0,0, texture.image.getWidth(), texture.image.getHeight());
                 this.srcX = 0;
                 this.srcY = 0;

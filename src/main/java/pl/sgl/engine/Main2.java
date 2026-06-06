@@ -4,7 +4,6 @@ import pl.sgl.engine.GameTest.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.Random;
 
 public class Main2 extends Game {
 
@@ -71,7 +70,7 @@ public class Main2 extends Game {
         player2 = new Player();
         addGameObject(player.sprite);
         addGameObject(player2.sprite);
-        player2.sprite.setPosition(player2.sprite.x + player2.sprite.width, player.sprite.y);
+        player2.sprite.setPosition(player2.sprite.x + player2.sprite.frameWidth, player.sprite.y);
 
         enemyManager = new EnemyManager(platformManager.platforms);
     }
@@ -83,6 +82,7 @@ public class Main2 extends Game {
         if (run) {
             moveDown();
         }
+
         colisionWithEnv();
 
         playerInput();
@@ -225,7 +225,7 @@ public class Main2 extends Game {
 //        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
         for (int i = 0; i < platformManager.platforms.size(); i++) {
             GameObject p = platformManager.platforms.get(i);
-            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.height) < p.y && player.sprite.velocityY > 0) {
+            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.frameHeight) < p.y && player.sprite.velocityY > 0) {
                 return i; // Zwraca indeks platformy, z którą nastąpiła kolizja
             }
         }
