@@ -97,6 +97,7 @@ public class Main2 extends Game {
     }
 
     public void cycle () {
+
         for( Platform p : platformManager.platforms) {
             if (p.y <= platformManager.startPosY) {
                 coinManager.recycle(p);

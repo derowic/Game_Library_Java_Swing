@@ -11,7 +11,7 @@ public class Enemy extends AnimatedSprite {
     public Enemy(Platform p){
         super(p.x, p.y, 0.1);
         Animation walk = new Animation("/textures/brackeys_platformer_assets/sprites/slime_green.png",0,32,24,16,4);
-        showHitBox = true;
+//        showHitBox = true;
         addAnimation("walk", walk);
         playAnimationInCycle();
 
@@ -32,9 +32,11 @@ public class Enemy extends AnimatedSprite {
     public void ai() {
         if(x >= maxX) {
             velocityX *= -1;
+            setScaleX(-4);
         }
         if(x <= minX) {
             velocityX *= -1;
+            setScaleX(4);
         }
         move(velocityX,0);
 

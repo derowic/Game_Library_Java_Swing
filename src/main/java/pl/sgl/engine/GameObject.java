@@ -20,8 +20,8 @@ public class GameObject {
     public double velocityY = 0.0;
     public double scaleX = 1.0;
     protected double scaleY= 1.0;
-    protected int frameWidth = 0;
-    protected int frameHeight = 0;
+    public int frameWidth = 0;
+    public int frameHeight = 0;
     public boolean showHitBox = false;
     public boolean visible = true;
     public double pivotX = 0;
@@ -369,11 +369,11 @@ public class GameObject {
     }
 
     public double getWidth(){
-        return hitbox.getWidth() * scaleX;
+        return hitbox.getWidth() * Math.abs(scaleX);
     }
 
     public double getHeight(){
-        return hitbox.getHeight() * scaleY;
+        return hitbox.getHeight() * Math.abs(scaleY);
     }
 
 

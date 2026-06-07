@@ -17,7 +17,7 @@ public class Player  {
         Animation jump = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",128,64,32,32,1);
         Animation fall = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,1);
         sprite = new AnimatedSprite( 600, 780, 0.1); // zmiana klatki co 0.1 sekundy
-        sprite.showHitBox = true;
+//        sprite.showHitBox = true;
         sprite.addAnimation("idle", idle);
         sprite.addAnimation("walk", walk);
         sprite.addAnimation("roll", roll);

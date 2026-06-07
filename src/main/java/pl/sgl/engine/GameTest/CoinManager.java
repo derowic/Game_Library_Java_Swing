@@ -21,10 +21,11 @@ public class CoinManager {
         Animation coinAnim = new Animation("/textures/brackeys_platformer_assets/sprites/coin.png", 0, 0, 16, 16, 12);
         c.addAnimation("base", coinAnim);
         c.scale(4, 4);
-        c.setPosition(platform.x + platform.getWidth() / 2 - c.getWidth() / 2, platform.y - c.getHeight());
+        c.setPivotByProcent(0.5,0.5);
+        c.setPosition(platform.x + platform.getWidth() / 2 - c.getWidth() / 2, platform.y - c.getHeight()/2);
         c.playAnimationInCycle();
 
-        c.velocityY = 100;
+        c.velocityY = platform.velocityY;
 
         coins.add(c);
         Game.instance.addGameObject(c);

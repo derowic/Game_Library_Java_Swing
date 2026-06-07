@@ -470,7 +470,7 @@ public class Game implements Runnable {
             e.draw(g);
         }
 
-        drawDebugGrid(g);
+//        drawDebugGrid(g);
     }
 
     private void renderStats(double alpha){
