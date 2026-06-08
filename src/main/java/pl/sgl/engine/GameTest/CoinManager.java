@@ -45,7 +45,7 @@ public class CoinManager {
     public void move (double deltaTime) {
         for (Coin s : coins) {
             if(s.y < 1500) {
-                s.moveByVelocity(deltaTime);
+                s.moveByVelocity();
             }
         }
     }

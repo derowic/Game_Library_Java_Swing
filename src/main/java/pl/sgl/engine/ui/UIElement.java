@@ -22,4 +22,8 @@ public class UIElement {
 
         return bounds.contains(mouse.getUIX(), mouse.getUIY());
     }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }

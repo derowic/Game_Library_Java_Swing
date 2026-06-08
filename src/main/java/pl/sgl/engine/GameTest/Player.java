@@ -1,14 +1,20 @@
 package pl.sgl.engine.GameTest;
 
+import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
+import pl.sgl.engine.ui.Text;
+import pl.sgl.engine.ui.UIElement;
 
 public class Player  {
     public AnimatedSprite sprite;
     public String playerStatus = "falling";
     public boolean doubleJump = false;
     public GameObject playerCollideWith;
+    public int coins = 0;
+    public double health = 10;
+    public UIElement coinsNumberLabel;
 
     public Player(){
         Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
@@ -33,7 +39,8 @@ public class Player  {
 //        sprite.setPosition(64, sprite.y);
         sprite.playAnimationInCycle();
 //        player.showHitBox = true;
-
+        coinsNumberLabel = new Text( "PUNKTY: 0", 20, 80, 24);
+        Game.addUiElement(coinsNumberLabel);
     }
 
     public void playerAnimationLogic() {
