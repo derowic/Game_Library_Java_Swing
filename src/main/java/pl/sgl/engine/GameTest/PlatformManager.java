@@ -18,6 +18,12 @@ public class PlatformManager {
     public PlatformManager() {
         startPosX = rand.nextInt((max - min) + 1) + min;
         generatePlatforms();
+
+//        Platform p = generatePlatform(32, 1000,4);
+//        platforms.add(p);
+//        Game.instance.addGameObject(p);
+//        System.out.println("p.width: " + p.getWidth());
+//        System.out.println("p.height: " + p.getHeight());
     }
 
     public Platform generatePlatform (int randPosX, int basePos, int randPlatformLenght) {
@@ -28,6 +34,10 @@ public class PlatformManager {
         platform.setScaleX(2);
         platform.setScaleY(2);
         platform.velocityY = 100;
+//        platform.showHitBox = true;
+
+        System.out.println("   platform witdth: " + platform.getWidth());
+        System.out.println("    platformhitbox width" + platform.frameWidth);
 
         return platform;
     }
@@ -84,8 +94,8 @@ public class PlatformManager {
         } else {
 
             for (GameObject p : platforms) {
-                if(p.y > 1000) {
-                    p.setPosition(getRandomPlatformPosition((p.width * 2)), startPosY);
+                if(p.y >= 1000) {
+                    p.setPosition(getRandomPlatformPosition((int) (p.getWidth() * 2)), startPosY);
                 }
             }
 

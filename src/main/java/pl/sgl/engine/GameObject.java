@@ -20,8 +20,8 @@ public class GameObject {
     public double velocityY = 0.0;
     public double scaleX = 1.0;
     protected double scaleY= 1.0;
-    public int width = 0;
-    public int height = 0;
+    public int frameWidth = 0;
+    public int frameHeight = 0;
     public boolean showHitBox = false;
     public boolean visible = true;
     public double pivotX = 0;
@@ -54,8 +54,8 @@ public class GameObject {
         this.velocityY = go.velocityY;
         this.scaleX = go.scaleX;
         this.scaleY = go.scaleY;
-        this.width =go.width;
-        this.height = go.height;
+        this.frameWidth =go.frameWidth;
+        this.frameHeight = go.frameHeight;
         this.showHitBox = go.showHitBox;
         this.visible = go.visible;
         this.pivotX = go.pivotX;
@@ -91,15 +91,15 @@ public class GameObject {
 
     public void fitHitboxToTexture(){
         // Aktualizujemy rozmiar bazowy obiektu, aby skala 1:1 pasowała do wycinka
-        this.width = this.srcW;
-        this.height = this.srcH;
+        this.frameWidth = this.srcW;
+        this.frameHeight = this.srcH;
         this.needsRefresh = true; // Sygnał dla renderera, żeby przeliczył kafelki
         hitbox = new Rectangle(srcX, srcY, srcW, srcH);
     }
 
     public void setSpriteSize(int w, int h, FillMode fm) {
-        this.width = w;
-        this.height = h;
+        this.frameWidth = w;
+        this.frameHeight = h;
         hitbox = new Rectangle(0, 0, w, h);
         if (fm == FillMode.TILE) {
             setTileTexture();
@@ -112,10 +112,10 @@ public class GameObject {
 
     // Wywołaj tę metodę zawsze, gdy zmienisz width lub height sprite'a!
     public void refreshTiledCache() {
-        if (width <= 0 || height <= 0) return;
+        if (frameWidth <= 0 || frameHeight <= 0) return;
 
         // Tworzymy pusty obraz o docelowych wymiarach
-        tiledCache = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        tiledCache = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = tiledCache.createGraphics();
 
         // Ustawiamy jakość (Nearest Neighbor dla Pixel Artu)
@@ -128,7 +128,7 @@ public class GameObject {
         // Malujemy kafelki RAZ na tym nowym obrazie
         TexturePaint tp = new TexturePaint(tile, anchor);
         g.setPaint(tp);
-        g.fillRect(0, 0, width, height);
+        g.fillRect(0, 0, frameWidth, frameHeight);
 
         g.dispose(); // Zwalniamy zasoby graficzne
         needsRefresh = false;
@@ -187,8 +187,8 @@ public class GameObject {
         Graphics2D g2d = (Graphics2D) g.create();
 
         // 1. Wyznaczamy pivot (współrzędne lokalne obrazka)
-        double pX = Double.isNaN(pivotX) ? width / 2.0 : pivotX;
-        double pY = Double.isNaN(pivotY) ? height / 2.0 : pivotY;
+        double pX = Double.isNaN(pivotX) ? frameWidth / 2.0 : pivotX;
+        double pY = Double.isNaN(pivotY) ? frameHeight / 2.0 : pivotY;
 
         g2d.translate(drawX, drawY);
         if (rotation != 0) {
@@ -227,14 +227,14 @@ public class GameObject {
             g2d.setColor(new Color(255, 0, 0, 50));
             g2d.fill(collisionShape);
             g2d.dispose();
+
+
         }
     }
 
     public void scale(double scaleX, double scaleY) {
         this.scaleX = scaleX;
-        width *= scaleX;
         this.scaleY = scaleY;
-        height *= scaleY;
     }
 
     public Rectangle getRotatedBounds() {
@@ -243,12 +243,12 @@ public class GameObject {
         double cos = Math.abs(Math.cos(rad));
 
         // Nowa szerokość i wysokość prostokąta, który pomieści obrócony kształt
-        int newW = (int) Math.floor(width * cos + height * sin);
-        int newH = (int) Math.floor(width * sin + height * cos);
+        int newW = (int) Math.floor(frameWidth * cos + frameHeight * sin);
+        int newH = (int) Math.floor(frameWidth * sin + frameHeight * cos);
 
         // Wyśrodkowanie (zakładając, że obracasz wokół środka)
-        int newX = (int) ((width - newW) / 2.0);
-        int newY = (int) ((height - newH) / 2.0);
+        int newX = (int) ((frameWidth - newW) / 2.0);
+        int newY = (int) ((frameHeight - newH) / 2.0);
 
         return new Rectangle(newX, newY, newW, newH);
     }
@@ -263,8 +263,8 @@ public class GameObject {
         AffineTransform at = new AffineTransform();
 
         // 3. Obliczenie Pivotu (identycznie jak w draw)
-        double pX = Double.isNaN(pivotX) ? width / 2.0 : pivotX;
-        double pY = Double.isNaN(pivotY) ? height / 2.0 : pivotY;
+        double pX = Double.isNaN(pivotX) ? frameWidth / 2.0 : pivotX;
+        double pY = Double.isNaN(pivotY) ? frameHeight / 2.0 : pivotY;
 
         // 1. Przesunięcie do świata
         at.translate(drawX, drawY);
@@ -332,18 +332,23 @@ public class GameObject {
     public void setScaleY(double scaleY) {
 
         this.scaleY = scaleY;
-        height *= scaleY;
+//        height *= scaleY;
 //        hitbox.setSize(hitbox.width, (int) (hitbox.height * scaleY));
     }
 
     public void setScaleX(double scaleX) {
         this.scaleX = scaleX;
-        width *= scaleX;
+//        width *= scaleX;
     }
 
     public void setPivot(double x, double y) {
         this.pivotX = x;
         this.pivotY = y;
+    }
+
+    public void setPivotByProcent(double x, double y) {
+        this.pivotX = x * frameWidth;
+        this.pivotY = y * frameHeight;
     }
 
     public void resetPivotToCenter() {
@@ -364,11 +369,11 @@ public class GameObject {
     }
 
     public double getWidth(){
-        return width * scaleX;
+        return hitbox.getWidth() * Math.abs(scaleX);
     }
 
     public double getHeight(){
-        return height * scaleX;
+        return hitbox.getHeight() * Math.abs(scaleY);
     }
 
 

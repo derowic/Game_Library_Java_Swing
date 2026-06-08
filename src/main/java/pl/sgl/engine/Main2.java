@@ -4,17 +4,18 @@ import pl.sgl.engine.GameTest.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.Random;
 
 public class Main2 extends Game {
 
     Player player;
+    Player player2;
     Sprite stoneBlock;
     Sprite downBlocks;
     Sprite leftBlocks;
     Sprite rightBlocks;
     PlatformManager platformManager;
     CoinManager coinManager;
+    EnemyManager enemyManager;
 
 
     boolean run = false;
@@ -66,7 +67,12 @@ public class Main2 extends Game {
         coinManager = new CoinManager(platformManager.platforms);
 
         player = new Player();
+        player2 = new Player();
         addGameObject(player.sprite);
+        addGameObject(player2.sprite);
+        player2.sprite.setPosition(player2.sprite.x + player2.sprite.frameWidth, player.sprite.y);
+
+        enemyManager = new EnemyManager(platformManager.platforms);
     }
     @Override
     protected void update() {
@@ -76,11 +82,11 @@ public class Main2 extends Game {
         if (run) {
             moveDown();
         }
+
         colisionWithEnv();
 
         playerInput();
         player.playerAnimationLogic();
-
 
         if (run) {
             platformManager.generatePlatforms();
@@ -91,11 +97,14 @@ public class Main2 extends Game {
     }
 
     public void cycle () {
+
         for( Platform p : platformManager.platforms) {
             if (p.y <= platformManager.startPosY) {
                 coinManager.recycle(p);
+                enemyManager.recycle(p);
             }
         }
+
     }
 
 
@@ -108,6 +117,7 @@ public class Main2 extends Game {
         }
         platformManager.move(deltaTime);
         coinManager.move(deltaTime);
+        enemyManager.move(deltaTime);
     }
 
 
@@ -216,7 +226,7 @@ public class Main2 extends Game {
 //        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
         for (int i = 0; i < platformManager.platforms.size(); i++) {
             GameObject p = platformManager.platforms.get(i);
-            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.height) < p.y && player.sprite.velocityY > 0) {
+            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.frameHeight) < p.y && player.sprite.velocityY > 0) {
                 return i; // Zwraca indeks platformy, z którą nastąpiła kolizja
             }
         }

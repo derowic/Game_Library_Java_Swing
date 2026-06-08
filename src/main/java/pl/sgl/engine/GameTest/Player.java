@@ -16,24 +16,23 @@ public class Player  {
         Animation roll = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,160,32,32,8);
         Animation jump = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",128,64,32,32,1);
         Animation fall = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,1);
-        sprite = new AnimatedSprite( 600, 880, 0.1); // zmiana klatki co 0.1 sekundy
-        sprite.showHitBox = true;
+        sprite = new AnimatedSprite( 600, 780, 0.1); // zmiana klatki co 0.1 sekundy
+//        sprite.showHitBox = true;
         sprite.addAnimation("idle", idle);
         sprite.addAnimation("walk", walk);
         sprite.addAnimation("roll", roll);
         sprite.addAnimation("jump", jump);
         sprite.addAnimation("fall", fall);
         sprite.setAnimation("roll");
-        sprite.setScaleX(-4);
-        sprite.setScaleY(4);
+        sprite.setPivotByProcent(0.5,0.5);
+        sprite.scale(4,4);
         sprite.getRotatedShape();
 //        sprite.rotation = 45;
-        sprite.setPivot(sprite.width/2, sprite.height/2);
+//        sprite.rotation = 45;
+
 //        sprite.setPosition(64, sprite.y);
         sprite.playAnimationInCycle();
 //        player.showHitBox = true;
-        System.out.println(sprite.pivotX);
-        System.out.println(sprite.pivotY);
 
     }
 
@@ -61,6 +60,7 @@ public class Player  {
                 sprite.playAnimation();
             }
         }
+
     }
 
 
