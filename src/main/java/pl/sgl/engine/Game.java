@@ -2,6 +2,7 @@ package pl.sgl.engine;
 
 import pl.sgl.engine.GameTest.Enemy;
 import pl.sgl.engine.GameTest.Player;
+import pl.sgl.engine.Time.Timer;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.particleSystem.Particle;
 import pl.sgl.engine.particleSystem.ParticleEmitter;
@@ -49,6 +50,8 @@ public class Game implements Runnable {
     private boolean isSwitching = false;
     public String windowMode = "window";
     private long lastToggleTime = 0;
+
+    private List<Timer> timers = new ArrayList<>();
 
     public Game(String title, int width, int height, Color bc) {
 
@@ -279,6 +282,10 @@ public class Game implements Runnable {
 
         keyboard.update();
         mouse.update();
+
+        for(Timer t: timers) {
+            t.update(deltaTime);
+        }
     }
 
     public Rectangle2D.Double getVisibleWorldRect(double alpha) {
@@ -556,5 +563,9 @@ public class Game implements Runnable {
 
     public static void addUiElement(UIElement ui) {
         Game.instance.currentGame.uiManager.addElement(ui);
+    }
+
+    public void addTimer(Timer timer) {
+        timers.add(timer);
     }
 }

@@ -14,6 +14,7 @@ public class ColisionManager {
                     player.coins++;
                     p.destroy();
                     player.coinsNumberLabel.setText(String.valueOf(player.coins));
+
                 }
             }
         }
@@ -41,6 +42,7 @@ public class ColisionManager {
                             player.sprite.velocityY = -400 *1.5;
                         }
                         player.sprite.moveByVelocity();
+                        player.sprite.setAnimation("hurt");
                     }
                 }
             }

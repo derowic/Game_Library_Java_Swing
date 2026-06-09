@@ -22,6 +22,7 @@ public class Player  {
         Animation roll = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,160,32,32,8);
         Animation jump = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",128,64,32,32,1);
         Animation fall = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,1);
+        Animation getHit = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",64,192,32,32,1);
         sprite = new AnimatedSprite( 600, 780, 0.1); // zmiana klatki co 0.1 sekundy
 //        sprite.showHitBox = true;
         sprite.addAnimation("idle", idle);
@@ -29,6 +30,7 @@ public class Player  {
         sprite.addAnimation("roll", roll);
         sprite.addAnimation("jump", jump);
         sprite.addAnimation("fall", fall);
+        sprite.addAnimation("hurt", getHit);
         sprite.setAnimation("roll");
         sprite.setPivotByProcent(0.5,0.5);
         sprite.scale(4,4);
@@ -44,9 +46,6 @@ public class Player  {
     }
 
     public void playerAnimationLogic() {
-//        System.out.println("player status: "+playerStatus);
-//        System.out.println("player velocuity Y:" + sprite.velocityY);
-
         if (doubleJump) {
             if (sprite.velocityX != 0 && playerStatus.equals("onGround")) {
                 sprite.setAnimation("walk");
