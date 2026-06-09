@@ -31,6 +31,7 @@ public class GameObject {
     public Rectangle hitbox = new Rectangle();
     private BufferedImage tiledCache = null; // Tu trzymamy gotowy obraz
     private boolean needsRefresh = true;     // Flaga: czy trzeba wygenerować obraz na nowo?
+    private boolean isAlive = true;
 
     //draw texture fragment, these varuables set x,y and how much o tex you take
     protected int srcX, srcY;
@@ -146,12 +147,13 @@ public class GameObject {
         this.lastY = this.y;
     }
 
-    public void moveByVelocity(double deltaTime) {
+    public void moveByVelocity() {
+
         this.lastX = this.x;
-        this.x += (velocityX * deltaTime);
+        this.x += (velocityX * Game.instance.deltaTime);
 
         this.lastY = this.y;
-        this.y += (velocityY * deltaTime);
+        this.y += (velocityY * Game.instance.deltaTime);
     }
 
     public void move(double dx, double dy) {
@@ -374,6 +376,14 @@ public class GameObject {
 
     public double getHeight(){
         return hitbox.getHeight() * Math.abs(scaleY);
+    }
+
+    public void destroy () {
+        active = false;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
 

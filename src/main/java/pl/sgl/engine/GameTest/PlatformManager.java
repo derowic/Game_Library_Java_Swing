@@ -36,8 +36,8 @@ public class PlatformManager {
         platform.velocityY = 100;
 //        platform.showHitBox = true;
 
-        System.out.println("   platform witdth: " + platform.getWidth());
-        System.out.println("    platformhitbox width" + platform.frameWidth);
+//        System.out.println("   platform witdth: " + platform.getWidth());
+//        System.out.println("    platformhitbox width" + platform.frameWidth);
 
         return platform;
     }
@@ -106,7 +106,7 @@ public class PlatformManager {
 
     public void move( double deltaTime) {
         for (Platform p : platforms) {
-            p.moveByVelocity(deltaTime);
+            p.moveByVelocity();
         }
     }
 }

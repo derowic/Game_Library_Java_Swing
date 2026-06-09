@@ -1,6 +1,8 @@
 package pl.sgl.engine;
 
 import pl.sgl.engine.GameTest.*;
+import pl.sgl.engine.ui.Text;
+import pl.sgl.engine.ui.UIElement;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -8,7 +10,6 @@ import java.awt.event.KeyEvent;
 public class Main2 extends Game {
 
     Player player;
-    Player player2;
     Sprite stoneBlock;
     Sprite downBlocks;
     Sprite leftBlocks;
@@ -67,12 +68,11 @@ public class Main2 extends Game {
         coinManager = new CoinManager(platformManager.platforms);
 
         player = new Player();
-        player2 = new Player();
         addGameObject(player.sprite);
-        addGameObject(player2.sprite);
-        player2.sprite.setPosition(player2.sprite.x + player2.sprite.frameWidth, player.sprite.y);
 
         enemyManager = new EnemyManager(platformManager.platforms);
+
+
     }
     @Override
     protected void update() {
@@ -86,7 +86,12 @@ public class Main2 extends Game {
         colisionWithEnv();
 
         playerInput();
+
+        ColisionManager.coins_player(player, coinManager);
+        ColisionManager.enemies_player(player, enemyManager);
+
         player.playerAnimationLogic();
+
 
         if (run) {
             platformManager.generatePlatforms();
@@ -97,22 +102,19 @@ public class Main2 extends Game {
     }
 
     public void cycle () {
-
         for( Platform p : platformManager.platforms) {
             if (p.y <= platformManager.startPosY) {
                 coinManager.recycle(p);
                 enemyManager.recycle(p);
             }
         }
-
     }
-
 
     public void moveDown() {
         if (downBlocks.y > 1500) {
             downBlocks.y = 1500;
         } else {
-            downBlocks.moveByVelocity(deltaTime);
+            downBlocks.moveByVelocity();
 
         }
         platformManager.move(deltaTime);
@@ -120,26 +122,13 @@ public class Main2 extends Game {
         enemyManager.move(deltaTime);
     }
 
-
-
-
-
     public void playerInput() {
         if (keyboard.isKeyDown(KeyEvent.VK_A)) {
-
             player.sprite.velocityX = -400;
-//            if(player.velocityX <= -400) {
-//                player.velocityX = -400;
-//            }
-
             player.sprite.setScaleX(-4);
         }
         if (keyboard.isKeyDown(KeyEvent.VK_D)) {
             player.sprite.velocityX = 400;
-//            if(player.velocityX >= 400) {
-//                player.velocityX = 400;
-//            }
-
             player.sprite.setScaleX(4);
         }
 
@@ -226,7 +215,7 @@ public class Main2 extends Game {
 //        if(Colision.colisionWithListOfSprites(player, platforms)) return true;
         for (int i = 0; i < platformManager.platforms.size(); i++) {
             GameObject p = platformManager.platforms.get(i);
-            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.frameHeight) < p.y && player.sprite.velocityY > 0) {
+            if (Colision.checkCollision(player.sprite, p) && (player.sprite.y + (double) player.sprite.getHeight()/2) < p.y && player.sprite.velocityY > 0) {
                 return i; // Zwraca indeks platformy, z którą nastąpiła kolizja
             }
         }
@@ -238,13 +227,13 @@ public class Main2 extends Game {
 
         if (Colision.checkCollision(player.sprite, leftBlocks)) return true;
         if (Colision.checkCollision(player.sprite, rightBlocks)) return true;
-        // ... tutaj dodaj resztę bloków z listy 'blocks'
+
         return false;
     }
 
     private boolean isCollidingWithdDown() {
         if (Colision.checkCollision(player.sprite, downBlocks)) return true;
-        // ... tutaj dodaj resztę bloków z listy 'blocks'
+
         return false;
     }
 

@@ -22,10 +22,10 @@ public class Enemy extends AnimatedSprite {
         minX = (int) ((int) p.x + getWidth()/2);
         maxX = (int) (p.x + p.getWidth() - getWidth()/2);
         velocityX = 0.25;
-
-        System.out.println("frameHeightx:" +frameHeight);
-        System.out.println("witdth: " + getHeight());
-        System.out.println("hitbox width " + hitbox.getHeight());
+//
+//        System.out.println("frameHeightx:" +frameHeight);
+//        System.out.println("witdth: " + getHeight());
+//        System.out.println("hitbox width " + hitbox.getHeight());
         Game.instance.addGameObject(this);
     }
 

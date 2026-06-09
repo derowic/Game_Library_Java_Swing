@@ -229,7 +229,7 @@ public class Game implements Runnable {
         lastTickTime = System.nanoTime();
 
 
-
+        currentGame.sprites.removeIf(s -> !s.isActive());
         // 2. Aktualizuj UI
         currentGame.uiManager.update(keyboard, mouse);
 
@@ -240,29 +240,28 @@ public class Game implements Runnable {
                 e.update(mouse);
             }
         }
+
+        //clean dead sprites to not waste memory
         for (GameObject s : currentGame.sprites) {
             if (!s.active) {
                 currentGame.sprites.remove(s);
-            }
-        }
-        for (GameObject s : currentGame.sprites) {
-            s.update(deltaTime);
+            } else {
+                s.update(deltaTime);
 
-            double diffX = (s.x - s.lastX);
-            if (Math.abs(diffX) > 100) {
-                s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
-            }
-            double diffY = (s.y - s.lastY);
-            if (Math.abs(diffY) > 100) {
-                s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
+                double diffX = (s.x - s.lastX);
+                if (Math.abs(diffX) > 100) {
+                    s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
+                }
+                double diffY = (s.y - s.lastY);
+                if (Math.abs(diffY) > 100) {
+                    s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
+                }
             }
         }
 
         for (ParticleEmitter emitter : currentGame.emitters) {
             emitter.update(deltaTime);
         }
-
-
 
         // 2. STWÓRZ SNAPSHOT (Zdjęcie)
         // Tworzymy nową listę, która zawiera KOPIE stanów obiektów
@@ -553,5 +552,9 @@ public class Game implements Runnable {
 
     public void setRenderWithSmooth() {
         window.typeOfRenderingSprites = "normal";
+    }
+
+    public static void addUiElement(UIElement ui) {
+        Game.instance.currentGame.uiManager.addElement(ui);
     }
 }
