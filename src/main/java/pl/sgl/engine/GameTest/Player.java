@@ -2,6 +2,7 @@ package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
+import pl.sgl.engine.Time.Timer;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
 import pl.sgl.engine.ui.Text;
@@ -15,6 +16,8 @@ public class Player  {
     public int coins = 0;
     public double health = 10;
     public UIElement coinsNumberLabel;
+    public Timer animTiemr = new Timer(0.25);
+    public boolean hurt = false;
 
     public Player(){
         Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
@@ -46,26 +49,36 @@ public class Player  {
     }
 
     public void playerAnimationLogic() {
-        if (doubleJump) {
-            if (sprite.velocityX != 0 && playerStatus.equals("onGround")) {
-                sprite.setAnimation("walk");
-            } else {
+        if (hurt) {
+            if(animTiemr.check()) {
+                hurt = false;
                 sprite.setAnimation("idle");
             }
+        }
+        else {
+            if (doubleJump) {
+                if (sprite.velocityX != 0 && playerStatus.equals("onGround")) {
+                    sprite.setAnimation("walk");
+                } else {
+                    sprite.setAnimation("idle");
+                }
 
-            if (playerStatus.equals("onGround")) {
-                sprite.playAnimationInCycle();
-            }
+                if (playerStatus.equals("onGround")) {
+                    sprite.playAnimationInCycle();
+                }
 
-            if (playerStatus.equals("jumping") && sprite.velocityY <= 0) {
-                sprite.setAnimation("jump");
-            }
+                if (playerStatus.equals("jumping") && sprite.velocityY <= 0) {
+                    sprite.setAnimation("jump");
+                }
 
-            if (playerStatus.equals("falling") && sprite.velocityY > 0) {
-                sprite.setAnimation("fall");
-                sprite.playAnimation();
+                if (playerStatus.equals("falling") && sprite.velocityY > 0) {
+                    sprite.setAnimation("fall");
+                    sprite.playAnimation();
+                }
             }
         }
+
+
 
     }
 

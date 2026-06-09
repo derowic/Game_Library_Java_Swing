@@ -43,6 +43,9 @@ public class ColisionManager {
                         }
                         player.sprite.moveByVelocity();
                         player.sprite.setAnimation("hurt");
+                        player.playerStatus = "hurt";
+                        player.animTiemr.start();
+                        player.hurt = true;
                     }
                 }
             }
