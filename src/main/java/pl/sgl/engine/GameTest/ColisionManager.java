@@ -1,6 +1,7 @@
 package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.Colision;
+import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
 
 
@@ -14,7 +15,7 @@ public class ColisionManager {
                     player.coins++;
                     p.destroy();
                     player.coinsNumberLabel.setText(String.valueOf(player.coins));
-
+                    Game.instance.audio.play("coin");
                 }
             }
         }
@@ -46,6 +47,7 @@ public class ColisionManager {
                         player.playerStatus = "hurt";
                         player.animTiemr.start();
                         player.hurt = true;
+                        Game.instance.audio.play("hurt");
                     }
                 }
             }

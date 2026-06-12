@@ -25,7 +25,7 @@ public class Main2 extends Game {
         //w 32 * 40  h: 32 * 30
         super("Test", 1280, 960, Color.BLACK);
         setRenderPixelArt();
-
+        audio.mute();
 
 
 
@@ -71,6 +71,11 @@ public class Main2 extends Game {
         addGameObject(player.sprite);
 
         enemyManager = new EnemyManager(platformManager.platforms);
+
+        audio.load("bg_music",  "/textures/brackeys_platformer_assets/music/time_for_adventure.wav");
+//        audio.load("shoot", "/audio/zap-hiphop-a.wav");
+
+        audio.loop("bg_music"); // Start muzyki w tle
 
 
     }
@@ -142,11 +147,13 @@ public class Main2 extends Game {
             player.sprite.playAnimation();
             player.playerStatus = "jumping";
             player.doubleJump = false;
+            Game.instance.audio.play("jump");
         }
 
         if (keyboard.isKeyPressed(KeyEvent.VK_W) && player.playerStatus.equals("onGround")) {
             player.sprite.velocityY = -750 *1.5 ;
             player.playerStatus = "jumping";
+            Game.instance.audio.play("jump");
         }
     }
 

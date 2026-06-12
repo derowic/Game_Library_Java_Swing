@@ -46,6 +46,11 @@ public class Player  {
 //        player.showHitBox = true;
         coinsNumberLabel = new Text( "PUNKTY: 0", 20, 80, 24);
         Game.addUiElement(coinsNumberLabel);
+
+        Game.instance.audio.load("jump",  "/textures/brackeys_platformer_assets/sounds/jump.wav");
+        Game.instance.audio.load("hurt",  "/textures/brackeys_platformer_assets/sounds/hurt.wav");
+        Game.instance.audio.load("power_up",  "/textures/brackeys_platformer_assets/sounds/power_up.wav");
+
     }
 
     public void playerAnimationLogic() {

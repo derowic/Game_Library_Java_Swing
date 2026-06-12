@@ -43,7 +43,7 @@ public class Game implements Runnable {
 
     // Czas ostatniego pomiaru
     private long lastTimer = System.currentTimeMillis();
-    protected AudioManager audio = new AudioManager();
+    public AudioManager audio = new AudioManager();
     public InputHandler keyboard = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
     private final Object renderLock = new Object();

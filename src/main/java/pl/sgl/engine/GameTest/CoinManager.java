@@ -14,6 +14,12 @@ public class CoinManager {
         for(Platform p : platforms) {
             generate(p);
         }
+
+        //        audio.load("bg_music", "/audio/alex-productions-racing-sport-gaming-racing(chosic.com).wav");
+//        audio.load("shoot", "/audio/zap-hiphop-a.wav");
+//
+//        audio.loop("bg_music"); // Start muzyki w tle
+        Game.instance.audio.load("coin",  "/textures/brackeys_platformer_assets/sounds/coin.wav");
     }
 
     public Coin generate(Platform platform) {
