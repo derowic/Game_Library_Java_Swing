@@ -62,4 +62,7 @@ public class Button extends UIElement {
 
         g.drawString(text, textX, textY);
     }
+
+    public void setAction(Object o) {
+    }
 }

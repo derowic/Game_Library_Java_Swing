@@ -3,6 +3,7 @@ package pl.sgl.engine;
 import pl.sgl.engine.GameTest.*;
 import pl.sgl.engine.ui.Text;
 import pl.sgl.engine.ui.UIElement;
+import pl.sgl.engine.ui.UIManager;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -17,6 +18,7 @@ public class Main2 extends Game {
     PlatformManager platformManager;
     CoinManager coinManager;
     EnemyManager enemyManager;
+    UIManager startScreen;
 
 
     boolean run = false;
@@ -76,7 +78,6 @@ public class Main2 extends Game {
 //        audio.load("shoot", "/audio/zap-hiphop-a.wav");
 
         audio.loop("bg_music"); // Start muzyki w tle
-
 
     }
     @Override
