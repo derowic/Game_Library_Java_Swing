@@ -29,8 +29,6 @@ public class Main2 extends Game {
         setRenderPixelArt();
         audio.mute();
 
-
-
         stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0,0);
         stoneBlock.setPivot(0,0);
 
@@ -155,6 +153,13 @@ public class Main2 extends Game {
             player.sprite.velocityY = -750 *1.5 ;
             player.playerStatus = "jumping";
             Game.instance.audio.play("jump");
+        }
+
+        if (keyboard.isKeyPressed(KeyEvent.VK_F)) {
+           toggleFullScreen("fullscreen");
+        }
+        if (keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+            toggleFullScreen("window");
         }
     }
 

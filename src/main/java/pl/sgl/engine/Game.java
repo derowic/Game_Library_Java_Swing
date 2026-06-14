@@ -87,7 +87,7 @@ public class Game implements Runnable {
         long now = System.currentTimeMillis();
         if (now - lastToggleTime < 1000) return; // Blokada na 1 sekundę
         lastToggleTime = now;
-        System.out.println(mode);
+        System.out.println("mode edit:" + mode);
         if (isSwitching) return; // Blokada, jeśli proces trwa
 
         if(mode.equals(windowMode)) return;
@@ -106,7 +106,7 @@ public class Game implements Runnable {
                 window.setFullScreen();
                 windowMode = "fullscreen";
             } else {
-                window.setWindowedMode(1280, 720);
+                window.setWindowedMode(ConfigureData.oldWidth, ConfigureData.oldHeight);
                 windowMode = "window";
             }
         }

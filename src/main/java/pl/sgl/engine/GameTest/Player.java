@@ -64,12 +64,15 @@ public class Player  {
             if (doubleJump) {
                 if (sprite.velocityX != 0 && playerStatus.equals("onGround")) {
                     sprite.setAnimation("walk");
+                    Game.instance.audio.stop("jump");
                 } else {
                     sprite.setAnimation("idle");
+                    Game.instance.audio.stop("jump");
                 }
 
                 if (playerStatus.equals("onGround")) {
                     sprite.playAnimationInCycle();
+                    Game.instance.audio.stop("jump");
                 }
 
                 if (playerStatus.equals("jumping") && sprite.velocityY <= 0) {
@@ -79,6 +82,7 @@ public class Player  {
                 if (playerStatus.equals("falling") && sprite.velocityY > 0) {
                     sprite.setAnimation("fall");
                     sprite.playAnimation();
+                    Game.instance.audio.stop("jump");
                 }
             }
         }

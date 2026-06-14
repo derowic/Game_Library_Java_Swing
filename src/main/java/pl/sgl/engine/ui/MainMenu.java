@@ -2,7 +2,7 @@ package pl.sgl.engine.ui;
 
 import pl.sgl.engine.Scene;
 
-public class MainMenu extends Scene {
+/*public class MainMenu extends Scene {
     private UIPanel mainPanel;
     private UIPanel settingsPanel;
 
@@ -23,4 +23,4 @@ public class MainMenu extends Scene {
         ui.addElement(settingsPanel);
     }
     // ... reszta metod
-}
+}*/
