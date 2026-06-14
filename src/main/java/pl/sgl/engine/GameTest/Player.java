@@ -2,6 +2,8 @@ package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
+import pl.sgl.engine.Scene;
+import pl.sgl.engine.SceneManager;
 import pl.sgl.engine.Time.Timer;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
@@ -45,7 +47,7 @@ public class Player  {
         sprite.playAnimationInCycle();
 //        player.showHitBox = true;
         coinsNumberLabel = new Text( "PUNKTY: 0", 20, 80, 24);
-        Game.addUiElement(coinsNumberLabel);
+        SceneManager.getScene("Game").getUi().addElement(coinsNumberLabel);
 
         Game.instance.audio.load("jump",  "/textures/brackeys_platformer_assets/sounds/jump.wav");
         Game.instance.audio.load("hurt",  "/textures/brackeys_platformer_assets/sounds/hurt.wav");

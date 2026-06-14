@@ -34,7 +34,15 @@ public class Camera {
         this.y += dy;
     }
 
-    public void addZoom(double z) {
+    public void zoomIn(double z) {
+
+        this.zoom += z;
+        if(this.zoom <= 0.1) {
+            this.zoom = 0.1;
+        }
+    }
+
+    public void zoomOut(double z) {
 
         this.zoom += z;
         if(this.zoom <= 0.1) {

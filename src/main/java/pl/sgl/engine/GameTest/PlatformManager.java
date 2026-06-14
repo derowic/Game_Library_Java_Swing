@@ -3,6 +3,7 @@ package pl.sgl.engine.GameTest;
 import pl.sgl.engine.FillMode;
 import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
+import pl.sgl.engine.SceneManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class PlatformManager {
         startPosX = randPosX;
         Platform platform = generatePlatform(startPosX, (int) startPosY, randPlatformLenght);
 
-        Game.instance.addGameObject(platform);
+        SceneManager.getScene("Game").addGameObject(platform);
         return platform;
     }
 

@@ -2,6 +2,7 @@ package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
+import pl.sgl.engine.SceneManager;
 import pl.sgl.engine.animation.Animation;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class CoinManager {
         c.velocityY = platform.velocityY;
 
         coins.add(c);
-        Game.instance.addGameObject(c);
+        SceneManager.getScene("Game").addGameObject(c);
         return c;
     }
 

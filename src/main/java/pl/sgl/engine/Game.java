@@ -1,8 +1,7 @@
 package pl.sgl.engine;
 
-import pl.sgl.engine.GameTest.Enemy;
-import pl.sgl.engine.GameTest.Player;
 import pl.sgl.engine.Time.Timer;
+import pl.sgl.engine.animation.Animation;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.particleSystem.Particle;
 import pl.sgl.engine.particleSystem.ParticleEmitter;
@@ -12,14 +11,15 @@ import pl.sgl.engine.ui.UIElement;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Game implements Runnable {
     public static Game instance;
     //buffor to send data to rendering function
-    protected GameState currentSnapshot = new GameState();
-    // W klasie Engine
+    protected GameState currentSnapshot;
     protected GameState currentGame = new GameState();
+    public Camera camera = new Camera();
 
     public Window window;
     private volatile boolean running = false;
@@ -44,7 +44,7 @@ public class Game implements Runnable {
     // Czas ostatniego pomiaru
     private long lastTimer = System.currentTimeMillis();
     public AudioManager audio = new AudioManager();
-    public InputHandler keyboard = new InputHandler();
+    public static InputHandler keyboard = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
     private final Object renderLock = new Object();
     private boolean isSwitching = false;
@@ -53,11 +53,13 @@ public class Game implements Runnable {
 
     private List<Timer> timers = new ArrayList<>();
 
-    public Game(String title, int width, int height, Color bc) {
+    public Game(String title, String icon,  int width, int height, Color bc) {
 
         window = new Window(title, width, height, bc);
         window.initInput(keyboard);  // Klawiatura
         window.initMouse(mouse);  // Myszka
+        window.setTitle(title);
+        window.setIcon(icon);
         window.show();
 //        window.typeOfRenderingSprites = "pixelart";
         // W konstruktorze Engine lub Game
@@ -68,16 +70,24 @@ public class Game implements Runnable {
             currentGame = null;
             running = false;
             window = null;
-
+            this.stopRunning();
         }));
+
+//        if (scene == null) {
+//            this.scenes.put("game", new Scene());
+//        } else {
+//            this.scenes.put("game", scene);
+//        }
+//        List<GameObject> snapshotSprites = new ArrayList<>(scenes.get(selectedScene).getObjects());
+//        this.currentSnapshot = new GameState(snapshotSprites, currentGame.emitters, scenes.get(selectedScene).getUi(), currentGame.tileMap, camera);
 
         instance = this;
     }
 
 
-    public void addGameObject(GameObject g) {
-        currentGame.sprites.add(g);
-    }
+//    public void addGameObject(GameObject g) {
+//        selectedScene.objects.add(g);
+//    }
 
     public void addGameObject(ParticleEmitter emitter) {
         currentGame.emitters.add(emitter);
@@ -115,6 +125,10 @@ public class Game implements Runnable {
         windowMode = mode;
     }
 
+    public static void changeDisplayMode(String mode) {
+        instance.toggleFullScreen(mode);
+    }
+
     public synchronized void stopRunning() {
         this.running = false;
     }
@@ -140,6 +154,9 @@ public class Game implements Runnable {
             long lastFrameTime = System.nanoTime();
 
             while (running) {
+                if(currentSnapshot == null) {
+                    continue;
+                }
                 // Obliczanie interpolacji (alpha)
                 // Sprawdzamy jak daleko jesteśmy między jednym tickiem a drugim
                 // Szukamy czasu od ostatniego ticku logiki
@@ -232,11 +249,11 @@ public class Game implements Runnable {
         lastTickTime = System.nanoTime();
 
 
-        currentGame.sprites.removeIf(s -> !s.isActive());
+        SceneManager.getSelectedScene().getObjects().removeIf(s -> !s.isActive());
         // 2. Aktualizuj UI
-        currentGame.uiManager.update(keyboard, mouse);
+        SceneManager.getSelectedScene().getUi().update(keyboard, mouse);
 
-        for (UIElement e : currentGame.uiManager.getElements()) {
+        for (UIElement e : SceneManager.getSelectedScene().getUi().getElements()) {
             if(e.getClass() == InputField.class) {
                 e.update(keyboard,mouse);
             } else {
@@ -244,41 +261,36 @@ public class Game implements Runnable {
             }
         }
 
-        //clean dead sprites to not waste memory
-        for (GameObject s : currentGame.sprites) {
+
+        for (GameObject s : SceneManager.getSelectedScene().getObjects()) {
             if (!s.active) {
-                currentGame.sprites.remove(s);
+                //clean dead sprites to not waste memory
+                SceneManager.getSelectedScene().getObjects().remove(s);
             } else {
                 s.update(deltaTime);
 
                 double diffX = (s.x - s.lastX);
-                if (Math.abs(diffX) > 100) {
-                    s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
-                }
                 double diffY = (s.y - s.lastY);
-                if (Math.abs(diffY) > 100) {
-                    s.didTeleport = true; // Zaznaczamy, że to był skok, a nie płynny ruch
+                if (Math.abs(diffX) > 100 || Math.abs(diffY) > 100) {
+                    //check if sprite is moving or changing position
+                    s.didTeleport = true;
                 }
             }
         }
 
-        for (ParticleEmitter emitter : currentGame.emitters) {
-            emitter.update(deltaTime);
-        }
+        SceneManager.getSelectedScene().update(deltaTime);
 
-        // 2. STWÓRZ SNAPSHOT (Zdjęcie)
-        // Tworzymy nową listę, która zawiera KOPIE stanów obiektów
-        // (W uproszczeniu: kopiujemy referencje do nowej listy,
-        // ale profesjonalnie kopiuje się wartości x, y do nowych obiektów-struktur)
-        List<GameObject> snapshotSprites = new ArrayList<>(currentGame.sprites);
+        List<GameObject> snapshotSprites = new ArrayList<>(SceneManager.getSelectedScene().getObjects());
 
-        currentGame.cam.prepareForUpdate();
-        currentGame.cam.update(deltaTime);
-        ConfigureData.zoom = currentGame.cam.zoom;
-        ConfigureData.camX = currentGame.cam.x;
-        ConfigureData.camY = currentGame.cam.y;
+        camera.prepareForUpdate();
+        camera.update(deltaTime);
+        ConfigureData.zoom = camera.zoom;
+        ConfigureData.camX = camera.x;
+        ConfigureData.camY = camera.y;
         // 3. PUBLIKUJEMY - Podmieniamy całe pudełko (to jest bezpieczne dzięki volatile)
-        this.currentSnapshot = new GameState(snapshotSprites, currentGame.emitters, currentGame.uiManager, currentGame.tileMap, currentGame.cam);
+
+//        tu jest problem ponieważ dopóki nie stworzy się snapshot to nie renderstate nie bedzie prawidziwy bo nie istnieje wtedy
+        this.currentSnapshot = new GameState(snapshotSprites, currentGame.emitters, SceneManager.getSelectedScene().getUi(), currentGame.tileMap, camera);
 
         keyboard.update();
         mouse.update();
@@ -561,11 +573,16 @@ public class Game implements Runnable {
         window.typeOfRenderingSprites = "normal";
     }
 
-    public static void addUiElement(UIElement ui) {
-        Game.instance.currentGame.uiManager.addElement(ui);
-    }
 
     public void addTimer(Timer timer) {
         timers.add(timer);
+    }
+
+    public double getDeltaTime() {
+        return deltaTime;
+    }
+
+    public Camera getCamera() {
+        return instance.camera;
     }
 }

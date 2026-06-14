@@ -17,7 +17,7 @@ public class GameState {
     public TileMap tileMap;
     public UIManager uiManager = new UIManager();
 
-    public Camera cam = new Camera();
+    public Camera cam;
 // Zaktualizuj konstruktor GameState, aby przyjmował te wartości.
 
     public GameState(List<Primitive> primitives, List<Sprite> sprites, List<ParticleEmitter> emitters) {

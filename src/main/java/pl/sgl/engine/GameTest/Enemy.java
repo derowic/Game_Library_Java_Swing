@@ -2,6 +2,7 @@ package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
+import pl.sgl.engine.SceneManager;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
 
@@ -26,7 +27,8 @@ public class Enemy extends AnimatedSprite {
 //        System.out.println("frameHeightx:" +frameHeight);
 //        System.out.println("witdth: " + getHeight());
 //        System.out.println("hitbox width " + hitbox.getHeight());
-        Game.instance.addGameObject(this);
+//        Game.instance.addGameObject(this);
+        SceneManager.getScene("Game").addGameObject(this);
     }
 
     public void ai() {

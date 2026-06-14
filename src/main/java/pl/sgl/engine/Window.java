@@ -184,4 +184,22 @@ class Window {
         canvas.addMouseListener(mouse);
         canvas.addMouseMotionListener(mouse);
     }
+
+    // W klasie Window
+    public void setIcon(String path) {
+        try {
+            // Wczytujemy ikonę z zasobów
+            java.net.URL iconURL = Window.class.getResource(path);
+            if (iconURL != null) {
+                ImageIcon icon = new ImageIcon(iconURL);
+                frame.setIconImage(icon.getImage());
+            }
+        } catch (Exception e) {
+            System.err.println("Nie udało się załadować ikony: " + e.getMessage());
+        }
+    }
+
+    public void setTitle(String tmp) {
+        frame.setTitle(tmp);
+    }
 }
