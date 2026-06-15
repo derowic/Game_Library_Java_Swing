@@ -10,7 +10,7 @@ public class Timer {
 
     public Timer (double delay) {
         this.delay = delay;
-        Game.instance.addTimer(this);
+        TimerManager.addTimer(this);
     }
 
     public void update (double deltaTime) {

@@ -7,6 +7,7 @@ import pl.sgl.engine.SceneManager;
 import pl.sgl.engine.Time.Timer;
 import pl.sgl.engine.animation.AnimatedSprite;
 import pl.sgl.engine.animation.Animation;
+import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.ui.Text;
 import pl.sgl.engine.ui.UIElement;
 
@@ -49,9 +50,9 @@ public class Player  {
         coinsNumberLabel = new Text( "PUNKTY: 0", 20, 80, 24);
         SceneManager.getScene("Game").getUi().addElement(coinsNumberLabel);
 
-        Game.instance.audio.load("jump",  "/textures/brackeys_platformer_assets/sounds/jump.wav");
-        Game.instance.audio.load("hurt",  "/textures/brackeys_platformer_assets/sounds/hurt.wav");
-        Game.instance.audio.load("power_up",  "/textures/brackeys_platformer_assets/sounds/power_up.wav");
+        AudioManager.load("jump",  "/textures/brackeys_platformer_assets/sounds/jump.wav");
+        AudioManager.load("hurt",  "/textures/brackeys_platformer_assets/sounds/hurt.wav");
+        AudioManager.load("power_up",  "/textures/brackeys_platformer_assets/sounds/power_up.wav");
 
     }
 
@@ -66,15 +67,15 @@ public class Player  {
             if (doubleJump) {
                 if (sprite.velocityX != 0 && playerStatus.equals("onGround")) {
                     sprite.setAnimation("walk");
-                    Game.instance.audio.stop("jump");
+                    AudioManager.stop("jump");
                 } else {
                     sprite.setAnimation("idle");
-                    Game.instance.audio.stop("jump");
+                    AudioManager.stop("jump");
                 }
 
                 if (playerStatus.equals("onGround")) {
                     sprite.playAnimationInCycle();
-                    Game.instance.audio.stop("jump");
+                    AudioManager.stop("jump");
                 }
 
                 if (playerStatus.equals("jumping") && sprite.velocityY <= 0) {
@@ -84,7 +85,7 @@ public class Player  {
                 if (playerStatus.equals("falling") && sprite.velocityY > 0) {
                     sprite.setAnimation("fall");
                     sprite.playAnimation();
-                    Game.instance.audio.stop("jump");
+                    AudioManager.stop("jump");
                 }
             }
         }

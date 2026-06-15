@@ -12,7 +12,9 @@ public class Scene {
     protected Camera cam = new Camera();
     public double deltaTime;
 
-    public Scene() {
+    public Scene(String sceneName) {
+        SceneManager.addScene(sceneName, this);
+        init();
     }
 
     public Camera getCam() {

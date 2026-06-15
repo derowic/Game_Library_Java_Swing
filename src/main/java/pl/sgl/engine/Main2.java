@@ -1,6 +1,7 @@
 package pl.sgl.engine;
 
 import pl.sgl.engine.GameTest.*;
+import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.ui.Text;
 import pl.sgl.engine.ui.UIElement;
 import pl.sgl.engine.ui.UIManager;
@@ -14,19 +15,18 @@ public class Main2 {
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Moja Gra"); // Dla MacOS
         System.setProperty("sun.java2d.uiScale", "true"); // Dla poprawnego skalowania na Linux/Win
 
-        GameScene gameScene = new GameScene();
 
-        SceneManager.addScene("Game", gameScene);
-        SceneManager.setScene("Game");
 
-        SceneManager.addScene("Game2", new Scene());
 
+
+        GameScene gameScene = new GameScene("Game");
+        Scene scene = new Scene("Game2");
 
         Game game = new Game(title, icon, width, height, bc);
         game.setRenderPixelArt();
-//        game.audio.mute();
+        AudioManager.mute();
 
-        gameScene.init();
+
 
 
         return game;

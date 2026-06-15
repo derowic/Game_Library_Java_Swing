@@ -2,6 +2,7 @@ package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.*;
 import pl.sgl.engine.GameTest.*;
+import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.ui.Text;
 import pl.sgl.engine.ui.UIElement;
 import pl.sgl.engine.ui.UIManager;
@@ -13,58 +14,24 @@ public class GameScene extends Scene {
 
 
     Player player;
-    Sprite stoneBlock;
-    Sprite downBlocks;
-    Sprite leftBlocks;
-    Sprite rightBlocks;
+
     PlatformManager platformManager;
     CoinManager coinManager;
     EnemyManager enemyManager;
     UIManager startScreen;
+    EnvManager envManager;
 
 
     boolean run = false;
 
-    public GameScene() {
-        super();
+    public GameScene(String name) {
+        super(name);
     }
 
     @Override
     public void init() {
-        stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0,0);
-        stoneBlock.setPivot(0,0);
 
-        stoneBlock.setSpriteSize(640,480, FillMode.TILE);
-        stoneBlock.setScaleX(2);
-        stoneBlock.setScaleY(2);
-        addGameObject(stoneBlock);
-
-        downBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0,928);
-        downBlocks.setPivot(0,0);
-        downBlocks.setTextureRegion(32,32,16,16);
-        downBlocks.setSpriteSize(640,16, FillMode.TILE);
-        downBlocks.setScaleX(2);
-        downBlocks.setScaleY(2);
-        downBlocks.velocityY = 50;
-        addGameObject(downBlocks);
-
-
-        leftBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0,0);
-        leftBlocks.setPivot(0,0);
-        leftBlocks.setTextureRegion(32,32,16,16);
-        leftBlocks.setSpriteSize(16,480, FillMode.TILE);
-        leftBlocks.setScaleX(2);
-        leftBlocks.setScaleY(2);
-        addGameObject(leftBlocks);
-
-        rightBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 1248,0);
-        rightBlocks.setPivot(0,0);
-        rightBlocks.setTextureRegion(32,32,16,16);
-        rightBlocks.setSpriteSize(16,480, FillMode.TILE);
-        rightBlocks.setScaleX(2);
-        rightBlocks.setScaleY(2);
-        addGameObject(rightBlocks);
-
+        envManager = new EnvManager();
         //coinManager after platforms bc it base on platforms posX
         platformManager = new PlatformManager();
         coinManager = new CoinManager(platformManager.platforms);
@@ -74,10 +41,10 @@ public class GameScene extends Scene {
 
         enemyManager = new EnemyManager(platformManager.platforms);
 
-        Game.instance.audio.load("bg_music",  "/textures/brackeys_platformer_assets/music/time_for_adventure.wav");
+        AudioManager.load("bg_music",  "/textures/brackeys_platformer_assets/music/time_for_adventure.wav");
 //        audio.load("shoot", "/audio/zap-hiphop-a.wav");
 
-        Game.instance.audio.loop("bg_music"); // Start muzyki w tle
+        AudioManager.loop("bg_music"); // Start muzyki w tle
 
     }
 
@@ -123,15 +90,11 @@ public class GameScene extends Scene {
     }
 
     public void moveDown() {
-        if (downBlocks.y > 1500) {
-            downBlocks.y = 1500;
-        } else {
-            downBlocks.moveByVelocity();
-
-        }
+        envManager.move();
         platformManager.move(deltaTime);
         coinManager.move(deltaTime);
         enemyManager.move(deltaTime);
+
     }
 
     public void playerInput() {
@@ -154,13 +117,13 @@ public class GameScene extends Scene {
             player.sprite.playAnimation();
             player.playerStatus = "jumping";
             player.doubleJump = false;
-            Game.instance.audio.play("jump");
+            AudioManager.play("jump");
         }
 
         if (Game.keyboard.isKeyPressed(KeyEvent.VK_W) && player.playerStatus.equals("onGround")) {
             player.sprite.velocityY = -750 *1.5 ;
             player.playerStatus = "jumping";
-            Game.instance.audio.play("jump");
+            AudioManager.play("jump");
         }
 
         if (Game.keyboard.isKeyPressed(KeyEvent.VK_F)) {
@@ -187,7 +150,7 @@ public class GameScene extends Scene {
         player.sprite.x += player.sprite.velocityX * deltaTime;
 
         // Sprawdzamy kolizję po ruchu w X
-        if (isCollidingWithWall()) {
+        if (envManager.isCollidingWithWall(player)) {
             player.sprite.x = oldX;      // Cofamy ruch w X
             player.sprite.velocityX = 0; // Zatrzymujemy się na ścianie
         }
@@ -207,7 +170,7 @@ public class GameScene extends Scene {
         player.playerStatus = "falling";
 
         // Sprawdzamy kolizję po ruchu w Y
-        if (isCollidingWithdDown()) {
+        if (envManager.isCollidingWithdDown(player)) {
             player.playerStatus = "onGround".trim();
             player.doubleJump = true;
             player.sprite.y = oldY;      // Cofamy ruch w Y
@@ -241,20 +204,5 @@ public class GameScene extends Scene {
             }
         }
         return -1; // Zwraca -1, jeśli nie wykryto żadnej kolizji
-    }
-
-    // Metoda pomocnicza sprawdzająca kolizję z listą bloków
-    private boolean isCollidingWithWall() {
-
-        if (Colision.checkCollision(player.sprite, leftBlocks)) return true;
-        if (Colision.checkCollision(player.sprite, rightBlocks)) return true;
-
-        return false;
-    }
-
-    private boolean isCollidingWithdDown() {
-        if (Colision.checkCollision(player.sprite, downBlocks)) return true;
-
-        return false;
     }
 }

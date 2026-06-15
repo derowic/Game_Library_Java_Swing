@@ -1,6 +1,7 @@
 package pl.sgl.engine;
 
 import pl.sgl.engine.Time.Timer;
+import pl.sgl.engine.Time.TimerManager;
 import pl.sgl.engine.animation.Animation;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.particleSystem.Particle;
@@ -43,7 +44,6 @@ public class Game implements Runnable {
 
     // Czas ostatniego pomiaru
     private long lastTimer = System.currentTimeMillis();
-    public AudioManager audio = new AudioManager();
     public static InputHandler keyboard = new InputHandler();
     protected MouseHandler mouse = new MouseHandler();
     private final Object renderLock = new Object();
@@ -51,7 +51,7 @@ public class Game implements Runnable {
     public String windowMode = "window";
     private long lastToggleTime = 0;
 
-    private List<Timer> timers = new ArrayList<>();
+
 
     public Game(String title, String icon,  int width, int height, Color bc) {
 
@@ -64,8 +64,8 @@ public class Game implements Runnable {
 //        window.typeOfRenderingSprites = "pixelart";
         // W konstruktorze Engine lub Game
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            audio.stopAll();
-            audio = null;
+            AudioManager.stopAll();
+            AudioManager.clearAllData();
             currentSnapshot = null;
             currentGame = null;
             running = false;
@@ -295,7 +295,7 @@ public class Game implements Runnable {
         keyboard.update();
         mouse.update();
 
-        for(Timer t: timers) {
+        for(Timer t: TimerManager.getTimers()) {
             t.update(deltaTime);
         }
     }
@@ -574,9 +574,7 @@ public class Game implements Runnable {
     }
 
 
-    public void addTimer(Timer timer) {
-        timers.add(timer);
-    }
+
 
     public double getDeltaTime() {
         return deltaTime;

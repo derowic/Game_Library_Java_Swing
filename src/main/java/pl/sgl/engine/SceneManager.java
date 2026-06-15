@@ -9,7 +9,7 @@ public class SceneManager {
     protected static HashMap<String, Scene> scenes = new HashMap<>();
 
     public SceneManager() {
-        scenes.put("Game", new Scene());
+        new Scene("Game");
         selectedScene = "Game";
     }
 

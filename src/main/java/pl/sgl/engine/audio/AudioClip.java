@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 public class AudioClip {
     private Clip clip;
+    private boolean looping = false;
 
     public AudioClip(String path) {
         try {
@@ -28,12 +29,14 @@ public class AudioClip {
         stop(); // Zatrzymaj jeśli jeszcze gra
         clip.setFramePosition(0); // Przewiń do początku
         clip.start();
+        this.looping = false;
     }
 
     // Odtwórz w pętli (muzyka w tle)
     public void loop() {
         if (clip == null) return;
         clip.loop(Clip.LOOP_CONTINUOUSLY);
+        this.looping = true;
     }
 
     public void stop() {
@@ -48,5 +51,9 @@ public class AudioClip {
         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
         gainControl.setValue(dB);
+    }
+
+    public boolean isLooping() {
+        return looping;
     }
 }

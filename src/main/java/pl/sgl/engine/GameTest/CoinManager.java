@@ -4,6 +4,7 @@ import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
 import pl.sgl.engine.SceneManager;
 import pl.sgl.engine.animation.Animation;
+import pl.sgl.engine.audio.AudioManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class CoinManager {
 //        audio.load("shoot", "/audio/zap-hiphop-a.wav");
 //
 //        audio.loop("bg_music"); // Start muzyki w tle
-        Game.instance.audio.load("coin",  "/textures/brackeys_platformer_assets/sounds/coin.wav");
+        AudioManager.load("coin",  "/textures/brackeys_platformer_assets/sounds/coin.wav");
     }
 
     public Coin generate(Platform platform) {
