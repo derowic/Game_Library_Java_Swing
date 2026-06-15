@@ -1,11 +1,12 @@
 package pl.sgl.engine.ui;
 
+import pl.sgl.engine.InputHandler;
 import pl.sgl.engine.MouseHandler;
 
 import java.awt.*;
 
 public class Button extends UIElement {
-
+    private Runnable onClickAction;
     public String text;
     public Font font;
     public Color normalColor = Color.GRAY;
@@ -30,8 +31,18 @@ public class Button extends UIElement {
 
     @Override
     //when mouse pointer is on the button isHovered = true
-    public void update(MouseHandler mouse) {
+    public void update(InputHandler input, MouseHandler mouse) {
+
         isHovered = bounds.contains(mouse.getUIX(), mouse.getUIY());
+        if (isHovered && mouse.isButtonPressed(1)) {
+            // Jeśli przypisano jakąś akcję, uruchom ją
+            if (onClickAction != null) {
+                onClickAction.run();
+            }
+
+            // Opcjonalnie: skonsumuj kliknięcie, żeby nie przeszło pod przycisk
+//            mouse.consumeButton(1);
+        }
     }
 
     @Override
@@ -63,6 +74,8 @@ public class Button extends UIElement {
         g.drawString(text, textX, textY);
     }
 
-    public void setAction(Object o) {
+    // Metoda do łatwego podpinania funkcji
+    public void setOnClick(Runnable action) {
+        this.onClickAction = action;
     }
 }

@@ -45,7 +45,7 @@ public class Game implements Runnable {
     // Czas ostatniego pomiaru
     private long lastTimer = System.currentTimeMillis();
     public static InputHandler keyboard = new InputHandler();
-    protected MouseHandler mouse = new MouseHandler();
+    public static MouseHandler mouse = new MouseHandler();
     private final Object renderLock = new Object();
     private boolean isSwitching = false;
     public String windowMode = "window";

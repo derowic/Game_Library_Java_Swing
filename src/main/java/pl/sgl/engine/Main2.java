@@ -15,15 +15,13 @@ public class Main2 {
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Moja Gra"); // Dla MacOS
         System.setProperty("sun.java2d.uiScale", "true"); // Dla poprawnego skalowania na Linux/Win
 
-
-
-
-
         GameScene gameScene = new GameScene("Game");
         Scene scene = new Scene("Game2");
+        MenuScene menuScene = new MenuScene("Menu");
 
         Game game = new Game(title, icon, width, height, bc);
         game.setRenderPixelArt();
+        SceneManager.setScene("Menu");
         AudioManager.mute();
 
 
