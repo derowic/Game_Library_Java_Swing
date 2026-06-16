@@ -35,6 +35,14 @@ public class PlatformManager {
         platform.setScaleX(2);
         platform.setScaleY(2);
         platform.velocityY = 100;
+
+        if ( rand.nextInt(100) <= 50) {
+            EnemyManager.generate(platform);
+        }
+
+        if ( rand.nextInt(100) <= 25) {
+            CoinManager.generate(platform);
+        }
 //        platform.showHitBox = true;
 
 //        System.out.println("   platform witdth: " + platform.getWidth());
@@ -97,6 +105,13 @@ public class PlatformManager {
             for (GameObject p : platforms) {
                 if(p.y >= 1000) {
                     p.setPosition(getRandomPlatformPosition((int) (p.getWidth() * 2)), startPosY);
+                    if ( rand.nextInt(100) <= 50) {
+                        EnemyManager.generate((Platform) p);
+                    }
+
+                    if ( rand.nextInt(100) <= 25) {
+                        CoinManager.generate((Platform) p);
+                    }
                 }
             }
 

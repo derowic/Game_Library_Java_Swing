@@ -126,12 +126,16 @@ public class GameScene extends Scene {
             AudioManager.play("jump");
         }
 
-        if (Game.keyboard.isKeyPressed(KeyEvent.VK_F)) {
-            Game.changeDisplayMode("fullscreen");
+//        if (Game.keyboard.isKeyPressed(KeyEvent.VK_F)) {
+//            Game.changeDisplayMode("fullscreen");
+//        }
+//        if (Game.keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+//            Game.changeDisplayMode("window");
+//        }
+        if (Game.keyboard.isKeyPressed(KeyEvent.VK_P)) {
+            Game.pause();
         }
-        if (Game.keyboard.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-            Game.changeDisplayMode("window");
-        }
+
     }
 
     public void colisionWithEnv(){

@@ -22,7 +22,7 @@ public class Main2 {
         Game game = new Game(title, icon, width, height, bc);
         game.setRenderPixelArt();
         SceneManager.setScene("Menu");
-        AudioManager.mute();
+//        AudioManager.mute();
 
 
 

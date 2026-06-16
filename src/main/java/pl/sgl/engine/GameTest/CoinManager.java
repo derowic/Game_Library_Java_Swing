@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoinManager {
-    public List<Coin> coins = new ArrayList<>();
+    public static List<Coin> coins = new ArrayList<>();
 
     public CoinManager(List<Platform> platforms) {
-        for(Platform p : platforms) {
-            generate(p);
-        }
+//        for(Platform p : platforms) {
+//            generate(p);
+//        }
 
         //        audio.load("bg_music", "/audio/alex-productions-racing-sport-gaming-racing(chosic.com).wav");
 //        audio.load("shoot", "/audio/zap-hiphop-a.wav");
@@ -24,7 +24,7 @@ public class CoinManager {
         AudioManager.load("coin",  "/textures/brackeys_platformer_assets/sounds/coin.wav");
     }
 
-    public Coin generate(Platform platform) {
+    public static void generate(Platform platform) {
         Coin c = new Coin((float) ((float) platform.x + platform.getWidth() / 2 * platform.scaleX), (float) platform.y, 0.1, 1);
         Animation coinAnim = new Animation("/textures/brackeys_platformer_assets/sprites/coin.png", 0, 0, 16, 16, 12);
         c.addAnimation("base", coinAnim);
@@ -37,7 +37,6 @@ public class CoinManager {
 
         coins.add(c);
         SceneManager.getScene("Game").addGameObject(c);
-        return c;
     }
 
     public void recycle (Platform platform) {

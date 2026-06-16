@@ -50,6 +50,7 @@ public class Game implements Runnable {
     private boolean isSwitching = false;
     public String windowMode = "window";
     private long lastToggleTime = 0;
+    private boolean paused = false;
 
 
 
@@ -211,7 +212,9 @@ public class Game implements Runnable {
 
             // Warunek zatrzyma się, jeśli zrobimy więcej niż 5 update'ów na raz!
             while (accumulator >= SKIP_TICKS && updates < 5) {
+
                 update();
+
                 tickCount++;
                 accumulator -= SKIP_TICKS;
                 lastTickTime = System.nanoTime();
@@ -582,5 +585,9 @@ public class Game implements Runnable {
 
     public Camera getCamera() {
         return instance.camera;
+    }
+
+    public static void pause() {
+        instance.paused = !instance.paused;
     }
 }

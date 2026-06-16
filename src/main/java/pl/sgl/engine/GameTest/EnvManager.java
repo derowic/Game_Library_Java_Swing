@@ -68,8 +68,8 @@ public class EnvManager {
             go.moveByVelocity();
         }
 
-        if (downBlocks.y > 1500) {
-            downBlocks.y = 1500;
+        if (downBlocks.y > 1200) {
+            downBlocks.y = 1200;
         } else {
             downBlocks.moveByVelocity();
 
