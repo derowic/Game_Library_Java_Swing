@@ -10,9 +10,10 @@ public class EnvManager {
     List<Sprite> background = new ArrayList<>();
     List<GameObject> sideWalls = new ArrayList<>();
     Sprite downBlocks;
+    int startY = 0;
 
     public EnvManager() {
-        int startY = 0;
+
         for(int i = 0; i < 6; i++) {
             Sprite stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0, startY - ((i) * 480));
             stoneBlock.setPivot(0, 0);
@@ -20,6 +21,7 @@ public class EnvManager {
             stoneBlock.setSpriteSize(640, 480, FillMode.TILE);
             stoneBlock.setScaleX(2);
             stoneBlock.setScaleY(2);
+            stoneBlock.velocityY = 100;
             background.add(stoneBlock);
             SceneManager.getScene("Game").addGameObject(stoneBlock);
         }
@@ -57,6 +59,8 @@ public class EnvManager {
             sideWalls.add(rightBlocks);
             SceneManager.getScene("Game").addGameObject(rightBlocks);
         }
+        startY = -5* 480;
+
     }
 
     public void move() {
@@ -73,6 +77,22 @@ public class EnvManager {
 
         for(GameObject go : sideWalls) {
             go.moveByVelocity();
+        }
+
+        recycle();
+    }
+
+    public void recycle() {
+        for(GameObject go : background) {
+            if( go.y >= 928) {
+                go.setPosition(go.x, startY);
+            }
+        }
+
+        for(GameObject go : sideWalls) {
+            if( go.y >= 928) {
+                go.setPosition(go.x, startY);
+            }
         }
     }
 
