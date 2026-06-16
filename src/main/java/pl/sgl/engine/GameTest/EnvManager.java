@@ -86,12 +86,14 @@ public class EnvManager {
         for(GameObject go : background) {
             if( go.y >= 928) {
                 go.setPosition(go.x, startY);
+                go.velocityY = GameScene.fallingSpeed;
             }
         }
 
         for(GameObject go : sideWalls) {
             if( go.y >= 928) {
                 go.setPosition(go.x, startY);
+                go.velocityY = GameScene.fallingSpeed;
             }
         }
     }

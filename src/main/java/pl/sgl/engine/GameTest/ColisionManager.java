@@ -1,7 +1,6 @@
 package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.Colision;
-import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
 import pl.sgl.engine.audio.AudioManager;
 
@@ -46,7 +45,7 @@ public class ColisionManager {
                         player.sprite.moveByVelocity();
                         player.sprite.setAnimation("hurt");
                         player.playerStatus = "hurt";
-                        player.animTiemr.start();
+                        player.animTiemr.reset();
                         player.hurt = true;
                         AudioManager.play("hurt");
                     }

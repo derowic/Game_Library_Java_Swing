@@ -1,7 +1,5 @@
 package pl.sgl.engine.Time;
 
-import pl.sgl.engine.Game;
-
 public class Timer {
     public double time =0;
     public double delay =0;
@@ -11,6 +9,7 @@ public class Timer {
     public Timer (double delay) {
         this.delay = delay;
         TimerManager.addTimer(this);
+        reset();
     }
 
     public void update (double deltaTime) {
@@ -23,7 +22,7 @@ public class Timer {
         }
     }
 
-    public void start() {
+    public void reset() {
         run = true;
         time = 0;
         tick = false;

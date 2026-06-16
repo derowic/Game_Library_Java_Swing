@@ -2,6 +2,7 @@ package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.*;
 import pl.sgl.engine.GameTest.*;
+import pl.sgl.engine.Time.Timer;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.ui.Text;
 import pl.sgl.engine.ui.UIElement;
@@ -20,6 +21,8 @@ public class GameScene extends Scene {
     EnemyManager enemyManager;
     UIManager startScreen;
     EnvManager envManager;
+    static double fallingSpeed = 100;
+    Timer sppedTimer = new Timer(3);
 
 
     boolean run = false;
@@ -77,7 +80,15 @@ public class GameScene extends Scene {
         }
         cycle();
 
+        if (sppedTimer.check() && fallingSpeed <= 200) {
+            fallingSpeed += 2;
+            System.out.println("time, sped falling "+ fallingSpeed);
+            sppedTimer.reset();
 
+//            for (GameObject p : platformManager.platforms) {
+//                p.velocityY = fallingSpeed;
+//            }
+        }
     }
 
     public void cycle () {

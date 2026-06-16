@@ -34,7 +34,7 @@ public class PlatformManager {
         platform.setSpriteSize(randPlatformLenght * 16,16, FillMode.TILE);
         platform.setScaleX(2);
         platform.setScaleY(2);
-        platform.velocityY = 100;
+        platform.velocityY = GameScene.fallingSpeed;
 
         if ( rand.nextInt(100) <= 50) {
             EnemyManager.generate(platform);
@@ -105,6 +105,7 @@ public class PlatformManager {
             for (GameObject p : platforms) {
                 if(p.y >= 1000) {
                     p.setPosition(getRandomPlatformPosition((int) (p.getWidth() * 2)), startPosY);
+                    p.velocityY = GameScene.fallingSpeed;
                     if ( rand.nextInt(100) <= 50) {
                         EnemyManager.generate((Platform) p);
                     }
