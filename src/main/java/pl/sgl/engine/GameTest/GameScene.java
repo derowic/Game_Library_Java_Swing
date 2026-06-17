@@ -78,14 +78,9 @@ public class GameScene extends Scene {
         }
         cycle();
 
-        fallingSpeed += 0.2 * dt;
-        for(GameObject o : objects) {
-            if(o.getName().equals("player")) {
-                continue;
-            }
-            o.velocityY = fallingSpeed;
-        }
-        if (sppedTimer.check() && fallingSpeed <= 200) {
+        fallingSpeed += 0.8 * dt;
+
+        if (sppedTimer.check() && fallingSpeed <= 300) {
 
 
             System.out.println("time, sped falling "+ fallingSpeed);

@@ -150,7 +150,7 @@ public class Game implements Runnable {
     private void startRenderLoop() {
         Thread renderThread = new Thread(() -> {
             // 1. Definiujemy parametry limitu
-            final double TARGET_FPS = 120.0;
+            final double TARGET_FPS = 240.0;
             final double NS_PER_FRAME = 1_000_000_000.0 / TARGET_FPS;
             long lastFrameTime = System.nanoTime();
 
