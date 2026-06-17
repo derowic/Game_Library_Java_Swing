@@ -106,13 +106,13 @@ public class PlatformManager {
                 if(p.y >= 1000) {
                     p.setPosition(getRandomPlatformPosition((int) (p.getWidth() * 2)), startPosY);
                     p.velocityY = GameScene.fallingSpeed;
-                    if ( rand.nextInt(100) <= 50) {
-                        EnemyManager.generate((Platform) p);
-                    }
-
-                    if ( rand.nextInt(100) <= 25) {
-                        CoinManager.generate((Platform) p);
-                    }
+//                    if ( rand.nextInt(100) <= 50) {
+//                        EnemyManager.generate((Platform) p);
+//                    }
+//
+//                    if ( rand.nextInt(100) <= 25) {
+//                        CoinManager.generate((Platform) p);
+//                    }
                 }
             }
 

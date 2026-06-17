@@ -54,6 +54,10 @@ public class Player  {
         AudioManager.load("hurt",  "/textures/brackeys_platformer_assets/sounds/hurt.wav");
         AudioManager.load("power_up",  "/textures/brackeys_platformer_assets/sounds/power_up.wav");
 
+        sprite.setName("player");
+
+        SceneManager.getScene("Game").addGameObject(sprite);
+
     }
 
     public void playerAnimationLogic() {

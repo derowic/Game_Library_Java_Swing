@@ -32,6 +32,7 @@ public class GameObject {
     private BufferedImage tiledCache = null; // Tu trzymamy gotowy obraz
     private boolean needsRefresh = true;     // Flaga: czy trzeba wygenerować obraz na nowo?
     private boolean isAlive = true;
+    private String name;
 
     //draw texture fragment, these varuables set x,y and how much o tex you take
     protected int srcX, srcY;
@@ -386,6 +387,13 @@ public class GameObject {
         return active;
     }
 
+    public String getName() {
+        return name != null ? name : "";
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 //    public abstract void getCalculateAutoHitBoxes();
 }

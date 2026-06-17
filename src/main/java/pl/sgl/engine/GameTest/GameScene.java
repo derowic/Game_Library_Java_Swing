@@ -15,7 +15,6 @@ public class GameScene extends Scene {
 
 
     Player player;
-
     PlatformManager platformManager;
     CoinManager coinManager;
     EnemyManager enemyManager;
@@ -40,7 +39,6 @@ public class GameScene extends Scene {
         coinManager = new CoinManager(platformManager.platforms);
 
         player = new Player();
-        addGameObject(player.sprite);
 
         enemyManager = new EnemyManager(platformManager.platforms);
 
@@ -53,7 +51,7 @@ public class GameScene extends Scene {
 
     @Override
     public void update(double dt) {
-        super.update(dt);
+
 
         if (Game.keyboard.isKeyPressed(KeyEvent.VK_Q)) Game.instance.camera.zoomIn(0.1);
         if (Game.keyboard.isKeyPressed(KeyEvent.VK_E))  Game.instance.camera.zoomOut(-0.1);
@@ -80,15 +78,25 @@ public class GameScene extends Scene {
         }
         cycle();
 
+        fallingSpeed += 0.2 * dt;
+        for(GameObject o : objects) {
+            if(o.getName().equals("player")) {
+                continue;
+            }
+            o.velocityY = fallingSpeed;
+        }
         if (sppedTimer.check() && fallingSpeed <= 200) {
-            fallingSpeed += 2;
+
+
             System.out.println("time, sped falling "+ fallingSpeed);
             sppedTimer.reset();
 
-//            for (GameObject p : platformManager.platforms) {
-//                p.velocityY = fallingSpeed;
-//            }
+            for(GameObject o : objects) {
+                o.velocityY = fallingSpeed;
+            }
         }
+
+        super.update(dt);
     }
 
     public void cycle () {
