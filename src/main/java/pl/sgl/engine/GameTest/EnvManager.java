@@ -14,14 +14,14 @@ public class EnvManager {
 
     public EnvManager() {
 
-        for(int i = 0; i < 6; i++) {
-            Sprite stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0, startY - ((i) * 480));
+        for(int i = 0; i < 5; i++) {
+            Sprite stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0, startY - ((i) * 960));
             stoneBlock.setPivot(0, 0);
-
             stoneBlock.setSpriteSize(640, 480, FillMode.TILE);
             stoneBlock.setScaleX(2);
             stoneBlock.setScaleY(2);
             stoneBlock.velocityY = 100;
+//            stoneBlock.showHitBox = true;
             background.add(stoneBlock);
             SceneManager.getScene("Game").addGameObject(stoneBlock);
         }
@@ -38,18 +38,19 @@ public class EnvManager {
 
 
         startY = 0;
-        for(int i = 0; i < 6; i++) {
-            Sprite leftBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0, startY - ((i) * 480));
+        for(int i = 0; i < 5; i++) {
+            Sprite leftBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0, startY - ((i) * 960));
             leftBlocks.setPivot(0, 0);
             leftBlocks.setTextureRegion(32, 32, 16, 16);
             leftBlocks.setSpriteSize(16, 480, FillMode.TILE);
             leftBlocks.setScaleX(2);
             leftBlocks.setScaleY(2);
             leftBlocks.velocityY = 100;
+
             sideWalls.add(leftBlocks);
             SceneManager.getScene("Game").addGameObject(leftBlocks);
 
-            Sprite rightBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 1248, startY - ((i) * 480));
+            Sprite rightBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 1248, startY - ((i) * 960));
             rightBlocks.setPivot(0, 0);
             rightBlocks.setTextureRegion(32, 32, 16, 16);
             rightBlocks.setSpriteSize(16, 480, FillMode.TILE);
@@ -59,7 +60,8 @@ public class EnvManager {
             sideWalls.add(rightBlocks);
             SceneManager.getScene("Game").addGameObject(rightBlocks);
         }
-        startY = -5* 480;
+
+        startY = -4 * 960;
 
     }
 
@@ -84,16 +86,14 @@ public class EnvManager {
 
     public void recycle() {
         for(GameObject go : background) {
-            if( go.y >= 928) {
+            if( go.y >= 960) {
                 go.setPosition(go.x, startY);
-                go.velocityY = GameScene.fallingSpeed;
             }
         }
 
         for(GameObject go : sideWalls) {
-            if( go.y >= 928) {
+            if( go.y >= 960) {
                 go.setPosition(go.x, startY);
-                go.velocityY = GameScene.fallingSpeed;
             }
         }
     }

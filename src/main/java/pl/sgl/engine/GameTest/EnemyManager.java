@@ -10,15 +10,18 @@ import java.util.List;
 public class EnemyManager {
     public static List<Enemy> enemies = new ArrayList<>();
 
+
     public EnemyManager(List<Platform> platforms) {
     }
 
     public static void generate(Platform platform) {
-        Enemy enemy = new Enemy(platform);
-        enemy.velocityY = platform.velocityY;
+        if (enemies.size() < 10) {
+            Enemy enemy = new Enemy(platform);
+            enemy.velocityY = platform.velocityY;
 
-        enemies.add(enemy);
-        SceneManager.getScene("Game").addGameObject(enemy);
+            enemies.add(enemy);
+            SceneManager.getScene("Game").addGameObject(enemy);
+        }
     }
 
     public void recycle (Platform platform) {

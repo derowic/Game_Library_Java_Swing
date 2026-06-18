@@ -14,7 +14,7 @@ import java.awt.event.KeyEvent;
 public class GameScene extends Scene {
 
 
-    Player player;
+    public static Player player;
     PlatformManager platformManager;
     CoinManager coinManager;
     EnemyManager enemyManager;
@@ -78,9 +78,11 @@ public class GameScene extends Scene {
         }
         cycle();
 
-        fallingSpeed += 0.8 * dt;
+        if(fallingSpeed <=250) {
+            fallingSpeed += 0.8 * dt;
+        }
 
-        if (sppedTimer.check() && fallingSpeed <= 300) {
+        if (sppedTimer.check() && fallingSpeed <= 250) {
 
 
             System.out.println("time, sped falling "+ fallingSpeed);
@@ -92,6 +94,8 @@ public class GameScene extends Scene {
         }
 
         super.update(dt);
+
+//        System.out.println(player.sprite.y);
     }
 
     public void cycle () {
@@ -126,7 +130,7 @@ public class GameScene extends Scene {
         }
 
         if (Game.keyboard.isKeyPressed(KeyEvent.VK_W) && player.doubleJump && (player.playerStatus.equals("jumping") || player.playerStatus.equals("falling"))) {
-            player.sprite.velocityY = -750 *1.5;
+            player.sprite.velocityY = -750 * 1.5;
             player.sprite.setAnimation("roll");
             player.sprite.playAnimation();
             player.playerStatus = "jumping";

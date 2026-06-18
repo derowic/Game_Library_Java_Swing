@@ -1,5 +1,6 @@
 package pl.sgl.engine;
 
+import pl.sgl.engine.GameTest.GameScene;
 import pl.sgl.engine.math.Vector2D;
 
 public class Camera {
@@ -10,6 +11,7 @@ public class Camera {
     public double zoom = 1.0;
     public double lastZoom = 1.0;
     public Vector2D velocity = new Vector2D(0,0);
+    private GameObject followedObject;
 
     // Ta metoda musi być wywołana RAZ na początku Engine.update()
     public void prepareForUpdate() {
@@ -22,6 +24,25 @@ public class Camera {
     public void update(double deltaTime) {
         this.x += (velocity.x * deltaTime);
         this.y += (velocity.y * deltaTime);
+
+        if(followedObject != null) {
+            followObject(deltaTime);
+        }
+    }
+
+    public void followObject(double deltaTime) {
+
+        // 1. Zapisujemy stary stan pod interpolację (Kluczowe!)
+        double lastY = y;
+
+        // 2. Wyznaczamy cel (środek ekranu)
+        // Gracz.y - (Wysokość okna / 2)
+        double targetY = followedObject.y - (ConfigureData.oldHeight / 2.0);
+
+        // 3. Wygładzanie ruchu (Lerp)
+        // Zamiast cam.y = targetY (sztywne przypięcie), robimy płynne dążenie
+        double lerpFactor = 5.0; // Prędkość śledzenia
+        y += (targetY - y) * lerpFactor * deltaTime;
     }
 
     public void setPose(double x, double y) {
@@ -48,5 +69,13 @@ public class Camera {
         if(this.zoom <= 0.1) {
             this.zoom = 0.1;
         }
+    }
+
+    public GameObject getFollowedObject() {
+        return followedObject;
+    }
+
+    public void setFollowedObject(GameObject followedObject) {
+        this.followedObject = followedObject;
     }
 }

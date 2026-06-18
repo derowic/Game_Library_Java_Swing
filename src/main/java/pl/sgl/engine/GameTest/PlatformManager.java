@@ -1,9 +1,6 @@
 package pl.sgl.engine.GameTest;
 
-import pl.sgl.engine.FillMode;
-import pl.sgl.engine.Game;
-import pl.sgl.engine.GameObject;
-import pl.sgl.engine.SceneManager;
+import pl.sgl.engine.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +92,7 @@ public class PlatformManager {
     public void generatePlatforms() {
         if (platforms.size() <= 1) {
 
-            for(int i = 0; i < 20; i++) {
+            for(int i = 0; i < 6; i++) {
                 platforms.add(getRandomPlatform());
                 startPosY -= 100;
             }
@@ -103,18 +100,36 @@ public class PlatformManager {
         } else {
 
             for (GameObject p : platforms) {
-                if(p.y >= 1000) {
+                if(p.y >= Game.instance.camera.y + 1000) {
+
                     p.setPosition(getRandomPlatformPosition((int) (p.getWidth() * 2)), startPosY);
-                    p.velocityY = GameScene.fallingSpeed;
-//                    if ( rand.nextInt(100) <= 50) {
-//                        EnemyManager.generate((Platform) p);
-//                    }
-//
-//                    if ( rand.nextInt(100) <= 25) {
-//                        CoinManager.generate((Platform) p);
-//                    }
+
+                    if (startPosY > Game.instance.camera.y - 200 ) {
+                        startPosY -= 100;
+                    }
+                    platforms.get(0).setPosition(0, 1000);
+                    platforms.get(0).velocityY = 0;
                 }
+
+
             }
+
+//            while (startPosY > Game.instance.camera.y - 200) {
+//                startPosY -= 100;
+//
+//                System.out.println("generate");
+//
+//                Platform p = getRandomPlatform();
+//
+//                if (rand.nextInt(100) <= 50) {
+//                    EnemyManager.generate((Platform) p);
+//                }
+//
+//                if (rand.nextInt(100) <= 25) {
+//                    CoinManager.generate((Platform) p);
+//                }
+//                platforms.add(p);
+//            }
 
         }
     }
