@@ -12,6 +12,7 @@ public class PlatformManager {
     public int startPosY = 960;
     Random rand = new Random();
     int min = 32, max = 1248;
+    Platform lastRecycledPlatform;
 
     public PlatformManager() {
         startPosX = rand.nextInt((max - min) + 1) + min;
@@ -92,23 +93,26 @@ public class PlatformManager {
     public void generatePlatforms() {
         if (platforms.size() <= 1) {
 
-            for(int i = 0; i < 6; i++) {
+            for(int i = 0; i < 8; i++) {
                 platforms.add(getRandomPlatform());
                 startPosY -= 100;
             }
+            lastRecycledPlatform = platforms.get(platforms.size() - 1);
+
+            System.out.println("last start pos:" + startPosY);
 
         } else {
 
-            for (GameObject p : platforms) {
-                if(p.y >= Game.instance.camera.y + 1000) {
+            for (Platform p : platforms) {
+                if(p.y >= GameScene.player.sprite.y + 500) {
+                    System.out.println("last start pos2 :" + startPosY);
 
-                    p.setPosition(getRandomPlatformPosition((int) (p.getWidth() * 2)), startPosY);
+                    p.setPosition(getRandomPlatformPosition((int) (p.getWidth() * 2)), lastRecycledPlatform.y - 100);
+                    lastRecycledPlatform = p;
+//                    startPosY -= 100;
 
-                    if (startPosY > Game.instance.camera.y - 200 ) {
-                        startPosY -= 100;
-                    }
-                    platforms.get(0).setPosition(0, 1000);
-                    platforms.get(0).velocityY = 0;
+//                    platforms.get(0).setPosition(0, GameScene.player.sprite.y);
+//                    platforms.get(0).velocityY = 0;
                 }
 
 
