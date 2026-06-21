@@ -39,23 +39,29 @@ public class CoinManager {
         SceneManager.getScene("Game").addGameObject(c);
     }
 
-    public void recycle (Platform platform) {
-        for (Coin c: coins) {
-            if (c.y >= 1000 ) {
-                c.setPosition(platform.x + platform.getWidth() / 2 - c.getWidth() / 2, platform.y - c.getHeight());
-                c.velocityY = platform.velocityY;
-//                System.out.println("add coind");
+//    public void recycle (Platform platform) {
+//        for (Coin c: coins) {
+//            if (c.y >= 1000 ) {
+//                c.setPosition(platform.x + platform.getWidth() / 2 - c.getWidth() / 2, platform.y - c.getHeight());
+//                c.velocityY = platform.velocityY;
+////                System.out.println("add coind");
+//            }
+//        }
+//    }
+
+    public void move() {
+        for (int i = coins.size() - 1; i >= 0; i--) {
+            Coin e = coins.get(i);
+            if(e.y <= GameScene.player.sprite.y + 1000) {
+                e.moveByVelocity();
+            } else {
+                deleteCoin(e); // Teraz możesz bezpiecznie wywołać swoją metodę
             }
         }
     }
 
-    public void move (double deltaTime) {
-        for (Coin s : coins) {
-            if(s.y < 1500) {
-                s.moveByVelocity();
-            }
-        }
+    public static void deleteCoin(Coin go) {
+        coins.remove(go);
+        go.destroy();
     }
-
-
 }

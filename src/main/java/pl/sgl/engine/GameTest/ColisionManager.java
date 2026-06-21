@@ -28,7 +28,7 @@ public class ColisionManager {
                 if (Colision.checkCollision(player.sprite, p)) {
                     if ((player.sprite.y + (double) player.sprite.getHeight() / 2) < p.y && player.sprite.velocityY >= 0) {
                         System.out.println(p.velocityY);
-                        p.destroy();
+                        EnemyManager.deleteEnemy((Enemy) p);
                         player.sprite.velocityY = -400 *1.5;
                         System.out.println("killed enemy");
                     } else {

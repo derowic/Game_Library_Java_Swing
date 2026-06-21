@@ -7,14 +7,16 @@ import java.util.List;
 
 public class EnvManager {
 
-    List<Sprite> background = new ArrayList<>();
+    List<GameObject> background = new ArrayList<>();
     List<GameObject> sideWalls = new ArrayList<>();
+    GameObject lastBackground;
+    GameObject lastSideWall;
     Sprite downBlocks;
     int startY = 0;
 
     public EnvManager() {
 
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < 6; i++) {
             Sprite stoneBlock = new Sprite("/textures/brackeys_platformer_assets/sprites/stone_block.png", 0, startY - ((i) * 960));
             stoneBlock.setPivot(0, 0);
             stoneBlock.setSpriteSize(640, 480, FillMode.TILE);
@@ -24,6 +26,7 @@ public class EnvManager {
 //            stoneBlock.showHitBox = true;
             background.add(stoneBlock);
             SceneManager.getScene("Game").addGameObject(stoneBlock);
+            lastBackground = stoneBlock;
         }
 
 
@@ -38,7 +41,7 @@ public class EnvManager {
 
 
         startY = 0;
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < 6; i++) {
             Sprite leftBlocks = new Sprite("/textures/brackeys_platformer_assets/sprites/world_tileset.png", 0, startY - ((i) * 960));
             leftBlocks.setPivot(0, 0);
             leftBlocks.setTextureRegion(32, 32, 16, 16);
@@ -59,6 +62,8 @@ public class EnvManager {
             rightBlocks.velocityY = 100;
             sideWalls.add(rightBlocks);
             SceneManager.getScene("Game").addGameObject(rightBlocks);
+
+            lastSideWall = rightBlocks;
         }
 
         startY = -4 * 960;
@@ -86,15 +91,25 @@ public class EnvManager {
 
     public void recycle() {
         for(GameObject go : background) {
-            if( go.y >= 960) {
-                go.setPosition(go.x, startY);
+            if(go.y >= GameScene.player.sprite.y + 1000) {
+
+                go.setPosition(go.x, lastBackground.y - 960);
+
+                lastBackground = go;
             }
         }
 
+        GameObject tmp = null;
         for(GameObject go : sideWalls) {
-            if( go.y >= 960) {
-                go.setPosition(go.x, startY);
+            if(go.y >= GameScene.player.sprite.y + 1000) {
+                go.setPosition(go.x, lastSideWall.y - 960);
+                if(go.y <= lastSideWall.y) {
+                    tmp = go;
+                }
             }
+        }
+        if(tmp != null) {
+            lastSideWall = tmp;
         }
     }
 

@@ -13,6 +13,7 @@ public class PlatformManager {
     Random rand = new Random();
     int min = 32, max = 1248;
     Platform lastRecycledPlatform;
+    int deathHeight;
 
     public PlatformManager() {
         startPosX = rand.nextInt((max - min) + 1) + min;
@@ -93,7 +94,7 @@ public class PlatformManager {
     public void generatePlatforms() {
         if (platforms.size() <= 1) {
 
-            for(int i = 0; i < 8; i++) {
+            for(int i = 0; i < 18; i++) {
                 platforms.add(getRandomPlatform());
                 startPosY -= 100;
             }
@@ -104,11 +105,26 @@ public class PlatformManager {
         } else {
 
             for (Platform p : platforms) {
-                if(p.y >= GameScene.player.sprite.y + 500) {
-                    System.out.println("last start pos2 :" + startPosY);
+                if(p.y >= GameScene.player.sprite.y + 1000) {
+//                    System.out.println("last start pos2 :" + startPosY);
 
+                    deathHeight = (int) p.y;
+
+                    setDeath();
+//                    System.out.println(GameScene.player.sprite.y);
                     p.setPosition(getRandomPlatformPosition((int) (p.getWidth() * 2)), lastRecycledPlatform.y - 100);
+
                     lastRecycledPlatform = p;
+
+                    if (rand.nextInt(100) <= 50) {
+                        EnemyManager.generate((Platform) p);
+                        System.out.println("gen enemy");
+                    }
+
+                    if (rand.nextInt(100) <= 25) {
+                        CoinManager.generate((Platform) p);
+                    }
+
 //                    startPosY -= 100;
 
 //                    platforms.get(0).setPosition(0, GameScene.player.sprite.y);
@@ -117,6 +133,10 @@ public class PlatformManager {
 
 
             }
+
+            setDeath();
+
+
 
 //            while (startPosY > Game.instance.camera.y - 200) {
 //                startPosY -= 100;
@@ -140,9 +160,16 @@ public class PlatformManager {
 
 
 
-    public void move( double deltaTime) {
+    public void move() {
         for (Platform p : platforms) {
             p.moveByVelocity();
+        }
+    }
+
+    public void setDeath() {
+        if (GameScene.player.sprite.y > deathHeight + 1000) {
+            SceneManager.setScene("Death");
+            System.out.println("death height " + deathHeight);
         }
     }
 }

@@ -22,6 +22,7 @@ public class GameScene extends Scene {
     EnvManager envManager;
     static double fallingSpeed = 100;
     Timer sppedTimer = new Timer(3);
+    Text platformSpeed;
 
 
     boolean run = false;
@@ -46,6 +47,9 @@ public class GameScene extends Scene {
 //        audio.load("shoot", "/audio/zap-hiphop-a.wav");
 
         AudioManager.loop("bg_music"); // Start muzyki w tle
+
+        platformSpeed = new Text("Platform speed", 20, 100, 20);
+        ui.addElement(platformSpeed);
 
     }
 
@@ -76,15 +80,16 @@ public class GameScene extends Scene {
         if (run) {
             platformManager.generatePlatforms();
         }
-        cycle();
+//        cycle();
 
         if(fallingSpeed <= 250) {
             fallingSpeed += 0.8 * dt;
+            platformSpeed.setText("Platform speed " + fallingSpeed);
 
             if (sppedTimer.check()) {
 
 
-                System.out.println("time, sped falling "+ fallingSpeed);
+//                System.out.println("time, sped falling "+ fallingSpeed);
                 sppedTimer.reset();
 
                 for(GameObject o : objects) {
@@ -100,20 +105,20 @@ public class GameScene extends Scene {
 //        System.out.println(player.sprite.y);
     }
 
-    public void cycle () {
-        for( Platform p : platformManager.platforms) {
-            if (p.y <= platformManager.startPosY) {
-                coinManager.recycle(p);
-                enemyManager.recycle(p);
-            }
-        }
-    }
+//    public void cycle () {
+//        for( Platform p : platformManager.platforms) {
+//            if (p.y <= platformManager.startPosY) {
+//                coinManager.recycle(p);
+//                enemyManager.recycle(p);
+//            }
+//        }
+//    }
 
     public void moveDown() {
         envManager.move();
-        platformManager.move(deltaTime);
-        coinManager.move(deltaTime);
-        enemyManager.move(deltaTime);
+        platformManager.move();
+        coinManager.move();
+        enemyManager.move();
 
     }
 
