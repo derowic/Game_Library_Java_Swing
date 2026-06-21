@@ -31,7 +31,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>pl.sgl.engine.Main</mainClass> <!-- Ścieżka do Twojej klasy Main -->
+                            <mainClass>pl.sgl.engine.Main2</mainClass> <!-- Ścieżka do Twojej klasy Main -->
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -43,6 +43,28 @@
                         <id>make-assembly</id>
                         <phase>package</phase>
                         <goals><goal>single</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!-- TU WPISZ SWOJĄ KLASĘ MAIN -->
+                                    <mainClass>pl.sgl.engine.Main2</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
