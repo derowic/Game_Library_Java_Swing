@@ -171,67 +171,67 @@ public class GameObject {
 
     public void draw(Graphics2D g, double alpha) {
 
-        if (fillMode == FillMode.TILE && (needsRefresh || tiledCache == null)) {
-            refreshTiledCache();
-        }
+        if(visible) {
+            if (fillMode == FillMode.TILE && (needsRefresh || tiledCache == null)) {
+                refreshTiledCache();
+            }
 
-        double drawX;
-        double drawY;
-        if (didTeleport) {
+            double drawX;
+            double drawY;
+            if (didTeleport) {
 //            renderX = (float) renderState.x;
-            // Interpolacja pozycji
-            drawX = x;
-            drawY = y;
-        } else {
-            drawX = lastX + (x - lastX) * (float) alpha;
-            drawY = lastY + (y - lastY) * (float) alpha;
-        }
-        // 2. Tworzymy izolowaną kopię Graphics2D
-        Graphics2D g2d = (Graphics2D) g.create();
+                // Interpolacja pozycji
+                drawX = x;
+                drawY = y;
+            } else {
+                drawX = lastX + (x - lastX) * (float) alpha;
+                drawY = lastY + (y - lastY) * (float) alpha;
+            }
+            // 2. Tworzymy izolowaną kopię Graphics2D
+            Graphics2D g2d = (Graphics2D) g.create();
 
-        // 1. Wyznaczamy pivot (współrzędne lokalne obrazka)
-        double pX = Double.isNaN(pivotX) ? frameWidth / 2.0 : pivotX;
-        double pY = Double.isNaN(pivotY) ? frameHeight / 2.0 : pivotY;
+            // 1. Wyznaczamy pivot (współrzędne lokalne obrazka)
+            double pX = Double.isNaN(pivotX) ? frameWidth / 2.0 : pivotX;
+            double pY = Double.isNaN(pivotY) ? frameHeight / 2.0 : pivotY;
 
-        g2d.translate(drawX, drawY);
-        if (rotation != 0) {
-            g2d.rotate(Math.toRadians(rotation));
-        }
+            g2d.translate(drawX, drawY);
+            if (rotation != 0) {
+                g2d.rotate(Math.toRadians(rotation));
+            }
 
-        g2d.scale(scaleX, scaleY);
+            g2d.scale(scaleX, scaleY);
 
-        // 6. RYSOWANIE OBRAZKA (od 0,0 bo g2d jest już przesunięte)
+            // 6. RYSOWANIE OBRAZKA (od 0,0 bo g2d jest już przesunięte)
 //        g2d.drawImage(texture.image, (int)-pX, (int)-pY, width, height, null);
 //        g2d.drawImage(texture.image,
 //                (int)-pX, (int)-pY, (int)(-pX + width), (int)(-pY + height),
 //                srcX, srcY, srcX + srcW, srcY + srcH,
 //                null
 //        );
-        if (fillMode == FillMode.STRETCH) {
-            g2d.drawImage(texture.image, (int) -pX, (int) -pY, (int) (-pX + srcW), (int) (-pY + srcH),
-                    srcX, srcY, srcX + srcW, srcY + srcH, null);
-        } else if (fillMode == FillMode.TILE) {
-            // TERAZ TO JEST TYLKO JEDNA OPERACJA - bardzo szybka!
-            g2d.drawImage(tiledCache, (int) -pX, (int) -pY, null);
-        }
+            if (fillMode == FillMode.STRETCH) {
+                g2d.drawImage(texture.image, (int) -pX, (int) -pY, (int) (-pX + srcW), (int) (-pY + srcH),
+                        srcX, srcY, srcX + srcW, srcY + srcH, null);
+            } else if (fillMode == FillMode.TILE) {
+                // TERAZ TO JEST TYLKO JEDNA OPERACJA - bardzo szybka!
+                g2d.drawImage(tiledCache, (int) -pX, (int) -pY, null);
+            }
 
-        // 7. RYSOWANIE HITBOXA (Lokalnie!)
-        if (showHitBox) {
+            // 7. RYSOWANIE HITBOXA (Lokalnie!)
+            if (showHitBox) {
 //            System.out.println("render");
-            g2d = (Graphics2D) g.create();
-            Shape collisionShape = getRotatedShape();
+                g2d = (Graphics2D) g.create();
+                Shape collisionShape = getRotatedShape();
 
-            // Rysujemy kształt na worldG
-            g2d.setColor(Color.RED);
-            g2d.setStroke(new BasicStroke(1.0f)); // Cienka linia
-            g2d.draw(collisionShape); // To narysuje obramowanie
+                // Rysujemy kształt na worldG
+                g2d.setColor(Color.RED);
+                g2d.setStroke(new BasicStroke(1.0f)); // Cienka linia
+                g2d.draw(collisionShape); // To narysuje obramowanie
 
-            // Opcjonalnie: półprzezroczyste wypełnienie
-            g2d.setColor(new Color(255, 0, 0, 50));
-            g2d.fill(collisionShape);
-            g2d.dispose();
-
-
+                // Opcjonalnie: półprzezroczyste wypełnienie
+                g2d.setColor(new Color(255, 0, 0, 50));
+                g2d.fill(collisionShape);
+                g2d.dispose();
+            }
         }
     }
 

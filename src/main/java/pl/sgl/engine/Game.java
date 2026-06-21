@@ -2,7 +2,6 @@ package pl.sgl.engine;
 
 import pl.sgl.engine.Time.Timer;
 import pl.sgl.engine.Time.TimerManager;
-import pl.sgl.engine.animation.Animation;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.particleSystem.Particle;
 import pl.sgl.engine.particleSystem.ParticleEmitter;
@@ -12,7 +11,6 @@ import pl.sgl.engine.ui.UIElement;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Game implements Runnable {
@@ -256,7 +254,7 @@ public class Game implements Runnable {
         // 2. Aktualizuj UI
         SceneManager.getSelectedScene().getUi().update(keyboard, mouse);
 
-        for (UIElement e : SceneManager.getSelectedScene().getUi().getElements()) {
+        for (UIElement e : SceneManager.getSelectedScene().getUi().getUIs()) {
             if(e.getClass() == InputField.class) {
                 e.update(keyboard,mouse);
             } else {
@@ -487,7 +485,11 @@ public class Game implements Runnable {
             window.getCanvas().setCursor(Cursor.getDefaultCursor());
         }
 
-        for (UIElement e : renderState.uiManager.getElements()) {
+        for (GameObject e : renderState.uiManager.getUiObjects()) {
+            e.draw(g, deltaTime);
+        }
+
+        for (UIElement e : renderState.uiManager.getUIs()) {
             e.draw(g);
         }
 
@@ -499,16 +501,16 @@ public class Game implements Runnable {
         window.g.setColor(Color.WHITE);
         // Ustawiamy tło pod tekst, żeby był czytelny
         window.g.setColor(new Color(0, 0, 0, 150)); // Półprzezroczysty czarny
-        window.g.fillRect(5, 5, 100, 45);
+        window.g.fillRect(5, 800, 100, 45);
 
         window.g.setColor(Color.GREEN);
         window.g.setFont(new Font("Monospaced", Font.BOLD, 14));
-        window.g.drawString("FPS: " + currentFPS, 10, 20);
-        window.g.drawString("TPS: " + currentTPS, 10, 40);
+        window.g.drawString("FPS: " + currentFPS, 10, 820);
+        window.g.drawString("TPS: " + currentTPS, 10, 840);
 
         // Wyświetlanie Alpha (opcjonalnie do debugowania płynności)
         window.g.setColor(Color.YELLOW);
-        window.g.drawString("Delta Time: " + String.format("%.2f", alpha), 10, 60);
+        window.g.drawString("Delta Time: " + String.format("%.2f", alpha), 10, 860);
 
 
     }

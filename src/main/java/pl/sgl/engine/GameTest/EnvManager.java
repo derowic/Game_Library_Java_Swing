@@ -36,7 +36,7 @@ public class EnvManager {
         downBlocks.setSpriteSize(640, 16, FillMode.TILE);
         downBlocks.setScaleX(2);
         downBlocks.setScaleY(2);
-        downBlocks.velocityY = 50;
+//        downBlocks.velocityY = 50;
         SceneManager.getScene("Game").addGameObject(downBlocks);
 
 

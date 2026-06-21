@@ -21,14 +21,14 @@ public class DeathScene extends Scene {
             System.out.println("Kliknięto Start! Przełączam scenę...");
             SceneManager.setScene("Game");
         });
-        ui.addElement(restartButton);
+        ui.addUi(restartButton);
 
         Button exitButton = new Button("Wyjdź", 500, 670, 100, 50);
         exitButton.setOnClick(() -> System.exit(0));
-        ui.addElement(exitButton);
+        ui.addUi(exitButton);
 
         deathText = new Text("DEATH", 500, 200, 20);
-        ui.addElement(deathText);
+        ui.addUi(deathText);
     }
 
     @Override

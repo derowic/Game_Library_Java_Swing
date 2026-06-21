@@ -105,10 +105,12 @@ public class PlatformManager {
         } else {
 
             for (Platform p : platforms) {
-                if(p.y >= GameScene.player.sprite.y + 1000) {
+                if(p.y >= GameScene.player.sprite.y + 1000 || p.y > deathHeight + 1000) {
 //                    System.out.println("last start pos2 :" + startPosY);
 
-                    deathHeight = (int) p.y;
+                    if (p.y < deathHeight) {
+                        deathHeight = (int) p.y;
+                    }
 
                     setDeath();
 //                    System.out.println(GameScene.player.sprite.y);
@@ -135,30 +137,8 @@ public class PlatformManager {
             }
 
             setDeath();
-
-
-
-//            while (startPosY > Game.instance.camera.y - 200) {
-//                startPosY -= 100;
-//
-//                System.out.println("generate");
-//
-//                Platform p = getRandomPlatform();
-//
-//                if (rand.nextInt(100) <= 50) {
-//                    EnemyManager.generate((Platform) p);
-//                }
-//
-//                if (rand.nextInt(100) <= 25) {
-//                    CoinManager.generate((Platform) p);
-//                }
-//                platforms.add(p);
-//            }
-
         }
     }
-
-
 
     public void move() {
         for (Platform p : platforms) {
@@ -167,7 +147,7 @@ public class PlatformManager {
     }
 
     public void setDeath() {
-        if (GameScene.player.sprite.y > deathHeight + 1000) {
+        if (GameScene.player.sprite.y > deathHeight + 2000) {
             SceneManager.setScene("Death");
             System.out.println("death height " + deathHeight);
         }

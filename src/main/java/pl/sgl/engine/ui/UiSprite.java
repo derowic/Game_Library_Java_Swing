@@ -1,12 +1,10 @@
 package pl.sgl.engine.ui;
 
-import pl.sgl.engine.FillMode;
 import pl.sgl.engine.texture.Texture;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-public class Background extends UIElement {
+public class UiSprite extends UIElement {
     public double x = 0;
     public double y = 0;
     public double rotation = 0; // Dodajmy rotację, sprite'y często jej potrzebują

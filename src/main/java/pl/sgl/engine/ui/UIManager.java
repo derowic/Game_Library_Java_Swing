@@ -1,21 +1,26 @@
 package pl.sgl.engine.ui;
 
+import pl.sgl.engine.GameObject;
 import pl.sgl.engine.InputHandler;
 import pl.sgl.engine.MouseHandler;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UIManager {
     private List<UIElement> elements = new ArrayList<>();
+    protected List<GameObject> uiObjects = new ArrayList<>();
     private boolean mouseCaptured = false;
     private boolean keyboardCaptured = false;
 
-    public void addElement(UIElement e) { elements.add(e); }
+    public void addUi(UIElement e) { elements.add(e); }
+    public void addUiObject(GameObject e) { uiObjects.add(e); }
 
-    public List<UIElement> getElements() {
+    public List<UIElement> getUIs() {
         return elements;
+    }
+    public List<GameObject> getUiObjects() {
+        return uiObjects;
     }
 
     public void setElements(List<UIElement> elements) {

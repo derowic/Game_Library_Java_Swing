@@ -2,7 +2,6 @@ package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.Game;
 import pl.sgl.engine.GameObject;
-import pl.sgl.engine.Scene;
 import pl.sgl.engine.SceneManager;
 import pl.sgl.engine.Time.Timer;
 import pl.sgl.engine.animation.AnimatedSprite;
@@ -16,11 +15,14 @@ public class Player  {
     public String playerStatus = "falling";
     public boolean doubleJump = false;
     public GameObject playerCollideWith;
-    public int coins = 0;
-    public double health = 10;
+
+
     public UIElement coinsNumberLabel;
+    public int coins = 0;
+
     public Timer animTiemr = new Timer(0.25);
     public boolean hurt = false;
+    HeartManager heartManager;
 
     public Player(){
         Animation idle = new Animation("/textures/brackeys_platformer_assets/sprites/knight.png",0,0,32,32,4);
@@ -48,7 +50,7 @@ public class Player  {
         sprite.playAnimationInCycle();
 //        player.showHitBox = true;
         coinsNumberLabel = new Text( "PUNKTY: 0", 20, 80, 24);
-        SceneManager.getScene("Game").getUi().addElement(coinsNumberLabel);
+        SceneManager.getScene("Game").getUi().addUi(coinsNumberLabel);
 
         AudioManager.load("jump",  "/textures/brackeys_platformer_assets/sounds/jump.wav");
         AudioManager.load("hurt",  "/textures/brackeys_platformer_assets/sounds/hurt.wav");
@@ -59,6 +61,8 @@ public class Player  {
         SceneManager.getScene("Game").addGameObject(sprite);
 
         Game.instance.camera.setFollowedObject(sprite);
+
+        heartManager = new HeartManager();
     }
 
     public void playerAnimationLogic() {

@@ -1,14 +1,11 @@
 package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.*;
-import pl.sgl.engine.GameTest.*;
 import pl.sgl.engine.Time.Timer;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.ui.Text;
-import pl.sgl.engine.ui.UIElement;
 import pl.sgl.engine.ui.UIManager;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class GameScene extends Scene {
@@ -48,8 +45,8 @@ public class GameScene extends Scene {
 
         AudioManager.loop("bg_music"); // Start muzyki w tle
 
-        platformSpeed = new Text("Platform speed", 20, 100, 20);
-        ui.addElement(platformSpeed);
+        platformSpeed = new Text("Platform speed", 20, 900, 20);
+        ui.addUi(platformSpeed);
 
     }
 

@@ -33,15 +33,23 @@ public class ColisionManager {
                         System.out.println("killed enemy");
                     } else {
                         //add timer that will check by 0.1 if player i hited
-                        player.health--;
-                        System.out.println("Get hit: "+player.health);
+                        player.heartManager.getHit();
+//                        System.out.println("Get hit: "+player.health);
                         if(player.sprite.x <= p.x) {
                             player.sprite.velocityX = -750 *1.5;
-                            player.sprite.velocityY = -400 *1.5;
+
                         } else {
                             player.sprite.velocityX = 750 *1.5;
-                            player.sprite.velocityY = -400 *1.5;
+
                         }
+
+                        if(player.sprite.y <= p.y) {
+                            player.sprite.velocityY = -400 *1.5;
+                        } else {
+                            player.sprite.velocityY = 400 *1.5;
+                        }
+
+
                         player.sprite.moveByVelocity();
                         player.sprite.setAnimation("hurt");
                         player.playerStatus = "hurt";

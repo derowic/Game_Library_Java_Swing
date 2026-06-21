@@ -1,11 +1,7 @@
 package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.*;
-import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.ui.Button;
-import pl.sgl.engine.ui.UIManager;
-
-import java.awt.event.KeyEvent;
 
 public class MenuScene extends Scene {
 
@@ -22,11 +18,11 @@ public class MenuScene extends Scene {
             System.out.println("Kliknięto Start! Przełączam scenę...");
             SceneManager.setScene("Game");
         });
-        ui.addElement(startButton);
+        ui.addUi(startButton);
 
         Button exitButton = new Button("Wyjdź", 500, 670, 100, 50);
         exitButton.setOnClick(() -> System.exit(0));
-        ui.addElement(exitButton);
+        ui.addUi(exitButton);
     }
 
     @Override
