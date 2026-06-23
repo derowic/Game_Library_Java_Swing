@@ -19,10 +19,8 @@ public class Main2 {
         game.setRenderPixelArt();
 
         GameScene gameScene = new GameScene("Game");
-        Scene scene = new Scene("Game2");
         MenuScene menuScene = new MenuScene("Menu");
         DeathScene deathScene = new DeathScene("Death");
-
 
         SceneManager.setScene("Menu");
         AudioManager.mute();

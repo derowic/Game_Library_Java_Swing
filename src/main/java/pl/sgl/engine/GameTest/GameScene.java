@@ -30,7 +30,6 @@ public class GameScene extends Scene {
 
     @Override
     public void init() {
-
         envManager = new EnvManager();
         //coinManager after platforms bc it base on platforms posX
         platformManager = new PlatformManager();
@@ -41,13 +40,18 @@ public class GameScene extends Scene {
         enemyManager = new EnemyManager(platformManager.platforms);
 
         AudioManager.load("bg_music",  "/textures/brackeys_platformer_assets/music/time_for_adventure.wav");
-//        audio.load("shoot", "/audio/zap-hiphop-a.wav");
 
         AudioManager.loop("bg_music"); // Start muzyki w tle
 
         platformSpeed = new Text("Platform speed", 20, 900, 20);
         ui.addUi(platformSpeed);
 
+    }
+
+    @Override
+    public void cleanEverything() {
+        super.cleanEverything();
+        init();
     }
 
     @Override

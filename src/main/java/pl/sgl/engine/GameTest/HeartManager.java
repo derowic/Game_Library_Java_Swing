@@ -2,6 +2,7 @@ package pl.sgl.engine.GameTest;
 
 import pl.sgl.engine.SceneManager;
 import pl.sgl.engine.Sprite;
+import pl.sgl.engine.Time.Timer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,8 @@ public class HeartManager {
     public int health = 10;
     List<Sprite> deadHearts = new ArrayList<>();
     List<Sprite> hearts = new ArrayList<>();
+    public Timer hurtTimer= new Timer(1);
+
     public HeartManager () {
 
         for( int i = 0; i < health; i++) {
@@ -35,7 +38,7 @@ public class HeartManager {
     }
 
     public void getHit() {
-        if(!GameScene.player.playerStatus.equals("hurt")) {
+        if(!GameScene.player.playerStatus.equals("hurt") && hurtTimer.check()) {
             health--;
 
             if (health <= 0) {
@@ -43,6 +46,7 @@ public class HeartManager {
             }
 
             hearts.get(health).hide();
+            hurtTimer.reset();
         }
     }
 }

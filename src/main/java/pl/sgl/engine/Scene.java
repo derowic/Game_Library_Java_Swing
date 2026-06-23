@@ -17,6 +17,14 @@ public class Scene {
         init();
     }
 
+    public void cleanEverything() {
+        ui.getUiObjects().clear();
+        ui.getUIs().clear();
+        objects.clear();
+        cam = new Camera();
+        deltaTime = 0;
+    }
+
     public Camera getCam() {
         return cam;
     }

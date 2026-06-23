@@ -19,6 +19,7 @@ public class DeathScene extends Scene {
         restartButton = new Button("Restart", 500, 600, 100, 50);
         restartButton.setOnClick(() -> {
             System.out.println("Kliknięto Start! Przełączam scenę...");
+            SceneManager.getScene("Game").cleanEverything();
             SceneManager.setScene("Game");
         });
         ui.addUi(restartButton);
