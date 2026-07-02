@@ -12,7 +12,7 @@ public class HeartManager {
     public int health = 10;
     List<Sprite> deadHearts = new ArrayList<>();
     List<Sprite> hearts = new ArrayList<>();
-    public Timer hurtTimer= new Timer(1);
+    public Timer hurtTimer= new Timer(0.5);
 
     public HeartManager () {
 

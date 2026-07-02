@@ -11,6 +11,7 @@ import pl.sgl.engine.ui.UIElement;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Game implements Runnable {
@@ -210,9 +211,7 @@ public class Game implements Runnable {
 
             // Warunek zatrzyma się, jeśli zrobimy więcej niż 5 update'ów na raz!
             while (accumulator >= SKIP_TICKS && updates < 5) {
-
                 update();
-
                 tickCount++;
                 accumulator -= SKIP_TICKS;
                 lastTickTime = System.nanoTime();
@@ -262,24 +261,19 @@ public class Game implements Runnable {
             }
         }
 
+        SceneManager.getSelectedScene().update(deltaTime);
 
         for (GameObject s : SceneManager.getSelectedScene().getObjects()) {
-            if (!s.active) {
-                //clean dead sprites to not waste memory
-                SceneManager.getSelectedScene().getObjects().remove(s);
-            } else {
-                s.update(deltaTime);
+            //clean dead sprites to not waste memory
+            s.update(deltaTime);
 
-                double diffX = (s.x - s.lastX);
-                double diffY = (s.y - s.lastY);
-                if (Math.abs(diffX) > 100 || Math.abs(diffY) > 100) {
-                    //check if sprite is moving or changing position
-                    s.didTeleport = true;
-                }
+            double diffX = (s.x - s.lastX);
+            double diffY = (s.y - s.lastY);
+            if (Math.abs(diffX) > 100 || Math.abs(diffY) > 100) {
+                //check if sprite is moving or changing position
+                s.didTeleport = true;
             }
         }
-
-        SceneManager.getSelectedScene().update(deltaTime);
 
         List<GameObject> snapshotSprites = new ArrayList<>(SceneManager.getSelectedScene().getObjects());
 
@@ -299,6 +293,13 @@ public class Game implements Runnable {
         for(Timer t: TimerManager.getTimers()) {
             t.update(deltaTime);
         }
+
+//        for (GameObject s : SceneManager.getSelectedScene().getObjects()) {
+//            if (!s.active) {
+//                SceneManager.getSelectedScene().getObjects().remove(s);
+//            }
+//        }
+        SceneManager.getSelectedScene().getObjects().removeIf(obj -> !obj.active);
     }
 
     public Rectangle2D.Double getVisibleWorldRect(double alpha) {
@@ -458,6 +459,7 @@ public class Game implements Runnable {
             renderState.tileMap.draw(worldG, renderState.cam.x, renderState.cam.y, window.getCanvas().getWidth(), window.getCanvas().getHeight());
         }
 
+        renderState.sprites.sort(Comparator.comparingInt(o -> o.getzIndex()));
 
         for (GameObject s : renderState.sprites) {
             // Wywołujemy draw, przekazując mu worldG.

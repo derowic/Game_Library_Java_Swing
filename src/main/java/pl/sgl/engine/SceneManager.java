@@ -36,4 +36,8 @@ public class SceneManager {
     public static Scene getSelectedScene() {
         return scenes.get(selectedScene);
     }
+
+    public static void addGameObject(GameObject go) {
+        scenes.get(selectedScene).addGameObject(go);
+    }
 }

@@ -33,10 +33,11 @@ public class GameObject {
     private boolean needsRefresh = true;     // Flaga: czy trzeba wygenerować obraz na nowo?
     private boolean isAlive = true;
     private String name;
-
     //draw texture fragment, these varuables set x,y and how much o tex you take
     protected int srcX, srcY;
     protected int srcW, srcH;
+
+    private int zIndex=0;
 
     public GameObject(double x, double y) {
         this.x = x;
@@ -395,5 +396,13 @@ public class GameObject {
         this.name = name;
     }
 
-//    public abstract void getCalculateAutoHitBoxes();
+    public int getzIndex() {
+        return zIndex;
+    }
+
+    public void setzIndex(int zIndex) {
+        this.zIndex = zIndex;
+    }
+
+    //    public abstract void getCalculateAutoHitBoxes();
 }

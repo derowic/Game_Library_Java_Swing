@@ -9,6 +9,7 @@ import java.util.List;
 public class Scene {
     protected UIManager ui = new UIManager();
     protected List<GameObject> objects = new ArrayList<>();
+    public List<GameObject> gameObjectsToAdd = new ArrayList<>();
     protected Camera cam = new Camera();
     public double deltaTime;
 
@@ -38,7 +39,12 @@ public class Scene {
     }
     public void update(double dt) {
         deltaTime = dt;
+        for(GameObject g : gameObjectsToAdd) {
+            objects.add(g);
+        }
+        gameObjectsToAdd.clear();
     }
+
     public void renderUI(Graphics2D g) {
 
     }
@@ -47,6 +53,6 @@ public class Scene {
     public List<GameObject> getObjects() { return objects; }
 
     public void addGameObject(GameObject go) {
-        objects.add(go);
+        gameObjectsToAdd.add(go);
     }
 }
