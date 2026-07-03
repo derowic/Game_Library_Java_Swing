@@ -52,7 +52,9 @@ public class Scene {
     public UIManager getUi() { return ui; }
     public List<GameObject> getObjects() { return objects; }
 
-    public void addGameObject(GameObject go) {
-        gameObjectsToAdd.add(go);
+    public void addGameObject(GameObject go) {gameObjectsToAdd.add(go);}
+
+    public void delete() {
+        Game.dispose();
     }
 }

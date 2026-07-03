@@ -18,9 +18,10 @@ public class Main2 {
         Game game = new Game(title, icon, width, height, bc);
         game.setRenderPixelArt();
 
-        GameScene gameScene = new GameScene("Game");
+//        GameScene gameScene = new GameScene("Game");
+//
+//        DeathScene deathScene = new DeathScene("Death");
         MenuScene menuScene = new MenuScene("Menu");
-        DeathScene deathScene = new DeathScene("Death");
 
         SceneManager.setScene("Menu");
         AudioManager.mute();

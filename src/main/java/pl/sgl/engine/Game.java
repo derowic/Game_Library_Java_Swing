@@ -5,6 +5,7 @@ import pl.sgl.engine.Time.TimerManager;
 import pl.sgl.engine.audio.AudioManager;
 import pl.sgl.engine.particleSystem.Particle;
 import pl.sgl.engine.particleSystem.ParticleEmitter;
+import pl.sgl.engine.texture.TextureLoader;
 import pl.sgl.engine.ui.InputField;
 import pl.sgl.engine.ui.UIElement;
 
@@ -82,6 +83,15 @@ public class Game implements Runnable {
 //        this.currentSnapshot = new GameState(snapshotSprites, currentGame.emitters, scenes.get(selectedScene).getUi(), currentGame.tileMap, camera);
 
         instance = this;
+    }
+
+    public static void dispose( ) {
+        AudioManager.stopAll();
+        AudioManager.clearAllData();
+        instance.currentGame = new GameState();
+        instance.camera = new Camera();
+        TextureLoader.dispose();
+        TimerManager.dispose();
     }
 
 

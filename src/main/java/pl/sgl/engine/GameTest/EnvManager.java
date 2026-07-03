@@ -25,7 +25,7 @@ public class EnvManager {
             stoneBlock.velocityY = 100;
 //            stoneBlock.showHitBox = true;
             background.add(stoneBlock);
-            SceneManager.getScene("Game").addGameObject(stoneBlock);
+            SceneManager.addGameObject(stoneBlock);
             lastBackground = stoneBlock;
         }
 
