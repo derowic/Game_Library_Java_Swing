@@ -81,4 +81,9 @@ public class TextureLoader {
         // Zwraca prostokąt relatywny do obrazka (0,0 to lewy górny róg grafiki)
         return new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
     }
+
+    public static void dispose() {
+        textures.clear();
+        animations.clear();
+    }
 }

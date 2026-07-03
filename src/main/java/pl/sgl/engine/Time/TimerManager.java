@@ -17,4 +17,8 @@ public class TimerManager {
     public static void addTimer(Timer timer) {
         timers.add(timer);
     }
+
+    public static void dispose() {
+        timers.clear();
+    }
 }
