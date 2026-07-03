@@ -16,7 +16,7 @@ public class MenuScene extends Scene {
         startButton = new Button("Start", 500, 600, 100, 50);
         startButton.setOnClick(() -> {
             System.out.println("Kliknięto Start! Przełączam scenę...");
-            SceneManager.setScene("Game");
+            SceneManager.setScene(new GameScene("Game"));
         });
         ui.addUi(startButton);
 

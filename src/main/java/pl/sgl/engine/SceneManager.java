@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class SceneManager {
     protected static String selectedScene;
+    protected static Scene activeScene;
     protected static HashMap<String, Scene> scenes = new HashMap<>();
 
     public SceneManager() {
@@ -23,7 +24,16 @@ public class SceneManager {
     }
 
     public static void setScene(String sceneName) {
-        selectedScene = sceneName;
+        if(scenes.containsKey(sceneName)) {
+            selectedScene = sceneName;
+            activeScene = scenes.get(selectedScene);
+        }
+    }
+
+    public static void setScene(Scene newScene) {
+        activeScene.delete();
+        activeScene = newScene;
+        scenes.replace(selectedScene, newScene);
     }
 
     public static void addScene(String sceneName, Scene scene) {
@@ -31,13 +41,14 @@ public class SceneManager {
         if(selectedScene == null){
             setScene(sceneName);
         }
+        activeScene = scene;
     }
 
     public static Scene getSelectedScene() {
-        return scenes.get(selectedScene);
+        return activeScene;
     }
 
     public static void addGameObject(GameObject go) {
-        scenes.get(selectedScene).addGameObject(go);
+        activeScene.addGameObject(go);
     }
 }
