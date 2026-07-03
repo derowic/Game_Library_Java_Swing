@@ -1,2 +1,10 @@
 # Project exclude paths
 /out/
+/target/
+gitToken.txt
+/dist
+/dist/
+dist/
+/target/sgl-engine-1.0.0-jar-with-dependencies.jar
+/target/sgl-engine-1.0.0.jar
+/target/original-sgl-engine-1.0.0.jar

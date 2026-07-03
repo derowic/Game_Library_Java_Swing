@@ -1,0 +1,128 @@
+Krok 1: Przygotowanie „Fat JAR” (Fundament)
+Zanim zrobisz EXE, musisz mieć jeden plik .jar, który zawiera wszystko: Twój silnik, kod gry i biblioteki (GSON itp.).
+W pom.xml Twojej gry (nie biblioteki) dodaj ten plugin:
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.5.1</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals><goal>shade</goal></goals>
+                    <configuration>
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>pl.sgl.engine.Main2</mainClass> <!-- TWOJA KLASA MAIN -->
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
+
+Uruchom w terminalu: mvn clean package. W folderze target/ powstanie duży plik .jar.
+
+
+Krok 2: Eksport na Linux (z Linux Mint)
+Na Linuxie użyjemy wbudowanego w JDK narzędzia jpackage. Stworzy ono folder z grą i wbudowaną Javą.
+Wpisz w terminalu (będąc w folderze projektu):
+jpackage --name "MojaGra" \
+         --input target/ \
+         --main-jar nazwa-pliku-z-targetu.jar \
+         --main-class pl.sgl.engine.Main2 \
+         --type app-image \
+         --dest dist/linux \
+         --icon src/main/resources/icon.png
+
+--type app-image: Stworzy folder, który możesz po prostu spakować do .zip i wysłać komuś. Gracz wchodzi do środka i klika plik MojaGra.
+--dest dist/linux: Tam znajdziesz gotową grę.
+
+
+
+Tak, GitHub Actions to obecnie najlepszy, w pełni profesjonalny sposób na budowanie plików EXE i paczek Linuxowych, zwłaszcza gdy sam pracujesz na Linuxie.
+GitHub Actions pozwala Ci "wynająć" komputer z Windowsem na kilka minut, aby uruchomił on jpackage i wypluł gotowy instalator.
+Oto gotowy przepis, jak to skonfigurować:
+1. Przygotowanie Projektu (Konieczne)
+Upewnij się, że w Twoim pom.xml masz skonfigurowany maven-shade-plugin (ten od "Fat JAR"), o którym pisałem wcześniej. GitHub musi mieć jeden plik .jar jako bazę.
+2. Plik Konfiguracyjny GitHub Actions
+W głównym folderze swojej gry stwórz ukryte foldery: .github/workflows/. Wewnątrz stwórz plik o nazwie build.yml.
+Wklej do niego tę zawartość:
+
+name: Build Game Multiplatform
+
+on:
+  push:
+    tags:
+      - 'v*' # Uruchom, gdy dodasz tag np. v1.0.0
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # Budujemy jednocześnie na Linuxie i Windowsie
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 # Używamy najnowszej stabilnej Jawy
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build Fat JAR with Maven
+        run: mvn clean package
+
+      - name: Build Native Package (jpackage)
+        shell: bash
+        run: |
+          # Tutaj wpisz dane swojej gry
+          GAME_NAME="MojaSuperGra"
+          MAIN_CLASS="pl.sgl.engine.Main2"
+          JAR_NAME=$(ls target/*-with-dependencies.jar | head -n 1)
+
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            # Komenda dla Windowsa (EXE)
+            jpackage --type exe --name "$GAME_NAME" \
+              --input target/ \
+              --main-jar $(basename $JAR_NAME) \
+              --main-class $MAIN_CLASS \
+              --win-shortcut --win-menu \
+              --dest dist/
+          else
+            # Komenda dla Linuxa (App Image)
+            jpackage --type app-image --name "$GAME_NAME" \
+              --input target/ \
+              --main-jar $(basename $JAR_NAME) \
+              --main-class $MAIN_CLASS \
+              --dest dist/
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-build
+          path: dist/
+
+3. Jak to działa w praktyce?
+Wrzucasz kod na GitHub.
+Gdy Twoja gra jest gotowa, nadajesz jej "Tag" w terminalu (będąc na Linux Mint):
+code
+Bash
+git tag v1.0.0
+git push origin v1.0.0
+Wchodzisz na stronę swojego repozytorium na GitHubie w zakładkę Actions.
+Widzisz, jak GitHub uruchamia dwa komputery. Po ok. 2-3 minutach w szczegółach zadania znajdziesz Artifacts – tam będą gotowe pliki do pobrania:
+Paczka na Windowsa (.exe z wbudowaną Jawą).
+Folder na Linuxa (gotowy do uruchomienia).
