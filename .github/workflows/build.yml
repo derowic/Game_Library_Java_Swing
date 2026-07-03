@@ -1,0 +1,60 @@
+name: Build Game Multiplatform
+
+on:
+  push:
+    tags:
+      - 'v*' # Uruchom, gdy dodasz tag np. v1.0.0
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # Budujemy jednocześnie na Linuxie i Windowsie
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 # Używamy najnowszej stabilnej Jawy
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build Fat JAR with Maven
+        run: mvn clean package
+
+      - name: Build Native Package (jpackage)
+        shell: bash
+        run: |
+          # Tutaj wpisz dane swojej gry
+          GAME_NAME="MojaSuperGra"
+          MAIN_CLASS="pl.sgl.engine.Main2"
+          JAR_NAME=$(ls target/*-with-dependencies.jar | head -n 1)
+          
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            # Komenda dla Windowsa (EXE)
+            jpackage --type exe --name "$GAME_NAME" \
+              --input target/ \
+              --main-jar $(basename $JAR_NAME) \
+              --main-class $MAIN_CLASS \
+              --win-shortcut --win-menu \
+              --dest dist/
+          else
+            # Komenda dla Linuxa (App Image)
+            jpackage --type app-image --name "$GAME_NAME" \
+              --input target/ \
+              --main-jar $(basename $JAR_NAME) \
+              --main-class $MAIN_CLASS \
+              --dest dist/
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-build
+          path: dist/
